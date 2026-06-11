@@ -219,6 +219,18 @@ export class StellarAgent {
     throw new Error('Not yet implemented');
   }
 
+  /**
+   * Raise a dispute on a pending-release escrow job.
+   * Locks funds until the arbiter resolves the dispute.
+   *
+   * @throws If no arbiter is set for the job (contract error)
+   * @throws If the job is not in `pending_release` status
+   */
+  async dispute(jobId: bigint): Promise<TxResult> {
+    // TODO: Invoke Escrow.dispute(requester, job_id) via Soroban
+    throw new Error('Not yet implemented — see contracts/escrow/src/lib.rs');
+  }
+
   // ── Rate Limits ──────────────────────────────────────────────────────────
 
   /**
