@@ -6,6 +6,11 @@ import {
   Operation,
   Asset,
   Horizon,
+  SorobanRpc,
+  Contract,
+  nativeToScVal,
+  scValToNative,
+  xdr,
 } from '@stellar/stellar-sdk';
 
 import type {
@@ -73,6 +78,7 @@ export class StellarAgent {
   private networkConfig: NetworkConfig;
   private contracts: ContractAddresses;
   private horizon: Horizon.Server;
+  private rpcServer: SorobanRpc.Server;
   private activeChannelId?: bigint;
 
   private constructor(
@@ -84,6 +90,7 @@ export class StellarAgent {
     this.networkConfig = networkConfig;
     this.contracts = contracts;
     this.horizon = new Horizon.Server(networkConfig.horizonUrl);
+    this.rpcServer = new SorobanRpc.Server(networkConfig.rpcUrl);
   }
 
   // ── Factory Methods ──────────────────────────────────────────────────────
@@ -256,23 +263,130 @@ export class StellarAgent {
   }
 
   /**
-   * Get spend report for the current period
+   * Get spend report for the current period.
+   * Uses `simulateTransaction` to read channel state from the PaymentChannel contract.
    */
   async getSpendReport(): Promise<{
     spentThisPeriod: string;
     remainingThisPeriod: string;
     totalLifetime: string;
   }> {
-    // TODO: Query PaymentChannel.remaining_this_period
-    throw new Error('Not yet implemented');
+    if (!this.activeChannelId) {
+      throw new Error('No active payment channel. Call openChannel() first.');
+    }
+
+    const contract = new Contract(this.contracts.paymentChannel);
+    const account = await this.rpcServer.getAccount(this.address);
+
+    const tx = new TransactionBuilder(account, {
+      fee: BASE_FEE,
+      networkPassphrase: this.networkConfig.networkPassphrase,
+    })
+      .addOperation(
+        contract.call(
+          'get_channel',
+          nativeToScVal(this.activeChannelId, { type: 'u64' }),
+        ),
+      )
+      .setTimeout(30)
+      .build();
+
+    const simResult = await this.rpcServer.simulateTransaction(tx);
+
+    if (SorobanRpc.Api.isSimulationError(simResult)) {
+      throw new Error(`Contract simulation failed: ${simResult.error}`);
+    }
+
+    const successResult = simResult as SorobanRpc.Api.SimulateTransactionSuccessResponse;
+    const returnVal = successResult.result?.retval;
+    if (!returnVal) {
+      throw new Error('No return value from contract simulation');
+    }
+
+    const channel = scValToNative(returnVal) as {
+      spent_this_period: bigint;
+      limit_per_period: bigint;
+      total_spent: bigint;
+    };
+
+    const spent = channel.spent_this_period;
+    const remaining = channel.limit_per_period - spent;
+
+    return {
+      spentThisPeriod: spent.toString(),
+      remainingThisPeriod: remaining.toString(),
+      totalLifetime: channel.total_spent.toString(),
+    };
   }
 
   /**
-   * Get info about a job
+   * Get info about a job.
+   * Uses `simulateTransaction` to read job state from the Escrow contract.
    */
   async getJob(jobId: bigint): Promise<JobInfo> {
-    // TODO: Query Escrow.get_job
-    throw new Error('Not yet implemented');
+    const contract = new Contract(this.contracts.escrow);
+    const account = await this.rpcServer.getAccount(this.address);
+
+    const tx = new TransactionBuilder(account, {
+      fee: BASE_FEE,
+      networkPassphrase: this.networkConfig.networkPassphrase,
+    })
+      .addOperation(
+        contract.call(
+          'get_job',
+          nativeToScVal(jobId, { type: 'u64' }),
+        ),
+      )
+      .setTimeout(30)
+      .build();
+
+    const simResult = await this.rpcServer.simulateTransaction(tx);
+
+    if (SorobanRpc.Api.isSimulationError(simResult)) {
+      throw new Error(`Contract simulation failed: ${simResult.error}`);
+    }
+
+    const successResult = simResult as SorobanRpc.Api.SimulateTransactionSuccessResponse;
+    const returnVal = successResult.result?.retval;
+    if (!returnVal) {
+      throw new Error('No return value from contract simulation');
+    }
+
+    const job = scValToNative(returnVal) as {
+      requester: string;
+      worker: string | null;
+      arbiter: string | null;
+      token: string;
+      amount: bigint;
+      task_description: string;
+      result: string | null;
+      deadline_ledger: number;
+      status: { tag: string };
+      created_at: number;
+    };
+
+    const statusMap: Record<string, JobInfo['status']> = {
+      Open: 'open',
+      InProgress: 'in_progress',
+      PendingRelease: 'pending_release',
+      Completed: 'completed',
+      Refunded: 'refunded',
+      Disputed: 'disputed',
+    };
+
+    return {
+      id: jobId,
+      requester: job.requester,
+      worker: job.worker ?? null,
+      arbiter: job.arbiter ?? null,
+      token: job.token,
+      amount: job.amount,
+      taskDescription: job.task_description,
+      result: job.result ?? null,
+      deadlineLedger: job.deadline_ledger,
+      status: statusMap[job.status.tag] ?? 'open',
+      createdAt: job.created_at,
+    };
   }
 
   // ── Internals ────────────────────────────────────────────────────────────
