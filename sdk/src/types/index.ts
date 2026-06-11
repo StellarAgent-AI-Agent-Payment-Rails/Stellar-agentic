@@ -26,6 +26,23 @@ export const NETWORK_CONFIGS: Record<Network, NetworkConfig> = {
   },
 };
 
+// ─── USDC Address Constants ────────────────────────────────────────────────────────
+//
+// Circle-issued USDC on Stellar (classic asset format: CODE:ISSUER).
+// Soroban contract IDs are not yet deployed by Circle — use these classic asset
+// identifiers for payment channel operations.
+//
+// Sources:
+//   - https://developers.circle.com/stablecoins/usdc-contract-addresses
+//   - https://stellar.expert/explorer/public/asset/USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN
+
+/** USDC on Stellar Mainnet (Circle-issued) */
+export const USDC_MAINNET = 'USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
+
+/** USDC on Stellar Testnet (Circle-issued) */
+export const USDC_TESTNET = 'USDC-GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NOATFQRAU2PMKJP';
+
+
 // ─── Agent ───────────────────────────────────────────────────────────────────
 
 export type SpendPeriod = 'per_ledger' | 'hourly' | 'daily';
