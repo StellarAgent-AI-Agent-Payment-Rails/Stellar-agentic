@@ -254,6 +254,35 @@ impl Escrow {
         );
     }
 
+    /// Requester cancels an open job before anyone accepts it.
+    /// Refunds the locked funds immediately.
+    pub fn cancel_job(env: Env, requester: Address, job_id: u64) {
+        requester.require_auth();
+
+        let mut job = Self::load_job(&env, job_id);
+
+        if job.requester != requester {
+            panic!("not the job requester");
+        }
+        if job.status != JobStatus::Open {
+            panic!("can only cancel open jobs");
+        }
+
+        let token_client = token::Client::new(&env, &job.token);
+        token_client.transfer(&env.current_contract_address(), &requester, &job.amount);
+
+        job.status = JobStatus::Refunded;
+        Self::save_job(&env, job_id, job.clone());
+
+        env.events().publish(
+            (
+                soroban_sdk::symbol_short!("escrow"),
+                soroban_sdk::symbol_short!("cancel"),
+            ),
+            (job_id, requester, job.amount),
+        );
+    }
+
     /// Requester raises a dispute — locks funds until arbiter resolves
     pub fn dispute(env: Env, requester: Address, job_id: u64) {
         requester.require_auth();
