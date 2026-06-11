@@ -8,6 +8,8 @@ import {
   Horizon,
 } from '@stellar/stellar-sdk';
 
+export { toStroops, fromStroops, formatAmount } from './utils.js';
+
 import type {
   StellarAgentConfig,
   Network,
