@@ -26,6 +26,12 @@ export const NETWORK_CONFIGS: Record<Network, NetworkConfig> = {
   },
 };
 
+// ─── Token Constants ─────────────────────────────────────────────────────────
+
+export const USDC_TESTNET = 'CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA';
+export const USDC_MAINNET = 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7EJKVM';
+export const XLM_NATIVE = 'native';
+
 // ─── Agent ───────────────────────────────────────────────────────────────────
 
 export type SpendPeriod = 'per_ledger' | 'hourly' | 'daily';

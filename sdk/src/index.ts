@@ -23,7 +23,7 @@ import type {
   ContractAddresses,
 } from './types/index.js';
 
-import { NETWORK_CONFIGS } from './types/index.js';
+import { NETWORK_CONFIGS, USDC_TESTNET, USDC_MAINNET } from './types/index.js';
 
 // ─── Default Testnet Contract Addresses ──────────────────────────────────────
 // TODO: Update these after deploying contracts to testnet
@@ -74,16 +74,19 @@ export class StellarAgent {
   private contracts: ContractAddresses;
   private horizon: Horizon.Server;
   private activeChannelId?: bigint;
+  private network: Network;
 
   private constructor(
     keypair: Keypair,
     networkConfig: NetworkConfig,
     contracts: ContractAddresses,
+    network: Network,
   ) {
     this.keypair = keypair;
     this.networkConfig = networkConfig;
     this.contracts = contracts;
     this.horizon = new Horizon.Server(networkConfig.horizonUrl);
+    this.network = network;
   }
 
   // ── Factory Methods ──────────────────────────────────────────────────────
@@ -103,7 +106,7 @@ export class StellarAgent {
       ...config.contracts,
     };
 
-    const agent = new StellarAgent(keypair, networkConfig, contracts);
+    const agent = new StellarAgent(keypair, networkConfig, contracts, config.network);
 
     // If testnet and fresh keypair, fund from friendbot
     if (config.network === 'testnet' && !config.secretKey) {
@@ -141,12 +144,17 @@ export class StellarAgent {
    * Open a payment channel for this agent.
    * Deposits tokens and sets a per-period spend limit.
    *
+   * Defaults to USDC_TESTNET on testnet and USDC_MAINNET on mainnet.
+   *
    * @returns The channel ID
    */
   async openChannel(params: OpenChannelParams): Promise<bigint> {
+    // Default token based on network
+    const token = params.token ?? (this.network === 'testnet' ? USDC_TESTNET : USDC_MAINNET);
+
     // TODO: Invoke AgentWalletFactory.create_agent + PaymentChannel.open_channel
     // via Soroban contract invocation
-    console.log('Opening channel with params:', params);
+    console.log('Opening channel with params:', { ...params, token });
     throw new Error('Not yet implemented — contract addresses needed. See CONTRIBUTING.md');
   }
 
