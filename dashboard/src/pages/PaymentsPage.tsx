@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { ArrowUpRight, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, XCircle, Clock, Download } from 'lucide-react';
 import { Badge, AddressChip, SectionHeader, Card } from '../components/ui/index.js';
 import { MOCK_PAYMENTS } from '../lib/mockData.js';
+import { paymentsToCsv, downloadCsv } from '../lib/exportCsv.js';
 
 function statusIcon(status: string) {
   if (status === 'success') return <CheckCircle2 size={14} className="text-sa-green" />;
@@ -16,18 +17,31 @@ function statusBadge(status: string) {
 }
 
 export function PaymentsPage() {
-  const totalSuccess = MOCK_PAYMENTS.filter((p) => p.status === 'success').length;
-  const totalFailed = MOCK_PAYMENTS.filter((p) => p.status === 'failed').length;
-  const totalVolume = MOCK_PAYMENTS
+  const payments = MOCK_PAYMENTS;
+  const totalSuccess = payments.filter((p) => p.status === 'success').length;
+  const totalFailed = payments.filter((p) => p.status === 'failed').length;
+  const totalVolume = payments
     .filter((p) => p.status === 'success')
     .reduce((sum, p) => sum + parseFloat(p.amount), 0)
     .toFixed(4);
 
   return (
     <div className="flex-1 overflow-auto">
-      <div className="border-b border-sa-border px-8 py-5 bg-sa-bg/50 backdrop-blur sticky top-0 z-10">
-        <h1 className="font-display text-xl font-semibold text-sa-text">Payments</h1>
-        <p className="text-xs text-sa-text-dim mt-0.5">On-chain audit trail for all agent payments</p>
+      <div className="border-b border-sa-border px-8 py-5 bg-sa-bg/50 backdrop-blur sticky top-0 z-10 flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-xl font-semibold text-sa-text">Payments</h1>
+          <p className="text-xs text-sa-text-dim mt-0.5">On-chain audit trail for all agent payments</p>
+        </div>
+        <button
+          onClick={() => {
+            const csv = paymentsToCsv(payments);
+            downloadCsv(csv, `payments-${new Date().toISOString().slice(0, 10)}.csv`);
+          }}
+          className="flex items-center gap-1.5 rounded-md border border-sa-border bg-sa-panel px-3 py-1.5 text-xs font-medium text-sa-text hover:bg-sa-bg transition-colors"
+        >
+          <Download size={14} />
+          Export CSV
+        </button>
       </div>
 
       <div className="p-8 space-y-6">
@@ -58,7 +72,7 @@ export function PaymentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {MOCK_PAYMENTS.map((p, i) => (
+                {payments.map((p, i) => (
                   <motion.tr
                     key={p.id}
                     initial={{ opacity: 0 }}
