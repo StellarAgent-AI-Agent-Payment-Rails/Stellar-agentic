@@ -3,6 +3,38 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Light theme (default) ─────────────────────────────────────── */
+  :root {
+    --sa-bg: 248 250 252;
+    --sa-surface: 255 255 255;
+    --sa-border: 226 232 240;
+    --sa-accent: 0 180 220;
+    --sa-accent-dim: 0 140 180;
+    --sa-green: 0 179 126;
+    --sa-green-dim: 0 150 104;
+    --sa-red: 230 57 80;
+    --sa-yellow: 217 158 0;
+    --sa-muted: 148 163 184;
+    --sa-text: 30 41 59;
+    --sa-text-dim: 100 116 139;
+  }
+
+  /* ── Dark theme ────────────────────────────────────────────────── */
+  .dark {
+    --sa-bg: 8 12 20;
+    --sa-surface: 13 20 32;
+    --sa-border: 26 37 53;
+    --sa-accent: 0 212 255;
+    --sa-accent-dim: 0 153 187;
+    --sa-green: 0 255 178;
+    --sa-green-dim: 0 204 142;
+    --sa-red: 255 69 96;
+    --sa-yellow: 255 184 0;
+    --sa-muted: 74 96 128;
+    --sa-text: 200 216 232;
+    --sa-text-dim: 122 144 168;
+  }
+
   html {
     @apply bg-sa-bg text-sa-text antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";

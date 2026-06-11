@@ -9,8 +9,11 @@ import {
   Settings,
   ExternalLink,
   Zap,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useTheme } from '../../hooks/useTheme.js';
 
 const NAV_ITEMS = [
   { to: '/', icon: LayoutDashboard, label: 'Overview' },
@@ -22,6 +25,8 @@ const NAV_ITEMS = [
 ];
 
 export function Sidebar() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <aside className="w-60 shrink-0 flex flex-col bg-sa-surface border-r border-sa-border h-screen sticky top-0">
       {/* Logo */}
@@ -76,6 +81,14 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-sa-border space-y-2">
+        <button
+          onClick={toggleTheme}
+          className="flex items-center gap-2 text-xs text-sa-text-dim hover:text-sa-text transition-colors px-2 py-1.5 rounded w-full"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </button>
         <a
           href="https://github.com/yourusername/stellaragent"
           target="_blank"

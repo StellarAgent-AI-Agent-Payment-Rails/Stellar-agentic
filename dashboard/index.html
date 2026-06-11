@@ -12,6 +12,15 @@
     />
   </head>
   <body>
+    <script>
+      // Prevent flash of incorrect theme on page load
+      (function () {
+        var theme = localStorage.getItem('sa-theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
