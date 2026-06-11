@@ -25,6 +25,15 @@ import type {
 
 import { NETWORK_CONFIGS } from './types/index.js';
 
+export {
+  StellarAgentError,
+  NoActiveChannelError,
+  SpendLimitExceededError,
+  ContractPanicError,
+} from './errors.js';
+
+import { NoActiveChannelError, StellarAgentError } from './errors.js';
+
 // ─── Default Testnet Contract Addresses ──────────────────────────────────────
 // TODO: Update these after deploying contracts to testnet
 
@@ -147,7 +156,7 @@ export class StellarAgent {
     // TODO: Invoke AgentWalletFactory.create_agent + PaymentChannel.open_channel
     // via Soroban contract invocation
     console.log('Opening channel with params:', params);
-    throw new Error('Not yet implemented — contract addresses needed. See CONTRIBUTING.md');
+    throw new StellarAgentError('Not yet implemented — contract addresses needed. See CONTRIBUTING.md');
   }
 
   /**
@@ -165,12 +174,12 @@ export class StellarAgent {
    */
   async payForAPI(params: PayForAPIParams): Promise<TxResult> {
     if (!this.activeChannelId) {
-      throw new Error('No active payment channel. Call openChannel() first.');
+      throw new NoActiveChannelError();
     }
 
     // TODO: Invoke PaymentChannel.pay via Soroban
     console.log('Paying for API:', params);
-    throw new Error('Not yet implemented — see contracts/payment_channel/src/lib.rs');
+    throw new StellarAgentError('Not yet implemented — see contracts/payment_channel/src/lib.rs');
   }
 
   // ── Agent-to-Agent Escrow ────────────────────────────────────────────────
@@ -192,7 +201,7 @@ export class StellarAgent {
   async requestWork(params: RequestWorkParams): Promise<bigint> {
     // TODO: Invoke Escrow.create_job via Soroban
     console.log('Requesting work:', params);
-    throw new Error('Not yet implemented — see contracts/escrow/src/lib.rs');
+    throw new StellarAgentError('Not yet implemented — see contracts/escrow/src/lib.rs');
   }
 
   /**
@@ -200,7 +209,7 @@ export class StellarAgent {
    */
   async acceptJob(jobId: bigint): Promise<TxResult> {
     // TODO: Invoke Escrow.accept_job
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   /**
@@ -208,7 +217,7 @@ export class StellarAgent {
    */
   async submitResult(jobId: bigint, result: string): Promise<TxResult> {
     // TODO: Invoke Escrow.submit_result
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   /**
@@ -216,7 +225,7 @@ export class StellarAgent {
    */
   async releasePayment(jobId: bigint): Promise<TxResult> {
     // TODO: Invoke Escrow.release
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   // ── Rate Limits ──────────────────────────────────────────────────────────
@@ -227,7 +236,7 @@ export class StellarAgent {
    */
   async setRateLimits(config: RateLimitConfig): Promise<TxResult> {
     // TODO: Invoke RateLimiter.set_limits
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   /**
@@ -235,7 +244,7 @@ export class StellarAgent {
    */
   async checkRateLimit(amount: string): Promise<boolean> {
     // TODO: Invoke RateLimiter.check (read-only call)
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   // ── Queries ──────────────────────────────────────────────────────────────
@@ -264,7 +273,7 @@ export class StellarAgent {
     totalLifetime: string;
   }> {
     // TODO: Query PaymentChannel.remaining_this_period
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   /**
@@ -272,7 +281,7 @@ export class StellarAgent {
    */
   async getJob(jobId: bigint): Promise<JobInfo> {
     // TODO: Query Escrow.get_job
-    throw new Error('Not yet implemented');
+    throw new StellarAgentError('Not yet implemented');
   }
 
   // ── Internals ────────────────────────────────────────────────────────────
