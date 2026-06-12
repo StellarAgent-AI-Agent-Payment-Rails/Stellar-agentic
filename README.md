@@ -37,6 +37,7 @@ stellaragent/
 ├── dashboard/        # React + Tailwind business dashboard
 │   └── src/
 └── docs/             # Documentation
+    └── faq.md
 ```
 
 ---
@@ -135,6 +136,8 @@ npm run dev
 ## Contributing
 
 We welcome contributors! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get started.
+
+For common integration questions, see the [FAQ](docs/faq.md).
 
 Good first issues are labeled [`good first issue`](https://github.com/yourusername/stellaragent/labels/good%20first%20issue).
 
