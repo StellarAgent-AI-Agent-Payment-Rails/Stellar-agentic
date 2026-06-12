@@ -94,6 +94,24 @@ export function Sidebar() {
           <ExternalLink size={12} />
           Stellar Docs
         </a>
+        <button
+          onClick={() => {
+            const html = document.documentElement;
+            const isCurrentlyDark = html.classList.contains('dark');
+            if (isCurrentlyDark) {
+              html.classList.remove('dark');
+              html.classList.add('light');
+              localStorage.setItem('theme', 'light');
+            } else {
+              html.classList.remove('light');
+              html.classList.add('dark');
+              localStorage.setItem('theme', 'dark');
+            }
+          }}
+          className="flex items-center gap-2 text-xs text-sa-text-dim hover:text-sa-text transition-colors px-2 py-1.5 rounded w-full"
+        >
+          🌙 Toggle Theme
+        </button>
       </div>
     </aside>
   );

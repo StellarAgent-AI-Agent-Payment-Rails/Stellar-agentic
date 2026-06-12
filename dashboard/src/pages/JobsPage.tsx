@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Plus, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Badge, Card, SectionHeader, AddressChip, EmptyState } from '../components/ui/index.js';
-import { MOCK_JOBS, type Job } from '../lib/mockData.js';
+import { Badge, Card, SectionHeader, AddressChip, EmptyState } from '../components/ui/index';
+import { MOCK_JOBS, type Job } from '../lib/mockData';
 
 function JobStatusBadge({ status }: { status: Job['status'] }) {
   const map: Record<Job['status'], { label: string; variant: 'success' | 'warning' | 'danger' | 'neutral' | 'info' }> = {

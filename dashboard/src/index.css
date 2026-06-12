@@ -76,3 +76,69 @@
     @apply text-xs font-medium text-sa-text-dim uppercase tracking-wider;
   }
 }
+/* Light mode overrides */
+html.light {
+  --color-sa-bg: #f0f4f8;
+  --color-sa-surface: #ffffff;
+  --color-sa-border: #d1dce8;
+  --color-sa-text: #1a2535;
+  --color-sa-text-dim: #4a6080;
+  background-color: #f0f4f8;
+  color: #1a2535;
+}
+
+html.light .card {
+  background-color: #ffffff;
+  border-color: #d1dce8;
+}
+
+html.light aside {
+  background-color: #ffffff;
+  border-color: #d1dce8;
+}
+html.light body {
+  background-color: #f0f4f8;
+  color: #1a2535;
+}
+
+html.light p,
+html.light h1,
+html.light h2,
+html.light h3,
+html.light span,
+html.light a {
+  color: #1a2535;
+}
+
+html.light .text-sa-text-dim {
+  color: #4a6080 !important;
+}
+
+html.light .text-sa-text {
+  color: #1a2535 !important;
+}
+
+html.light nav a {
+  color: #1a2535 !important;
+}
+html.light #root,
+html.light main,
+html.light div {
+  background-color: #f0f4f8;
+}
+
+html.light .bg-sa-surface {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-sa-bg {
+  background-color: #f0f4f8 !important;
+}
+
+html.light .border-sa-border {
+  border-color: #d1dce8 !important;
+}
+
+html.light .text-sa-accent {
+  color: #0099BB !important;
+}

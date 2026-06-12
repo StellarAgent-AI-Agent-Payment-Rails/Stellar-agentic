@@ -9,8 +9,8 @@ import {
   AddressChip,
   SectionHeader,
   ProgressBar,
-} from '../components/ui/index.js';
-import { MOCK_AGENTS, type Agent } from '../lib/mockData.js';
+} from '../components/ui/index';
+import { MOCK_AGENTS, type Agent } from '../lib/mockData';
 
 function AgentCard({ agent, onSelect }: { agent: Agent; onSelect: (a: Agent) => void }) {
   const hourPct = (parseFloat(agent.spentThisHour) / parseFloat(agent.limitPerHour)) * 100;

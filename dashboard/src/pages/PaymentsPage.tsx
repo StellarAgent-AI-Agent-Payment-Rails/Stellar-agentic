@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, CheckCircle2, XCircle, Clock } from 'lucide-react';
-import { Badge, AddressChip, SectionHeader, Card } from '../components/ui/index.js';
-import { MOCK_PAYMENTS } from '../lib/mockData.js';
+import { Badge, AddressChip, SectionHeader, Card } from '../components/ui/index';
+import { MOCK_PAYMENTS } from '../lib/mockData';
 
 function statusIcon(status: string) {
   if (status === 'success') return <CheckCircle2 size={14} className="text-sa-green" />;
