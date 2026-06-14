@@ -290,3 +290,22 @@ export class StellarAgent {
     }
   }
 }
+
+
+export type {
+  StellarAgentConfig,
+  Network,
+  NetworkConfig,
+  OpenChannelParams,
+  PayForAPIParams,
+  RequestWorkParams,
+  RateLimitConfig,
+  AgentInfo,
+  ChannelInfo,
+  JobInfo,
+  TxResult,
+  ContractAddresses,
+  SpendPeriod,
+  SpendLimit,
+  JobStatus,
+} from './types/index.js';
