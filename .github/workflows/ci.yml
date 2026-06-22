@@ -24,6 +24,9 @@ jobs:
           targets: wasm32-unknown-unknown
           components: rustfmt, clippy
 
+      - name: Install cargo-deny
+        run: cargo install cargo-deny --locked
+
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
         with:
@@ -34,6 +37,9 @@ jobs:
 
       - name: Clippy
         run: cargo clippy --all-targets -- -D warnings
+
+      - name: License compliance check
+        run: cargo deny check licenses
 
       - name: Run tests
         run: cargo test --all
@@ -71,6 +77,9 @@ jobs:
       - name: Type check
         run: pnpm --filter @stellaragent/sdk typecheck
 
+      - name: License compliance check
+        run: pnpm --filter @stellaragent/sdk license-check
+
       - name: Run tests
         run: pnpm --filter @stellaragent/sdk test
 
@@ -102,6 +111,9 @@ jobs:
 
       - name: Type check
         run: pnpm --filter @stellaragent/dashboard typecheck
+
+      - name: License compliance check
+        run: pnpm --filter @stellaragent/dashboard license-check
 
       - name: Lint
         run: pnpm --filter @stellaragent/dashboard lint
