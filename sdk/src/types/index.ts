@@ -53,7 +53,7 @@ export interface StellarAgentConfig {
 export interface AgentInfo {
   id: bigint;
   address: string;
-  name: string;
+  metadataHash: string;
   owner: string;
   active: boolean;
   createdAt: number;
