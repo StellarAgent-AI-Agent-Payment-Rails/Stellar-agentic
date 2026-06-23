@@ -60,6 +60,24 @@ import type {
 } from './types/index.js';
 
 import { NETWORK_CONFIGS } from './types/index.js';
+export {
+  addCommitment,
+  compareTimestamp,
+  createOfflineAgentState,
+  listCommitments,
+  mergeOfflineStates,
+  removeCommitment,
+  tick,
+  updateCommitmentStatus,
+} from './offline-state.js';
+
+export type {
+  CommitmentInput,
+  LamportTimestamp,
+  OfflineAgentState,
+  OfflineCommitmentStatus,
+  OfflinePaymentCommitment,
+} from './offline-state.js';
 
 // ─── Default Testnet Contract Addresses ──────────────────────────────────────
 // TODO: Update these after deploying contracts to testnet
