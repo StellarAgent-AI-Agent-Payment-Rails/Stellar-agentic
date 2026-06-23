@@ -22,3 +22,4 @@ dist-ssr/
 # Stellar
 .soroban/
 identity/
+test_snapshots/
