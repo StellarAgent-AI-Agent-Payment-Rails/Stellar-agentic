@@ -60,6 +60,27 @@ import type {
 } from './types/index.js';
 
 import { NETWORK_CONFIGS } from './types/index.js';
+import {
+  AccountSequenceQueue,
+  submitSequencedTransaction as submitWithSequenceQueue,
+  type SequencedTransactionBuilder,
+  type SequencedTransactionServer,
+  type SignableTransaction,
+} from './sequence-queue.js';
+
+export {
+  AccountSequenceQueue,
+  defaultAccountSequenceQueue,
+  submitSequencedTransaction,
+} from './sequence-queue.js';
+
+export type {
+  SequencedTask,
+  SequencedTransactionBuilder,
+  SequencedTransactionServer,
+  SignableTransaction,
+  SubmitSequencedTransactionOptions,
+} from './sequence-queue.js';
 
 // ─── Default Testnet Contract Addresses ──────────────────────────────────────
 // TODO: Update these after deploying contracts to testnet
@@ -110,6 +131,7 @@ export class StellarAgent {
   private contracts: ContractAddresses;
   private horizon: Horizon.Server;
   private activeChannelId?: bigint;
+  private readonly sequenceQueue = new AccountSequenceQueue();
 
   private constructor(
     keypair: Keypair,
@@ -272,6 +294,50 @@ export class StellarAgent {
   async checkRateLimit(amount: string): Promise<boolean> {
     // TODO: Invoke RateLimiter.check (read-only call)
     throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Run arbitrary work under this agent's per-source-account sequence lock.
+   *
+   * Use this around custom transaction submission paths that load a Stellar
+   * account, build a transaction from its current sequence number, and submit it.
+   */
+  async withSequenceLock<T>(
+    task: () => T | Promise<T>,
+    sourceAccount: string = this.address,
+  ): Promise<T> {
+    return this.sequenceQueue.run(sourceAccount, task);
+  }
+
+  /**
+   * Build, sign, and submit a transaction with a fresh sequence number.
+   *
+   * Concurrent calls for the same source account are serialized so each builder
+   * sees the sequence after the previous submission. Calls for different source
+   * accounts remain concurrent.
+   */
+  async submitSequencedTransaction<
+    TAccount = unknown,
+    TTransaction extends SignableTransaction = SignableTransaction,
+    TSubmitResponse = unknown,
+  >(
+    buildTransaction: SequencedTransactionBuilder<TAccount, TTransaction>,
+    options: {
+      sourceAccount?: string;
+      signers?: Keypair[];
+    } = {},
+  ): Promise<TSubmitResponse> {
+    return submitWithSequenceQueue<TAccount, TTransaction, TSubmitResponse>({
+      server: this.horizon as unknown as SequencedTransactionServer<
+        TAccount,
+        TTransaction,
+        TSubmitResponse
+      >,
+      sourceAccount: options.sourceAccount ?? this.address,
+      buildTransaction,
+      queue: this.sequenceQueue,
+      signers: options.signers ?? [this.keypair],
+    });
   }
 
   // ── Queries ──────────────────────────────────────────────────────────────
