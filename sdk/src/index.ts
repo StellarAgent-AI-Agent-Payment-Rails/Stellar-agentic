@@ -60,6 +60,26 @@ import type {
 } from './types/index.js';
 
 import { NETWORK_CONFIGS } from './types/index.js';
+import {
+  waitForTransaction as waitForTransactionSse,
+  type WaitForTransactionOptions,
+  type HorizonTransactionRecord,
+  type TransactionStreamServer,
+} from './transaction-stream.js';
+
+export {
+  createTransactionWatcher,
+  waitForTransaction,
+} from './transaction-stream.js';
+
+export type {
+  HorizonTransactionRecord,
+  TransactionStreamBuilder,
+  TransactionStreamHandlers,
+  TransactionStreamServer,
+  TransactionWatcher,
+  WaitForTransactionOptions,
+} from './transaction-stream.js';
 
 // ─── Default Testnet Contract Addresses ──────────────────────────────────────
 // TODO: Update these after deploying contracts to testnet
@@ -272,6 +292,22 @@ export class StellarAgent {
   async checkRateLimit(amount: string): Promise<boolean> {
     // TODO: Invoke RateLimiter.check (read-only call)
     throw new Error('Not yet implemented');
+  }
+
+  /**
+   * Wait for a transaction to be included in Horizon using SSE.
+   *
+   * This replaces repeated fixed-interval polling for transaction inclusion,
+   * which is especially useful when many agents submit transactions at once.
+   */
+  async waitForTransaction<TRecord extends HorizonTransactionRecord = HorizonTransactionRecord>(
+    hash: string,
+    options: Omit<WaitForTransactionOptions<TRecord>, 'server' | 'horizonUrl'> = {},
+  ): Promise<TxResult> {
+    return waitForTransactionSse(hash, {
+      ...options,
+      server: this.horizon as unknown as TransactionStreamServer<TRecord>,
+    });
   }
 
   // ── Queries ──────────────────────────────────────────────────────────────
