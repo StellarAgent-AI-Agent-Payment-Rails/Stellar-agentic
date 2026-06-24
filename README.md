@@ -31,6 +31,7 @@ stellaragent/
 │   ├── agent_wallet_factory/
 │   ├── payment_channel/
 │   ├── escrow/
+│   ├── bug_bounty_oracle/
 │   └── rate_limiter/
 ├── sdk/              # TypeScript SDK
 │   └── src/
@@ -56,7 +57,7 @@ stellaragent/
 ┌──────────────────────▼──────────────────────────────┐
 │           Soroban Smart Contracts (Rust)              │
 │  AgentWalletFactory │ PaymentChannel │ Escrow        │
-│  RateLimiter        │ AuditLog                       │
+│  BugBountyOracle    │ RateLimiter    │ AuditLog      │
 └──────────────────────┬──────────────────────────────┘
                        │ Stellar Network
 ┌──────────────────────▼──────────────────────────────┐
@@ -123,6 +124,7 @@ npm run dev
 - [ ] `AgentWalletFactory` Soroban contract
 - [ ] `PaymentChannel` Soroban contract
 - [ ] `Escrow` Soroban contract
+- [ ] `BugBountyOracle` Soroban contract
 - [ ] `RateLimiter` Soroban contract
 - [ ] TypeScript SDK core
 - [ ] Python SDK
