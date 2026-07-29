@@ -297,3 +297,32 @@ export interface TxResult {
   /** Ledger number it was confirmed in */
   ledger?: number;
 }
+
+// ─── Multi-Sig ────────────────────────────────────────────────────────────────
+
+export interface SignerWeight {
+  key: string;
+  weight: number;
+}
+
+export interface MultiSigConfig {
+  signers: SignerWeight[];
+  masterWeight: number;
+  lowThreshold: number;
+  medThreshold: number;
+  highThreshold: number;
+}
+
+export interface UnsignedTxBuild {
+  transactionXdr: string;
+  authEntryXdrs: string[];
+  validUntilLedgerSeq: number;
+  threshold: number;
+  signaturesCollected: number;
+}
+
+export interface TopUpParams {
+  channelId?: bigint;
+  amount: string;
+  token?: string;
+}
