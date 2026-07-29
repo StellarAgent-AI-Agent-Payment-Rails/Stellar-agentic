@@ -8,6 +8,7 @@ import {
   Asset,
   Horizon,
   SorobanRpc,
+  StrKey,
   nativeToScVal,
   scValToNative,
   xdr,
@@ -77,6 +78,9 @@ import type {
   SpendReport,
   TxResult,
   ContractAddresses,
+  UnsignedTxBuild,
+  MultiSigConfig,
+  TopUpParams,
 } from './types/index.js';
 
 import { NETWORK_CONFIGS } from './types/index.js';
@@ -108,7 +112,23 @@ export type {
   ContractAddresses,
   AgentEvent,
   TxResult,
+  UnsignedTxBuild,
+  MultiSigConfig,
+  SignerWeight,
+  TopUpParams,
 } from './types/index.js';
+
+// ─── Multi-Sig Authorization ─────────────────────────────────────────────────
+export {
+  UnsignedTxBuilder,
+  addSignatureToEnvelope,
+  enoughSignatures,
+  getSignaturesCollected,
+  mergeSignatures,
+  buildSetOptionsOp,
+  buildSetThresholdsOp,
+  transactionSignatureCount,
+} from './multi-sig.js';
 
 // ─── Circuit Breaker (emergency pause) ────────────────────────────────────────
 export { CircuitBreaker } from './circuitBreaker.js';
@@ -155,6 +175,7 @@ export type {
 
 import { KeypairSigner, SigningError } from './signer.js';
 import type { Signer } from './signer.js';
+import { UnsignedTxBuilder, addSignatureToEnvelope, getSignaturesCollected } from './multi-sig.js';
 
 /**
  * Whether a URL points at the local machine, and may therefore be spoken to
@@ -208,6 +229,7 @@ export class StellarAgent {
   private horizon: Horizon.Server;
   private rpc: SorobanRpc.Server;
   private activeChannelId?: bigint;
+  private unsignedTxBuilder?: UnsignedTxBuilder;
 
   private constructor(
     signer: Signer,
@@ -597,6 +619,236 @@ export class StellarAgent {
       this.i128(amount),
     ], true);
     return result.value === true;
+  }
+
+  // ── Multi-Sig / Unsigned Transaction Workflow ──────────────────────────
+
+  /**
+   * Configure the on-chain account with N-of-M signers using Stellar's
+   * native multi-signature account model (setOptions with thresholds).
+   *
+   * This is a one-time setup: it adds each signer key with the configured
+   * weight and sets the master weight, low, medium, and high thresholds.
+   * After this call the agent's signer may no longer meet the thresholds
+   * alone — enough signers must cooperate to authorize operations.
+   *
+   * @example 2-of-3 setup
+   * ```typescript
+   * await agent.configureMultiSig({
+   *   masterWeight: 1,
+   *   signers: [
+   *     { key: 'GD...AAA', weight: 1 },
+   *     { key: 'GD...BBB', weight: 1 },
+   *     { key: 'GD...CCC', weight: 1 },
+   *   ],
+   *   lowThreshold: 1,
+   *   medThreshold: 2,
+   *   highThreshold: 3,
+   * });
+   * ```
+   */
+  async configureMultiSig(config: MultiSigConfig): Promise<TxResult> {
+    const ops: xdr.Operation[] = [];
+
+    ops.push(
+      Operation.setOptions({
+        source: this.address,
+        masterWeight: config.masterWeight,
+        lowThreshold: config.lowThreshold,
+        medThreshold: config.medThreshold,
+        highThreshold: config.highThreshold,
+      }),
+    );
+
+    for (const signer of config.signers) {
+      if (!StrKey.isValidEd25519PublicKey(signer.key)) {
+        throw new StellarAgentError(
+          'INVALID_ARGUMENT',
+          `Invalid signer key: ${signer.key}`,
+        );
+      }
+      ops.push(
+        Operation.setOptions({
+          source: this.address,
+          signer: {
+            ed25519PublicKey: signer.key,
+            weight: signer.weight,
+          },
+        }),
+      );
+    }
+
+    const account = await this.rpc.getAccount(this.address);
+    const transaction = new TransactionBuilder(account, {
+      fee: BASE_FEE,
+      networkPassphrase: this.networkConfig.networkPassphrase,
+    })
+      .addOperation(...ops)
+      .setTimeout(30)
+      .build();
+
+    const signedXdr = await this.signer.signTransaction(transaction.toXDR(), {
+      networkPassphrase: this.networkConfig.networkPassphrase,
+    });
+    const signed = TransactionBuilder.fromXDR(
+      signedXdr,
+      this.networkConfig.networkPassphrase,
+    );
+
+    try {
+      const result = await this.horizon.submitTransaction(signed);
+      return { hash: result.hash, success: true };
+    } catch (error) {
+      throw new StellarAgentError(
+        'SUBMISSION_FAILED',
+        `configureMultiSig failed: ${this.errorMessage(error)}`,
+        { cause: error },
+      );
+    }
+  }
+
+  /**
+   * Initialise the internal {@link UnsignedTxBuilder} for multi-sig workflows.
+   * Must be called before any `buildUnsigned*` method. The `threshold` is the
+   * N in N-of-M — typically the account's `medThreshold`.
+   *
+   * Without this, the unsigned-build methods throw.
+   */
+  enableUnsignedTx(threshold: number): void {
+    this.unsignedTxBuilder = new UnsignedTxBuilder(
+      this.rpc,
+      this.networkConfig.networkPassphrase,
+      this.signer,
+      threshold,
+    );
+  }
+
+  /**
+   * Build an unsigned {@link openChannel} transaction for off-line signature
+   * collection. Call {@link enableUnsignedTx} first.
+   */
+  async buildUnsignedOpenChannelTx(params: OpenChannelParams): Promise<UnsignedTxBuild> {
+    if (!this.unsignedTxBuilder) {
+      throw new StellarAgentError(
+        'NOT_AUTHORIZED',
+        'Multi-sig not enabled. Call enableUnsignedTx(threshold) first.',
+      );
+    }
+    return this.unsignedTxBuilder.buildOpenChannel(
+      this.address,
+      this.contracts,
+      this.assetContracts,
+      params,
+    );
+  }
+
+  /**
+   * Build an unsigned {@link closeChannel} transaction for off-line
+   * signature collection. Call {@link enableUnsignedTx} first.
+   */
+  async buildUnsignedCloseChannelTx(channelId = this.activeChannelId): Promise<UnsignedTxBuild> {
+    if (!this.unsignedTxBuilder) {
+      throw new StellarAgentError(
+        'NOT_AUTHORIZED',
+        'Multi-sig not enabled. Call enableUnsignedTx(threshold) first.',
+      );
+    }
+    if (channelId === undefined) {
+      throw new StellarAgentError(
+        'NO_ACTIVE_CHANNEL',
+        'No active payment channel. Call openChannel() first.',
+      );
+    }
+    return this.unsignedTxBuilder.buildCloseChannel(
+      this.address,
+      this.contracts,
+      channelId,
+    );
+  }
+
+  /**
+   * Build an unsigned {@link setRateLimits} transaction for off-line
+   * signature collection. Call {@link enableUnsignedTx} first.
+   */
+  async buildUnsignedSetRateLimitsTx(config: RateLimitConfig): Promise<UnsignedTxBuild> {
+    if (!this.unsignedTxBuilder) {
+      throw new StellarAgentError(
+        'NOT_AUTHORIZED',
+        'Multi-sig not enabled. Call enableUnsignedTx(threshold) first.',
+      );
+    }
+    return this.unsignedTxBuilder.buildSetRateLimits(
+      this.address,
+      this.contracts,
+      config,
+    );
+  }
+
+  /**
+   * Build an unsigned {@link top_up} transaction to add funds to an
+   * existing payment channel. Call {@link enableUnsignedTx} first.
+   *
+   * `top_up` is an owner-only operation that increases the channel deposit
+   * without closing it.
+   */
+  async buildUnsignedTopUpTx(params: TopUpParams): Promise<UnsignedTxBuild> {
+    if (!this.unsignedTxBuilder) {
+      throw new StellarAgentError(
+        'NOT_AUTHORIZED',
+        'Multi-sig not enabled. Call enableUnsignedTx(threshold) first.',
+      );
+    }
+    return this.unsignedTxBuilder.buildTopUp(
+      this.address,
+      this.contracts,
+      this.assetContracts,
+      params,
+    );
+  }
+
+  /**
+   * Add this agent's signature to an unsigned transaction build.
+   *
+   * Delegates to the agent's configured {@link Signer}, which may be a local
+   * keypair or a remote signing service. Each call adds one signature to the
+   * envelope.
+   *
+   * For external signers not running through this agent, use the exported
+   * {@link addSignatureToEnvelope} helper with their raw {@link Keypair}.
+   *
+   * @returns Updated build with incremented `signaturesCollected`.
+   */
+  async signUnsignedTx(build: UnsignedTxBuild): Promise<UnsignedTxBuild> {
+    if (!this.unsignedTxBuilder) {
+      throw new StellarAgentError(
+        'NOT_AUTHORIZED',
+        'Multi-sig not enabled. Call enableUnsignedTx(threshold) first.',
+      );
+    }
+    const signedXdr = await this.signer.signTransaction(
+      build.transactionXdr,
+      { networkPassphrase: this.networkConfig.networkPassphrase },
+    );
+    const collected = getSignaturesCollected(signedXdr);
+    return {
+      ...build,
+      transactionXdr: signedXdr,
+      signaturesCollected: collected,
+    };
+  }
+
+  /**
+   * Submit a transaction build once enough signatures have been collected.
+   * Throws `NOT_AUTHORIZED` if the threshold is not met.
+   */
+  async submitSignedTx(build: UnsignedTxBuild): Promise<TxResult> {
+    if (!this.unsignedTxBuilder) {
+      throw new StellarAgentError(
+        'NOT_AUTHORIZED',
+        'Multi-sig not enabled. Call enableUnsignedTx(threshold) first.',
+      );
+    }
+    return this.unsignedTxBuilder.submitSigned(build);
   }
 
   // ── Queries ──────────────────────────────────────────────────────────────
