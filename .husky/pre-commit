@@ -1,0 +1,48 @@
+pnpm exec lint-staged
+
+# --- Python (ruff) --------------------------------------------------------
+# Runs per staged file, mirroring the `ruff check .` step in the Python CI
+# job. Skips (rather than blocks) if ruff isn't on PATH, since not every
+# contributor has the Python venv set up locally. CI still enforces it.
+STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM -- '*.py')
+if [ -n "$STAGED_PY" ]; then
+  if command -v ruff >/dev/null 2>&1; then
+    echo "Running ruff check on staged Python files..."
+    if ! echo "$STAGED_PY" | xargs ruff check; then
+      echo "" >&2
+      echo "ruff check failed. Fix the issues above and re-stage, or skip with 'git commit --no-verify' (CI will still enforce this)." >&2
+      exit 1
+    fi
+  else
+    echo "ruff not found on PATH; skipping the Python lint check locally (CI will still enforce it)." >&2
+    echo "Run 'pip install -e \"./python[dev]\"' to enable it here." >&2
+  fi
+fi
+
+# --- Rust (cargo fmt) ------------------------------------------------------
+# cargo fmt has no per-file check mode, so this runs crate-wide for whichever
+# of contracts/ or zk/ has staged .rs files, matching the `cargo fmt --all --
+# --check` step in CI. Skips (rather than blocks) if cargo isn't on PATH.
+STAGED_RS=$(git diff --cached --name-only --diff-filter=ACM -- '*.rs')
+if [ -n "$STAGED_RS" ]; then
+  if command -v cargo >/dev/null 2>&1; then
+    if echo "$STAGED_RS" | grep -q '^contracts/'; then
+      echo "Running cargo fmt --check (contracts)..."
+      if ! (cd contracts && cargo fmt --all -- --check); then
+        echo "" >&2
+        echo "cargo fmt check failed in contracts/. Run 'cargo fmt --all' inside contracts/, re-stage, and commit again. Skip with 'git commit --no-verify' if needed." >&2
+        exit 1
+      fi
+    fi
+    if echo "$STAGED_RS" | grep -q '^zk/'; then
+      echo "Running cargo fmt --check (zk)..."
+      if ! (cd zk && cargo fmt --all -- --check); then
+        echo "" >&2
+        echo "cargo fmt check failed in zk/. Run 'cargo fmt --all' inside zk/, re-stage, and commit again. Skip with 'git commit --no-verify' if needed." >&2
+        exit 1
+      fi
+    fi
+  else
+    echo "cargo not found on PATH; skipping the Rust fmt check locally (CI will still enforce it)." >&2
+  fi
+fi
