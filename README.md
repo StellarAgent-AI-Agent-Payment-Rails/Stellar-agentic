@@ -39,7 +39,8 @@ stellaragent/
 ├── packages/
 │   ├── core/         # @stellaragent/core — the TypeScript SDK
 │   ├── react/        # @stellaragent/react — hooks
-│   └── cli/          # @stellaragent/cli
+│   ├── cli/          # @stellaragent/cli
+│   └── indexer/      # @stellaragent/indexer — Soroban event indexer
 ├── python/           # stellaragent — the Python SDK
 ├── dashboard/        # React + Tailwind business dashboard
 ├── fixtures/         # Shared TS ↔ Python determinism fixtures
@@ -71,8 +72,22 @@ stellaragent/
 ┌──────────────────────▼──────────────────────────────┐
 │              Stellar Blockchain                       │
 │         USDC · XLM · 2.5s finality · ~$0             │
+└──────────────────────┬──────────────────────────────┘
+                       │ Soroban contract events
+┌──────────────────────▼──────────────────────────────┐
+│             @stellaragent/indexer                    │
+│       SQLite audit trail · REST query API            │
+└──────────────────────┬──────────────────────────────┘
+                       │ indexed history and state
+┌──────────────────────▼──────────────────────────────┐
+│          Dashboards · operators · agent tooling      │
 └─────────────────────────────────────────────────────┘
 ```
+
+The [`@stellaragent/indexer`](packages/indexer/README.md) consumes Soroban
+contract events, persists a durable audit trail, and exposes indexed history
+and reconstructed state through REST and typed `EventStore` queries for
+dashboards, operators, and agent tooling.
 
 ---
 
