@@ -22,9 +22,12 @@
     "contract-types:generate": "tsx scripts/generate-contract-types.ts",
     "contract-types:check": "tsx scripts/generate-contract-types.ts --check",
     "docs:api": "tsx scripts/check-public-api.ts && tsx scripts/generate-api-docs.ts",
-    "docs:api:check": "tsx scripts/check-public-api.ts --check && tsx scripts/generate-api-docs.ts --check"
+    "docs:api:check": "tsx scripts/check-public-api.ts --check && tsx scripts/generate-api-docs.ts --check",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
     "tsx": "^4.19.0",
     "turbo": "^2.0.0",
     "typedoc": "^0.28.20",

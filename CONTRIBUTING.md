@@ -67,6 +67,40 @@ stellar network start local
 
 ---
 
+## Pre-commit Hooks
+
+`pnpm install` sets up a Husky `pre-commit` hook automatically (via the
+`prepare` script), so formatting and lint failures are caught locally in the
+second it takes to run, instead of a few minutes later in CI. On each commit
+it:
+
+- Runs **lint-staged**, which lints staged `.ts`/`.tsx` files in
+  `packages/core`, `packages/cli`, `packages/react`, and `dashboard` with
+  each package's own ESLint config: the same check `pnpm lint` runs, scoped
+  to only what you staged.
+- Runs `ruff check` on staged Python files under `python/`, if `ruff` is on
+  your `PATH`.
+- Runs `cargo fmt --all -- --check` for `contracts/` and/or `zk/`, if any
+  `.rs` files under them are staged and `cargo` is on your `PATH`. `cargo
+  fmt` has no per-file check mode, so this checks the whole crate rather than
+  only the staged files, the same trade-off CI makes.
+
+If you don't have Rust or the Python dev environment set up locally, those
+checks are skipped with a warning rather than blocking your commit. CI still
+enforces them either way.
+
+**Skipping the hook:** if you need to commit without running these checks
+(e.g. a WIP commit on a branch nobody else uses yet), use:
+
+```bash
+git commit --no-verify
+```
+
+CI runs the full set of checks regardless, so `--no-verify` only skips the
+local shortcut, not the gate itself.
+
+---
+
 ## Testing
 
 All TypeScript tests run from the repo root through Turborepo:
