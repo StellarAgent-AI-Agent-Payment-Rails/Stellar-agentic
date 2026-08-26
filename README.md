@@ -147,6 +147,11 @@ agent.holdsSecretKey; // false
 See [docs/signing.md](docs/signing.md) for the protocol, the hardware-wallet
 adapter, and why a signing service rather than Ledger.
 
+Full API reference (generated from the SDKs' own TSDoc comments, `pnpm
+docs:api`): [docs/api](docs/api/README.md). For how `@stellaragent/core` is
+put together and where new code belongs, see
+[docs/architecture/core-modules.md](docs/architecture/core-modules.md).
+
 ### SDK (Python)
 
 ```bash

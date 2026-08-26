@@ -1,0 +1,49 @@
+[**@stellaragent/core**](../README.md)
+
+***
+
+[@stellaragent/core](../README.md) / SigningError
+
+# Class: SigningError
+
+Defined in: [signer.ts:114](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L114)
+
+Thrown when a signer cannot produce a signature.
+
+## Extends
+
+- `Error`
+
+## Constructors
+
+### Constructor
+
+> **new SigningError**(`message`, `cause?`): `SigningError`
+
+Defined in: [signer.ts:116](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L116)
+
+#### Parameters
+
+##### message
+
+`string`
+
+##### cause?
+
+`unknown`
+
+#### Returns
+
+`SigningError`
+
+#### Overrides
+
+`Error.constructor`
+
+## Properties
+
+### cause?
+
+> `readonly` `optional` **cause?**: `unknown`
+
+Defined in: [signer.ts:115](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L115)

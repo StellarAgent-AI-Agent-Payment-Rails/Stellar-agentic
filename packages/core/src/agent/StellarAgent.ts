@@ -1,0 +1,477 @@
+// Key handling lives behind the Signer abstraction in ../signer.ts.
+import type { Horizon, SorobanRpc, xdr } from '@stellar/stellar-sdk';
+import type {
+  StellarAgentConfig,
+  Network,
+  NetworkConfig,
+  OpenChannelParams,
+  PayForAPIParams,
+  RequestWorkParams,
+  RateLimitConfig,
+  RateLimitStatus,
+  AgentInfo,
+  ChannelInfo,
+  JobInfo,
+  SpendReport,
+  TxResult,
+  ContractAddresses,
+} from '../types/index.js';
+import { NETWORK_CONFIGS } from '../types/index.js';
+import { StellarAgentError } from '../errors.js';
+import { resolveContracts, assertDeployed } from '../contracts.js';
+import { KeypairSigner, SigningError } from '../signer.js';
+import type { Signer } from '../signer.js';
+import type { LedgerCloseEstimate } from '../ledgerTime.js';
+
+import { createNetworkClients, fundFromFriendbot } from './config.js';
+import { getLatestLedger, runInvocation } from './invocation.js';
+import * as queries from './queries.js';
+import * as mutations from './mutations.js';
+
+/**
+ * Main SDK class for AI Agent payment operations on Stellar.
+ *
+ * @example
+ * ```typescript
+ * const agent = await StellarAgent.create({
+ *   network: 'testnet',
+ *   spendLimit: { amount: '10', asset: 'USDC', period: 'hourly' },
+ * });
+ *
+ * await agent.payForAPI({
+ *   endpoint: 'https://api.example.com/inference',
+ *   amount: '0.001',
+ *   asset: 'USDC',
+ * });
+ * ```
+ */
+export class StellarAgent {
+  /**
+   * Where signing happens. For a {@link RemoteSigner} this holds a URL and a
+   * token — no key material — which is the entire point of the abstraction.
+   */
+  private signer: Signer;
+  /**
+   * Resolved once at `create()` time. Cached so `address` stays a synchronous
+   * getter even when the signer derives it over the network.
+   */
+  private publicKey: string;
+  private networkConfig: NetworkConfig;
+  private contracts: ContractAddresses;
+  private assetContracts: Record<string, string>;
+  private horizon: Horizon.Server;
+  private rpc: SorobanRpc.Server;
+  private activeChannelId?: bigint;
+
+  private constructor(
+    signer: Signer,
+    publicKey: string,
+    networkConfig: NetworkConfig,
+    contracts: ContractAddresses,
+    assetContracts: Record<string, string>,
+  ) {
+    this.signer = signer;
+    this.publicKey = publicKey;
+    this.networkConfig = networkConfig;
+    this.contracts = contracts;
+    this.assetContracts = assetContracts;
+    const { horizon, rpc } = createNetworkClients(networkConfig);
+    this.horizon = horizon;
+    this.rpc = rpc;
+  }
+
+  // ── Factory Methods ──────────────────────────────────────────────────────
+
+  /**
+   * Create a new StellarAgent instance.
+   *
+   * Supply exactly one of:
+   * - `signer` — any {@link Signer}. The secret never enters this process.
+   * - `secretKey` — an in-memory keypair, wrapped in a {@link KeypairSigner}.
+   * - neither — a fresh random keypair is generated.
+   *
+   * Contract addresses resolve from `config.contracts`, then from
+   * `STELLARAGENT_*` environment variables, then from the per-network
+   * unconfigured sentinels. If the result is not a set of real deployed
+   * contract IDs this throws {@link ContractsNotDeployedError} immediately,
+   * rather than letting an opaque RPC error surface later from the middle of
+   * a payment. Pass `allowUnconfiguredContracts: true` to skip that check
+   * when you only need read-only, contract-free calls such as
+   * {@link StellarAgent.getBalance}.
+   *
+   * @example Remote signer — no key material in this process
+   * ```typescript
+   * const agent = await StellarAgent.create({
+   *   network: 'testnet',
+   *   signer: new RemoteSigner({ url: 'https://signer.internal', token: TOKEN }),
+   * });
+   * ```
+   *
+   * @throws {ContractsNotDeployedError} when contracts are not deployed
+   */
+  static async create(config: StellarAgentConfig): Promise<StellarAgent> {
+    if (config.signer && config.secretKey) {
+      throw new Error(
+        'StellarAgent.create: pass either `signer` or `secretKey`, not both. ' +
+          'Supplying a secret alongside a remote signer would defeat the point of the signer.',
+      );
+    }
+
+    const generatedKeypair = !config.signer && !config.secretKey;
+    const signer: Signer = config.signer
+      ? config.signer
+      : config.secretKey
+        ? KeypairSigner.fromSecret(config.secretKey)
+        : KeypairSigner.random();
+
+    // Derived through the Signer interface, so a remote signer reports its
+    // address without the secret ever being loaded here.
+    const publicKey = await signer.getPublicKey();
+
+    const networkConfig = NETWORK_CONFIGS[config.network];
+    const contracts = resolveContracts(config.network, config.contracts);
+
+    if (!config.allowUnconfiguredContracts) {
+      assertDeployed(config.network, contracts);
+    }
+
+    const agent = new StellarAgent(
+      signer,
+      publicKey,
+      networkConfig,
+      contracts,
+      config.assetContracts ?? {},
+    );
+
+    // Only a freshly generated keypair gets friendbot funding — a supplied
+    // secret or an external signer is assumed to already have an account.
+    if (config.network === 'testnet' && generatedKeypair) {
+      await fundFromFriendbot(agent.address);
+    }
+
+    return agent;
+  }
+
+  /**
+   * Restore an agent from an existing secret key.
+   *
+   * `options` forwards the rest of {@link StellarAgentConfig} — notably
+   * `contracts` and `allowUnconfiguredContracts`, without which a restored
+   * agent could only ever target contracts resolved from the environment.
+   */
+  static async fromSecret(
+    secretKey: string,
+    network: Network = 'testnet',
+    options: Omit<StellarAgentConfig, 'network' | 'secretKey'> = {},
+  ): Promise<StellarAgent> {
+    return StellarAgent.create({ ...options, network, secretKey });
+  }
+
+  // ── Identity ─────────────────────────────────────────────────────────────
+
+  /**
+   * The agent's Stellar public address.
+   *
+   * Resolved through the {@link Signer} at `create()` time, so this works
+   * identically for a remote signer that never exposes its secret.
+   */
+  get address(): string {
+    return this.publicKey;
+  }
+
+  /**
+   * The agent's secret key.
+   *
+   * Only available when the agent was built from an in-memory keypair. With
+   * any other {@link Signer} there is no secret in this process to return —
+   * which is the point — so this throws rather than returning something
+   * misleading.
+   *
+   * @deprecated Reading key material off a live agent is the pattern the
+   * {@link Signer} abstraction exists to remove. Hold the secret yourself if
+   * you need it, or use a {@link RemoteSigner} and stop having one.
+   *
+   * @throws {SigningError} when signing is not backed by a local keypair
+   */
+  get secretKey(): string {
+    if (!(this.signer instanceof KeypairSigner)) {
+      throw new SigningError(
+        'This agent has no secret key to expose — it signs via ' +
+          `${this.signer.constructor.name}, which holds the key elsewhere. ` +
+          'That is the intended behaviour for a remote signer.',
+      );
+    }
+    return this.signer.exportSecret();
+  }
+
+  /**
+   * Whether this agent holds key material in-process.
+   *
+   * `false` for a remote or hardware signer. Useful for asserting a
+   * production deployment is not running with an in-memory secret.
+   */
+  get holdsSecretKey(): boolean {
+    return this.signer instanceof KeypairSigner;
+  }
+
+  /** Register this wallet in the configured AgentWalletFactory contract. */
+  async createAgentWallet(name = 'StellarAgent'): Promise<bigint> {
+    return mutations.createAgentWallet(
+      this.invokeContract.bind(this),
+      this.contracts.agentWalletFactory,
+      this.address,
+      name,
+    );
+  }
+
+  /** Read and decode an agent registered in AgentWalletFactory. */
+  async getAgent(agentId: bigint): Promise<AgentInfo> {
+    return queries.getAgent(
+      this.invokeContract.bind(this),
+      this.contracts.agentWalletFactory,
+      agentId,
+    );
+  }
+
+  // ── Payment Channel ──────────────────────────────────────────────────────
+
+  /**
+   * Open a payment channel for this agent.
+   * Deposits tokens and sets a per-period spend limit.
+   *
+   * @returns The channel ID
+   */
+  async openChannel(params: OpenChannelParams): Promise<bigint> {
+    const channelId = await mutations.openChannel(
+      this.invokeContract.bind(this),
+      this.contracts.paymentChannel,
+      this.address,
+      this.assetContracts,
+      this.networkConfig.networkPassphrase,
+      params,
+    );
+    this.activeChannelId = channelId;
+    return channelId;
+  }
+
+  /** Close a payment channel and return its remaining token balance. */
+  async closeChannel(channelId = this.activeChannelId): Promise<TxResult> {
+    if (channelId === undefined) {
+      throw new StellarAgentError(
+        'NO_ACTIVE_CHANNEL',
+        'No active payment channel. Call openChannel() first.',
+      );
+    }
+    const tx = await mutations.closeChannel(
+      this.invokeContract.bind(this),
+      this.contracts.paymentChannel,
+      this.address,
+      channelId,
+    );
+    if (this.activeChannelId === channelId) this.activeChannelId = undefined;
+    return tx;
+  }
+
+  /**
+   * Pay for an API call. Deducts from the active payment channel.
+   * Respects on-chain spend limits automatically.
+   *
+   * If `destAsset` differs from the channel's settlement asset, this
+   * settles the recipient in `destAsset` instead — e.g. a channel funded
+   * in USDC paying a provider that only accepts XLM — by invoking
+   * `PaymentChannel.pay_with_conversion` rather than `pay`. The spend
+   * limit is still enforced in the channel's settlement asset either way.
+   *
+   * @example
+   * ```typescript
+   * await agent.payForAPI({
+   *   endpoint: 'https://api.openai.com/v1/chat',
+   *   amount: '0.001',
+   *   asset: 'USDC',
+   * });
+   *
+   * // Channel funded in USDC, provider only accepts XLM:
+   * await agent.payForAPI({
+   *   endpoint: 'https://api.example.com/inference',
+   *   amount: '0.001',
+   *   asset: 'USDC',
+   *   destAsset: 'XLM',
+   *   minReceived: '0.009', // slippage floor, in XLM
+   * });
+   * ```
+   */
+  async payForAPI(params: PayForAPIParams): Promise<TxResult> {
+    const channelId = params.channelId ?? this.activeChannelId;
+    if (channelId === undefined) {
+      throw new StellarAgentError(
+        'NO_ACTIVE_CHANNEL',
+        'No active payment channel. Call openChannel() first.',
+      );
+    }
+    return mutations.payForAPI(
+      this.invokeContract.bind(this),
+      this.contracts.paymentChannel,
+      this.address,
+      this.assetContracts,
+      this.networkConfig.networkPassphrase,
+      channelId,
+      params,
+    );
+  }
+
+  // ── Agent-to-Agent Escrow ────────────────────────────────────────────────
+
+  /**
+   * Create an escrow job delegating work to another agent.
+   * Locks payment until the work is delivered and released.
+   *
+   * @example
+   * ```typescript
+   * const job = await agent.requestWork({
+   *   workerAgent: 'G...WORKER_ADDRESS',
+   *   task: 'Summarize this document: ipfs://Qm...',
+   *   escrowAmount: '0.05',
+   *   asset: 'USDC',
+   * });
+   * ```
+   */
+  async requestWork(params: RequestWorkParams): Promise<bigint> {
+    return mutations.requestWork(
+      this.invokeContract.bind(this),
+      this.getLatestLedger.bind(this),
+      this.contracts.escrow,
+      this.address,
+      this.assetContracts,
+      this.networkConfig.networkPassphrase,
+      params,
+    );
+  }
+
+  /**
+   * Accept an open escrow job as a worker agent
+   */
+  async acceptJob(jobId: bigint): Promise<TxResult> {
+    return mutations.acceptJob(this.invokeContract.bind(this), this.contracts.escrow, this.address, jobId);
+  }
+
+  /**
+   * Submit work result for an escrow job
+   */
+  async submitResult(jobId: bigint, result: string): Promise<TxResult> {
+    return mutations.submitResult(
+      this.invokeContract.bind(this),
+      this.contracts.escrow,
+      this.address,
+      jobId,
+      result,
+    );
+  }
+
+  /**
+   * Release escrow payment to the worker after work is complete
+   */
+  async releasePayment(jobId: bigint): Promise<TxResult> {
+    return mutations.releasePayment(this.invokeContract.bind(this), this.contracts.escrow, this.address, jobId);
+  }
+
+  // ── Rate Limits ──────────────────────────────────────────────────────────
+
+  /**
+   * Configure rate limits for this agent on-chain.
+   * Protects against runaway spending.
+   */
+  async setRateLimits(config: RateLimitConfig): Promise<TxResult> {
+    return mutations.setRateLimits(this.invokeContract.bind(this), this.contracts.rateLimiter, this.address, config);
+  }
+
+  /**
+   * Check if a payment would be blocked by rate limits (read-only)
+   */
+  async checkRateLimit(amount: string): Promise<boolean> {
+    return queries.checkRateLimit(this.invokeContract.bind(this), this.contracts.rateLimiter, this.address, amount);
+  }
+
+  // ── Queries ──────────────────────────────────────────────────────────────
+
+  /**
+   * Get current XLM balance
+   */
+  async getBalance(): Promise<string> {
+    return queries.getBalance(this.horizon, this.address);
+  }
+
+  /**
+   * Get spend report for the current period
+   */
+  async getSpendReport(): Promise<SpendReport> {
+    return queries.getSpendReport(this.invokeContract.bind(this), this.contracts.paymentChannel, this.activeChannelId);
+  }
+
+  /**
+   * Get info about a payment channel
+   */
+  async getChannel(channelId: bigint): Promise<ChannelInfo> {
+    return queries.getChannel(this.invokeContract.bind(this), this.contracts.paymentChannel, channelId);
+  }
+
+  /**
+   * Get info about a job
+   */
+  async getJob(jobId: bigint): Promise<JobInfo> {
+    return queries.getJob(this.invokeContract.bind(this), this.contracts.escrow, jobId);
+  }
+
+  /**
+   * Get current rate-limit usage alongside the configured limits.
+   *
+   * `RateLimiter.get_limits` is keyed by an arbitrary agent address, not
+   * necessarily this agent's own — an owner monitoring several agents can
+   * query any of them read-only through one signed-in `StellarAgent`.
+   * Defaults to {@link StellarAgent.address} (checking this agent's own
+   * limits) when omitted.
+   */
+  async getRateLimitStatus(agentAddress: string = this.address): Promise<RateLimitStatus> {
+    return queries.getRateLimitStatus(this.invokeContract.bind(this), this.contracts.rateLimiter, agentAddress);
+  }
+
+  /**
+   * Derive the current ledger sequence and an *estimated* average ledger
+   * close time from a handful of recently observed ledgers via Horizon.
+   *
+   * Ledgers close roughly every 5 seconds, but that figure drifts with
+   * network conditions rather than being contractually fixed — so this
+   * measures it from real recent closes instead of assuming a constant. Used
+   * to convert a `RateLimiter`/`PaymentChannel` ledger-count window (e.g.
+   * "720 ledgers until the hourly window resets") into a human wall-clock
+   * estimate. See `ledgerTime.ts` for the derivation and its caveats.
+   */
+  async getLedgerCloseEstimate(): Promise<LedgerCloseEstimate> {
+    return queries.getLedgerCloseEstimate(this.networkConfig.horizonUrl);
+  }
+
+  // ── Internals ────────────────────────────────────────────────────────────
+
+  /**
+   * Build and simulate every contract call. Mutations additionally sign the
+   * simulated auth entries, assemble the footprint/resources, sign and submit
+   * the envelope, and wait for a terminal transaction status.
+   */
+  private async invokeContract(
+    contractId: string,
+    method: string,
+    args: xdr.ScVal[],
+    readOnly = false,
+  ): Promise<{ value: unknown; tx: TxResult }> {
+    return runInvocation(
+      { signer: this.signer, rpc: this.rpc, networkConfig: this.networkConfig, address: this.address },
+      contractId,
+      method,
+      args,
+      readOnly,
+    );
+  }
+
+  private async getLatestLedger(): Promise<number> {
+    return getLatestLedger(this.rpc);
+  }
+}

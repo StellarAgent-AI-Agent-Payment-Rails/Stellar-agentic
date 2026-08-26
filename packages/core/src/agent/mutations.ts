@@ -1,0 +1,208 @@
+/** State-changing `StellarAgent` operations: every call that submits a transaction. */
+import { xdr } from '@stellar/stellar-sdk';
+import { StellarAgentError } from '../errors.js';
+import type {
+  OpenChannelParams,
+  PayForAPIParams,
+  RateLimitConfig,
+  RequestWorkParams,
+  TxResult,
+} from '../types/index.js';
+import {
+  addressVal,
+  bytesVal,
+  enumVal,
+  i128Val,
+  resolveAssetContract,
+  spendPeriodVariant,
+  u32Val,
+  u64Val,
+} from './encoding.js';
+import { asBigInt } from './decoding.js';
+import type { InvokeFn } from './invocation.js';
+
+/** Register a wallet in the configured AgentWalletFactory contract. */
+export async function createAgentWallet(
+  invoke: InvokeFn,
+  agentWalletFactory: string,
+  address: string,
+  name: string,
+): Promise<bigint> {
+  const result = await invoke(agentWalletFactory, 'create_agent', [
+    addressVal(address),
+    addressVal(address),
+    xdr.ScVal.scvString(name),
+  ]);
+  return asBigInt(result.value);
+}
+
+/** Open a payment channel. Deposits tokens and sets a per-period spend limit. */
+export async function openChannel(
+  invoke: InvokeFn,
+  paymentChannel: string,
+  address: string,
+  assetContracts: Record<string, string>,
+  networkPassphrase: string,
+  params: OpenChannelParams,
+): Promise<bigint> {
+  const result = await invoke(paymentChannel, 'open_channel', [
+    addressVal(address),
+    addressVal(address),
+    addressVal(resolveAssetContract(params.token ?? 'XLM', assetContracts, networkPassphrase)),
+    i128Val(params.deposit),
+    i128Val(params.limitPerPeriod),
+    enumVal(spendPeriodVariant(params.period)),
+  ]);
+  return asBigInt(result.value);
+}
+
+/** Close a payment channel and return its remaining token balance. */
+export async function closeChannel(
+  invoke: InvokeFn,
+  paymentChannel: string,
+  address: string,
+  channelId: bigint,
+): Promise<TxResult> {
+  return (await invoke(paymentChannel, 'close_channel', [
+    addressVal(address),
+    u64Val(channelId),
+  ])).tx;
+}
+
+/**
+ * Pay for an API call. Deducts from the given payment channel, respecting
+ * on-chain spend limits automatically.
+ *
+ * If `destAsset` differs from the channel's settlement asset, this settles
+ * the recipient in `destAsset` instead — e.g. a channel funded in USDC
+ * paying a provider that only accepts XLM — by invoking
+ * `PaymentChannel.pay_with_conversion` rather than `pay`. The spend limit is
+ * still enforced in the channel's settlement asset either way.
+ */
+export async function payForAPI(
+  invoke: InvokeFn,
+  paymentChannel: string,
+  address: string,
+  assetContracts: Record<string, string>,
+  networkPassphrase: string,
+  channelId: bigint,
+  params: PayForAPIParams,
+): Promise<TxResult> {
+  if ((params.destAsset !== undefined) !== (params.minReceived !== undefined)) {
+    throw new StellarAgentError(
+      'INVALID_ARGUMENT',
+      'destAsset and minReceived must be set together',
+    );
+  }
+
+  const common = [
+    addressVal(address),
+    u64Val(channelId),
+    addressVal(params.recipient ?? address),
+    i128Val(params.amount),
+  ];
+  const args = params.destAsset === undefined
+    ? [...common, bytesVal(params.endpoint)]
+    : [
+        ...common,
+        addressVal(resolveAssetContract(params.destAsset, assetContracts, networkPassphrase)),
+        i128Val(params.minReceived!),
+        bytesVal(params.endpoint),
+      ];
+  return (await invoke(
+    paymentChannel,
+    params.destAsset === undefined ? 'pay' : 'pay_with_conversion',
+    args,
+  )).tx;
+}
+
+/** Create an escrow job delegating work to another agent. */
+export async function requestWork(
+  invoke: InvokeFn,
+  getLatestLedger: () => Promise<number>,
+  escrow: string,
+  address: string,
+  assetContracts: Record<string, string>,
+  networkPassphrase: string,
+  params: RequestWorkParams,
+): Promise<bigint> {
+  const latest = await getLatestLedger();
+  const deadlineOffset = params.deadlineLedgers ?? 720;
+  if (!Number.isInteger(deadlineOffset) || deadlineOffset <= 0) {
+    throw new StellarAgentError(
+      'INVALID_ARGUMENT',
+      'deadlineLedgers must be a positive integer',
+    );
+  }
+  const deadline = latest + deadlineOffset;
+  if (deadline > 0xffff_ffff) {
+    throw new StellarAgentError('INVALID_ARGUMENT', 'deadline ledger exceeds u32 range');
+  }
+  const result = await invoke(escrow, 'create_job', [
+    addressVal(address),
+    addressVal(resolveAssetContract(params.asset ?? 'XLM', assetContracts, networkPassphrase)),
+    i128Val(params.escrowAmount),
+    bytesVal(params.task),
+    u32Val(deadline),
+    params.arbiter ? addressVal(params.arbiter) : xdr.ScVal.scvVoid(),
+  ]);
+  return asBigInt(result.value);
+}
+
+/** Accept an open escrow job as a worker agent. */
+export async function acceptJob(
+  invoke: InvokeFn,
+  escrow: string,
+  address: string,
+  jobId: bigint,
+): Promise<TxResult> {
+  return (await invoke(escrow, 'accept_job', [
+    addressVal(address),
+    u64Val(jobId),
+  ])).tx;
+}
+
+/** Submit work result for an escrow job. */
+export async function submitResult(
+  invoke: InvokeFn,
+  escrow: string,
+  address: string,
+  jobId: bigint,
+  result: string,
+): Promise<TxResult> {
+  return (await invoke(escrow, 'submit_result', [
+    addressVal(address),
+    u64Val(jobId),
+    bytesVal(result),
+  ])).tx;
+}
+
+/** Release escrow payment to the worker after work is complete. */
+export async function releasePayment(
+  invoke: InvokeFn,
+  escrow: string,
+  address: string,
+  jobId: bigint,
+): Promise<TxResult> {
+  return (await invoke(escrow, 'release', [
+    addressVal(address),
+    u64Val(jobId),
+  ])).tx;
+}
+
+/** Configure rate limits for this agent on-chain. Protects against runaway spending. */
+export async function setRateLimits(
+  invoke: InvokeFn,
+  rateLimiter: string,
+  address: string,
+  config: RateLimitConfig,
+): Promise<TxResult> {
+  return (await invoke(rateLimiter, 'set_limits', [
+    addressVal(address),
+    addressVal(address),
+    i128Val(config.maxPerTx),
+    i128Val(config.maxPerHour),
+    i128Val(config.maxPerDay),
+    u32Val(config.maxTxsPerHour),
+  ])).tx;
+}

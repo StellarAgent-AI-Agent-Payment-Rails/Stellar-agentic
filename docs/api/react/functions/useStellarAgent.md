@@ -1,0 +1,17 @@
+[**@stellaragent/react**](../README.md)
+
+***
+
+[@stellaragent/react](../README.md) / useStellarAgent
+
+# Function: useStellarAgent()
+
+> **useStellarAgent**(): [`StellarAgentContextValue`](../interfaces/StellarAgentContextValue.md)
+
+Defined in: [StellarAgentProvider.tsx:29](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/StellarAgentProvider.tsx#L29)
+
+The live agent + its async init status. Must be used within a `<StellarAgentProvider>`.
+
+## Returns
+
+[`StellarAgentContextValue`](../interfaces/StellarAgentContextValue.md)
