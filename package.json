@@ -16,9 +16,12 @@
     "lint": "turbo run lint",
     "deploy:contracts": "tsx scripts/deploy.ts",
     "fixtures:generate": "tsx scripts/generate-fixtures.ts",
-    "fixtures:check": "tsx scripts/generate-fixtures.ts --check"
+    "fixtures:check": "tsx scripts/generate-fixtures.ts --check",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
     "tsx": "^4.19.0",
     "turbo": "^2.0.0"
   },
