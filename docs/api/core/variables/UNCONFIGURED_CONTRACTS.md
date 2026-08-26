@@ -8,7 +8,7 @@
 
 > `const` **UNCONFIGURED\_CONTRACTS**: `Record`\<[`Network`](../type-aliases/Network.md), [`ContractAddresses`](../interfaces/ContractAddresses.md)\>
 
-Defined in: [contracts.ts:62](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L62)
+Defined in: [contracts.ts:62](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L62)
 
 Placeholder addresses standing in for "nothing has been deployed to this
 network yet".

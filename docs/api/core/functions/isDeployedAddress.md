@@ -8,7 +8,7 @@
 
 > **isDeployedAddress**(`address`): `boolean`
 
-Defined in: [contracts.ts:94](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L94)
+Defined in: [contracts.ts:94](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L94)
 
 Whether a string is a real, deployable Stellar contract ID.
 

@@ -1,7 +1,8 @@
 /**
  * The shared Soroban contract-invocation pipeline: build, simulate, sign,
- * submit, and poll a single contract call. Every query and mutation in
- * `./queries.ts` / `./mutations.ts` goes through this.
+ * submit, and poll a single contract call — instrumented throughout with
+ * tracing, metrics, and payment-trace correlation. Every query and mutation
+ * in `./queries.ts` / `./mutations.ts` goes through this.
  */
 import {
   Contract,
@@ -17,6 +18,16 @@ import type { StellarAgentErrorCode } from '../errors.js';
 import { SigningError } from '../signer.js';
 import type { Signer } from '../signer.js';
 import type { NetworkConfig, TxResult } from '../types/index.js';
+import {
+  baseAttributes,
+  SpanNames,
+  SemConv,
+  MetricNames,
+  createPaymentId,
+  registerPaymentTrace,
+  attachTransactionHash,
+} from '../telemetry/index.js';
+import type { TelemetryContext } from '../telemetry/index.js';
 
 /** What {@link runInvocation} needs to build, sign, and submit a Soroban call. */
 export interface InvocationContext {
@@ -24,6 +35,7 @@ export interface InvocationContext {
   rpc: SorobanRpc.Server;
   networkConfig: NetworkConfig;
   address: string;
+  telemetry: TelemetryContext;
 }
 
 /**
@@ -51,112 +63,186 @@ export async function runInvocation(
   args: xdr.ScVal[],
   readOnly = false,
 ): Promise<{ value: unknown; tx: TxResult }> {
-  try {
-    const account = await ctx.rpc.getAccount(ctx.address);
-    const operation = new Contract(contractId).call(method, ...args);
-    const transaction = new TransactionBuilder(account, {
-      fee: BASE_FEE,
-      networkPassphrase: ctx.networkConfig.networkPassphrase,
-    })
-      .addOperation(operation)
-      .setTimeout(30)
-      .build();
+  const startMs = Date.now();
+  const paymentId = readOnly ? undefined : createPaymentId();
+  const attrs = {
+    ...baseAttributes(ctx.telemetry),
+    [SemConv.contract.id]: contractId,
+    [SemConv.contract.method]: method,
+    ...(paymentId ? { [SemConv.trace.paymentId]: paymentId } : {}),
+  };
 
-    const simulation = await ctx.rpc.simulateTransaction(transaction);
-    if (SorobanRpc.Api.isSimulationError(simulation)) {
-      throw contractError(
-        'SIMULATION_FAILED',
-        `${method} simulation failed: ${simulation.error}`,
-      );
-    }
-    if (SorobanRpc.Api.isSimulationRestore(simulation)) {
-      throw new StellarAgentError(
-        'SIMULATION_FAILED',
-        `${method} requires restoring expired ledger entries before invocation`,
-      );
-    }
-
-    if (readOnly) {
-      return {
-        value: simulation.result?.retval
-          ? scValToNative(simulation.result.retval)
-          : undefined,
-        tx: { hash: '', success: true },
-      };
-    }
-
-    const validUntilLedgerSeq = simulation.latestLedger + 100;
-    const auth = await Promise.all((simulation.result?.auth ?? []).map(async (entry) => {
-      if (entry.credentials().switch().name !== 'sorobanCredentialsAddress') {
-        return entry;
+  return ctx.telemetry.tracer.startActiveSpan(SpanNames.contractInvoke, attrs, async (parent) => {
+    try {
+      if (paymentId) {
+        registerPaymentTrace({
+          paymentId,
+          agentAddress: ctx.address,
+          method,
+          submittedAt: Date.now(),
+        });
       }
-      const signedXdr = await ctx.signer.signAuthEntry(entry.toXDR('base64'), {
+      const account = await ctx.rpc.getAccount(ctx.address);
+      const operation = new Contract(contractId).call(method, ...args);
+      const transaction = new TransactionBuilder(account, {
+        fee: BASE_FEE,
         networkPassphrase: ctx.networkConfig.networkPassphrase,
-        validUntilLedgerSeq,
-      });
-      return xdr.SorobanAuthorizationEntry.fromXDR(signedXdr, 'base64');
-    }));
+      })
+        .addOperation(operation)
+        .setTimeout(30)
+        .build();
 
-    const hostFunction = operation.body().invokeHostFunctionOp().hostFunction();
-    const authorizedOperation = Operation.invokeHostFunction({ func: hostFunction, auth });
-    const authorizedTransaction = TransactionBuilder.cloneFrom(transaction)
-      .clearOperations()
-      .addOperation(authorizedOperation)
-      .build();
-    const assembled = SorobanRpc.assembleTransaction(
-      authorizedTransaction,
-      simulation,
-    ).build();
-    const signedXdr = await ctx.signer.signTransaction(assembled.toXDR(), {
-      networkPassphrase: ctx.networkConfig.networkPassphrase,
-    });
-    const signed = TransactionBuilder.fromXDR(
-      signedXdr,
-      ctx.networkConfig.networkPassphrase,
-    );
-
-    const submitted = await ctx.rpc.sendTransaction(signed);
-    if (submitted.status !== 'PENDING' && submitted.status !== 'DUPLICATE') {
-      const diagnostics = diagnosticText(submitted.diagnosticEvents);
-      throw contractError(
-        'SUBMISSION_FAILED',
-        `${method} submission failed (${submitted.status}): ${
-          diagnostics || submitted.errorResult?.toXDR('base64') || 'unknown error'
-        }`,
+      const simulation = await ctx.telemetry.tracer.startActiveSpan(
+        SpanNames.simulate,
+        attrs,
+        async (simulateSpan) => {
+          const sim = await ctx.rpc.simulateTransaction(transaction);
+          if (SorobanRpc.Api.isSimulationError(sim)) {
+            simulateSpan.recordException(new Error(sim.error));
+            throw contractError(
+              'SIMULATION_FAILED',
+              `${method} simulation failed: ${sim.error}`,
+            );
+          }
+          if (SorobanRpc.Api.isSimulationRestore(sim)) {
+            throw new StellarAgentError(
+              'SIMULATION_FAILED',
+              `${method} requires restoring expired ledger entries before invocation`,
+            );
+          }
+          return sim;
+        },
       );
-    }
 
-    for (let attempt = 0; attempt < 30; attempt++) {
-      const confirmed = await ctx.rpc.getTransaction(submitted.hash);
-      if (confirmed.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+      if (!readOnly && simulation.minResourceFee) {
+        const feeStroops = Number(simulation.minResourceFee);
+        if (Number.isFinite(feeStroops) && feeStroops > 0) {
+          ctx.telemetry.metrics.recordHistogram(
+            MetricNames.paymentFeesStroops,
+            feeStroops,
+            attrs,
+          );
+        }
+      }
+
+      if (readOnly) {
         return {
-          value: confirmed.returnValue ? scValToNative(confirmed.returnValue) : undefined,
-          tx: { hash: submitted.hash, success: true, ledger: confirmed.ledger },
+          value: simulation.result?.retval
+            ? scValToNative(simulation.result.retval)
+            : undefined,
+          tx: { hash: '', success: true },
         };
       }
-      if (confirmed.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
-        const diagnostics = diagnosticText(confirmed.diagnosticEventsXdr);
-        throw contractError(
-          'TRANSACTION_FAILED',
-          `${method} transaction failed${diagnostics ? `: ${diagnostics}` : ''}`,
-          submitted.hash,
-        );
+
+      const validUntilLedgerSeq = simulation.latestLedger + 100;
+      const auth = await ctx.telemetry.tracer.startActiveSpan(SpanNames.sign, attrs, async () =>
+        Promise.all((simulation.result?.auth ?? []).map(async (entry: xdr.SorobanAuthorizationEntry) => {
+          if (entry.credentials().switch().name !== 'sorobanCredentialsAddress') {
+            return entry;
+          }
+          const signedXdr = await ctx.signer.signAuthEntry(entry.toXDR('base64'), {
+            networkPassphrase: ctx.networkConfig.networkPassphrase,
+            validUntilLedgerSeq,
+          });
+          return xdr.SorobanAuthorizationEntry.fromXDR(signedXdr, 'base64');
+        })),
+      );
+
+      const hostFunction = operation.body().invokeHostFunctionOp().hostFunction();
+      const authorizedOperation = Operation.invokeHostFunction({ func: hostFunction, auth });
+      const authorizedTransaction = TransactionBuilder.cloneFrom(transaction)
+        .clearOperations()
+        .addOperation(authorizedOperation)
+        .build();
+      const assembled = SorobanRpc.assembleTransaction(
+        authorizedTransaction,
+        simulation,
+      ).build();
+      const signedXdr = await ctx.signer.signTransaction(assembled.toXDR(), {
+        networkPassphrase: ctx.networkConfig.networkPassphrase,
+      });
+      const signed = TransactionBuilder.fromXDR(
+        signedXdr,
+        ctx.networkConfig.networkPassphrase,
+      );
+
+      const submitted = await ctx.telemetry.tracer.startActiveSpan(
+        SpanNames.submit,
+        attrs,
+        async (submitSpan) => {
+          const result = await ctx.rpc.sendTransaction(signed);
+          if (result.status !== 'PENDING' && result.status !== 'DUPLICATE') {
+            const diagnostics = diagnosticText(result.diagnosticEvents);
+            submitSpan.recordException(new Error(result.status));
+            throw contractError(
+              'SUBMISSION_FAILED',
+              `${method} submission failed (${result.status}): ${
+                diagnostics || result.errorResult?.toXDR('base64') || 'unknown error'
+              }`,
+            );
+          }
+          submitSpan.setAttribute(SemConv.transaction.hash, result.hash);
+          if (paymentId) attachTransactionHash(paymentId, result.hash);
+          return result;
+        },
+      );
+
+      for (let attempt = 0; attempt < 30; attempt++) {
+        const confirmed = await ctx.rpc.getTransaction(submitted.hash);
+        if (confirmed.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+          await ctx.telemetry.tracer.startActiveSpan(SpanNames.confirm, {
+            ...attrs,
+            [SemConv.transaction.hash]: submitted.hash,
+            [SemConv.transaction.ledger]: confirmed.ledger,
+          }, (confirmSpan) => {
+            confirmSpan.end();
+          });
+          const latencyMs = Date.now() - startMs;
+          ctx.telemetry.metrics.recordHistogram(MetricNames.paymentLatencyMs, latencyMs, attrs);
+          ctx.telemetry.logger.debug(`${method} confirmed`, {
+            hash: submitted.hash,
+            ledger: confirmed.ledger,
+            latencyMs,
+          });
+          return {
+            value: confirmed.returnValue ? scValToNative(confirmed.returnValue) : undefined,
+            tx: { hash: submitted.hash, success: true, ledger: confirmed.ledger },
+          };
+        }
+        if (confirmed.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
+          const diagnostics = diagnosticText(confirmed.diagnosticEventsXdr);
+          throw contractError(
+            'TRANSACTION_FAILED',
+            `${method} transaction failed${diagnostics ? `: ${diagnostics}` : ''}`,
+            submitted.hash,
+          );
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      throw new StellarAgentError(
+        'TRANSACTION_TIMEOUT',
+        `${method} transaction did not complete in time`,
+        { transactionHash: submitted.hash },
+      );
+    } catch (error) {
+      if (error instanceof StellarAgentError) {
+        ctx.telemetry.metrics.incrementCounter(MetricNames.paymentFailures, 1, {
+          ...attrs,
+          [SemConv.error.code]: error.code,
+        });
+        parent.recordException(error);
+        throw error;
+      }
+      if (error instanceof SigningError) throw error;
+      const wrapped = new StellarAgentError(
+        'NETWORK_ERROR',
+        `${method} failed while communicating with Soroban RPC: ${errorMessage(error)}`,
+        { cause: error },
+      );
+      parent.recordException(wrapped);
+      throw wrapped;
     }
-    throw new StellarAgentError(
-      'TRANSACTION_TIMEOUT',
-      `${method} transaction did not complete in time`,
-      { transactionHash: submitted.hash },
-    );
-  } catch (error) {
-    if (error instanceof StellarAgentError || error instanceof SigningError) throw error;
-    throw new StellarAgentError(
-      'NETWORK_ERROR',
-      `${method} failed while communicating with Soroban RPC: ${errorMessage(error)}`,
-      { cause: error },
-    );
-  }
+  });
 }
 
 /** Maps a raw contract-panic or RPC failure message to a stable machine-readable code. */

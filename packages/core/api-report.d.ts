@@ -383,6 +383,126 @@ declare function attestRankBids(bids: AgentBid[], weights: BidWeights | undefine
  */
 declare function verifyBidAttestation(bids: AgentBid[], result: ScoredBid[], attestation: BidAttestation, trustedKeys: ScorerKeyDirectory, options?: VerifyBidAttestationOptions): BidAttestationVerification;
 
+interface HistogramRecord {
+    name: string;
+    value: number;
+    attributes?: Record<string, string | number | boolean>;
+}
+interface CounterRecord {
+    name: string;
+    delta: number;
+    attributes?: Record<string, string | number | boolean>;
+}
+interface Metrics {
+    recordHistogram(name: string, value: number, attributes?: Record<string, string | number | boolean>): void;
+    incrementCounter(name: string, delta?: number, attributes?: Record<string, string | number | boolean>): void;
+}
+declare const noopMetrics: Metrics;
+/** In-memory metrics recorder for tests. */
+declare class InMemoryMetrics implements Metrics {
+    readonly histograms: HistogramRecord[];
+    readonly counters: CounterRecord[];
+    recordHistogram(name: string, value: number, attributes?: Record<string, string | number | boolean>): void;
+    incrementCounter(name: string, delta?: number, attributes?: Record<string, string | number | boolean>): void;
+}
+
+/**
+ * StellarAgent semantic conventions for OpenTelemetry spans and metrics.
+ *
+ * @version 1.0.0 — stable; dashboards and alerts depend on these names.
+ * @see docs/telemetry-conventions.md
+ */
+declare const SEMCONV_VERSION = "1.0.0";
+declare const SemConv: {
+    readonly version: "stellaragent.semconv.version";
+    readonly agent: {
+        readonly id: "stellaragent.agent.id";
+        readonly address: "stellaragent.agent.address";
+        readonly name: "stellaragent.agent.name";
+    };
+    readonly channel: {
+        readonly id: "stellaragent.channel.id";
+    };
+    readonly job: {
+        readonly id: "stellaragent.job.id";
+        readonly status: "stellaragent.job.status";
+    };
+    readonly contract: {
+        readonly id: "stellaragent.contract.id";
+        readonly method: "stellaragent.contract.method";
+        readonly kind: "stellaragent.contract.kind";
+    };
+    readonly network: "stellaragent.network";
+    readonly payment: {
+        readonly amount: "stellaragent.payment.amount";
+        readonly asset: "stellaragent.payment.asset";
+        readonly endpoint: "stellaragent.payment.endpoint";
+        readonly recipient: "stellaragent.payment.recipient";
+    };
+    readonly transaction: {
+        readonly hash: "stellaragent.transaction.hash";
+        readonly ledger: "stellaragent.transaction.ledger";
+    };
+    readonly error: {
+        readonly code: "stellaragent.error.code";
+    };
+    readonly indexer: {
+        readonly fromLedger: "stellaragent.indexer.from_ledger";
+        readonly throughLedger: "stellaragent.indexer.through_ledger";
+        readonly eventCount: "stellaragent.indexer.event_count";
+        readonly lagLedgers: "stellaragent.indexer.lag_ledgers";
+        readonly decodeFailures: "stellaragent.indexer.decode_failures";
+    };
+    readonly trace: {
+        readonly paymentId: "stellaragent.trace.payment_id";
+    };
+};
+/** Span names for the SDK invocation lifecycle. */
+declare const SpanNames: {
+    readonly contractInvoke: "stellaragent.contract.invoke";
+    readonly simulate: "stellaragent.contract.simulate";
+    readonly sign: "stellaragent.contract.sign";
+    readonly submit: "stellaragent.contract.submit";
+    readonly confirm: "stellaragent.contract.confirm";
+    readonly payForApi: "stellaragent.payment.pay_for_api";
+    readonly indexerRun: "stellaragent.indexer.run";
+    readonly indexerDecode: "stellaragent.indexer.decode";
+};
+/** Metric names exported by the SDK and indexer. */
+declare const MetricNames: {
+    readonly paymentLatencyMs: "stellaragent.payment.latency_ms";
+    readonly paymentFailures: "stellaragent.payment.failures";
+    readonly paymentFeesStroops: "stellaragent.payment.fees_stroops";
+    readonly indexerLagLedgers: "stellaragent.indexer.lag_ledgers";
+    readonly indexerThroughputEvents: "stellaragent.indexer.throughput_events";
+    readonly indexerDecodeFailures: "stellaragent.indexer.decode_failures";
+};
+type SemanticAttributes = Record<string, string | number | boolean>;
+
+interface Span {
+    setAttribute(key: string, value: string | number | boolean): void;
+    setAttributes(attrs: SemanticAttributes): void;
+    recordException(error: unknown): void;
+    end(): void;
+}
+interface Tracer {
+    startSpan(name: string, attributes?: SemanticAttributes): Span;
+    startActiveSpan<T>(name: string, attributes: SemanticAttributes | undefined, fn: (span: Span) => T | Promise<T>): T | Promise<T>;
+}
+declare const noopTracer: Tracer;
+/** In-memory span recorder for tests — no OpenTelemetry dependency. */
+interface RecordedSpan {
+    name: string;
+    attributes: SemanticAttributes;
+    exceptions: unknown[];
+    ended: boolean;
+}
+declare class InMemoryTracer implements Tracer {
+    readonly spans: RecordedSpan[];
+    startSpan(name: string, attributes?: SemanticAttributes): Span;
+    startActiveSpan<T>(name: string, attributes: SemanticAttributes | undefined, fn: (span: Span) => T | Promise<T>): T | Promise<T>;
+}
+
 type Network = 'mainnet' | 'testnet' | 'local';
 interface NetworkConfig {
     rpcUrl: string;
@@ -456,6 +576,19 @@ interface StellarAgentConfig {
      * @default false
      */
     allowUnconfiguredContracts?: boolean;
+    /**
+     * OpenTelemetry tracing, metrics, and logging. When omitted or
+     * `{ enabled: false }`, telemetry is a no-op with zero overhead.
+     */
+    telemetry?: {
+        enabled?: boolean;
+        serviceName?: string;
+        otlpEndpoint?: string;
+        logLevel?: 'debug' | 'info' | 'warn' | 'error';
+        /** Test-only injection — not for production use. */
+        tracer?: Tracer;
+        metrics?: Metrics;
+    };
 }
 interface AgentInfo {
     id: bigint;
@@ -1316,6 +1449,103 @@ declare class ContractsNotDeployedError extends Error {
  */
 declare function assertDeployed(network: Network, contracts: ContractAddresses): void;
 
+/** Log levels supported by the StellarAgent logger. */
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+interface LogRecord {
+    level: LogLevel;
+    message: string;
+    attributes?: Record<string, unknown>;
+    timestamp?: number;
+}
+interface Logger {
+    debug(message: string, attributes?: Record<string, unknown>): void;
+    info(message: string, attributes?: Record<string, unknown>): void;
+    warn(message: string, attributes?: Record<string, unknown>): void;
+    error(message: string, attributes?: Record<string, unknown>): void;
+}
+declare function redactForExport(value: unknown): unknown;
+interface LoggerOptions {
+    sink?: (record: LogRecord) => void;
+    minLevel?: LogLevel;
+}
+declare class RedactingLogger implements Logger {
+    constructor(options?: LoggerOptions);
+    debug(message: string, attributes?: Record<string, unknown>): void;
+    info(message: string, attributes?: Record<string, unknown>): void;
+    warn(message: string, attributes?: Record<string, unknown>): void;
+    error(message: string, attributes?: Record<string, unknown>): void;
+}
+/** Zero-cost logger used when telemetry is not configured. */
+declare const noopLogger: Logger;
+
+/**
+ * Optional OpenTelemetry bridge — only loaded when telemetry is enabled and
+ * the consumer has installed @opentelemetry/* packages.
+ */
+
+interface OtelBridgeOptions {
+    serviceName: string;
+    otlpEndpoint: string;
+}
+declare function createOtelBridge(options: OtelBridgeOptions): Promise<{
+    tracer: Tracer;
+    metrics: Metrics;
+}>;
+
+/** In-process registry linking submitted tx hashes to SDK payment trace IDs. */
+interface PaymentTraceRecord {
+    paymentId: string;
+    agentAddress: string;
+    method: string;
+    amount?: string;
+    endpoint?: string;
+    submittedAt: number;
+    transactionHash?: string;
+}
+declare function createPaymentId(): string;
+declare function registerPaymentTrace(record: PaymentTraceRecord): void;
+declare function attachTransactionHash(paymentId: string, transactionHash: string): void;
+declare function lookupPaymentIdByTxHash(txHash: string): string | undefined;
+declare function getPaymentTrace(paymentId: string): PaymentTraceRecord | undefined;
+/** Test helper — clears registries between tests. */
+declare function clearPaymentTraceRegistry(): void;
+declare function activePaymentTraceCount(): number;
+
+interface TelemetryConfig {
+    /** When false (default), all telemetry is no-op with zero overhead. */
+    enabled?: boolean;
+    /** Service name reported to exporters. */
+    serviceName?: string;
+    /** OTLP endpoint for traces and metrics (e.g. http://localhost:4318). */
+    otlpEndpoint?: string;
+    /** Custom logger sink — receives redacted records only. */
+    logSink?: (record: LogRecord) => void;
+    /** Minimum log level when a custom sink is configured. */
+    logLevel?: 'debug' | 'info' | 'warn' | 'error';
+    /** Inject tracers/metrics for tests. */
+    tracer?: Tracer;
+    metrics?: Metrics;
+    logger?: Logger;
+}
+interface TelemetryContext {
+    enabled: boolean;
+    tracer: Tracer;
+    metrics: Metrics;
+    logger: Logger;
+    network?: Network;
+    agentAddress?: string;
+}
+declare function getTelemetry(): TelemetryContext;
+declare function createTelemetry(config?: TelemetryConfig): TelemetryContext;
+/**
+ * Initialize global telemetry. When `enabled` is false, this is a no-op and
+ * OpenTelemetry packages are never loaded.
+ */
+declare function initTelemetry(config?: TelemetryConfig & {
+    network?: Network;
+    agentAddress?: string;
+}): Promise<TelemetryContext>;
+
 /**
  * Main SDK class for AI Agent payment operations on Stellar.
  *
@@ -1517,4 +1747,4 @@ declare class StellarAgent {
     getLedgerCloseEstimate(): Promise<LedgerCloseEstimate>;
 }
 
-export { type AgentBid, type AgentEvent, type AgentInfo, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, type ChannelInfo, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, FALLBACK_LEDGER_CLOSE_SECONDS, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LedgerCloseEstimate, type LedgerCloseSample, type Network, type NetworkConfig, type OpenChannelParams, type PayForAPIParams, type PaymentPrediction, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, STROOP_SCALE, type ScoredBid, type ScorerKeyDirectory, type ScorerKeyRecord, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, type SpendLimit, type SpendPeriod, type SpendReport, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, add, asPublicAddress, assertDeployed, attestRankBids, bn, clamp, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, gt, gte, isDeployedAddress, isPositive, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lt, lte, index as math, mul, pct, predictPaymentOutcome, rankBids, remainingBudget, resolveContracts, scoreBid, selectBestBid, sub, sumStrings, toStr, toStroops, verifyBidAttestation };
+export { type AgentBid, type AgentEvent, type AgentInfo, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, type ChannelInfo, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, FALLBACK_LEDGER_CLOSE_SECONDS, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, type Network, type NetworkConfig, type OpenChannelParams, type OtelBridgeOptions, type PayForAPIParams, type PaymentPrediction, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, clamp, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, pct, predictPaymentOutcome, rankBids, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, selectBestBid, sub, sumStrings, toStr, toStroops, verifyBidAttestation };

@@ -1,126 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
-  asBigInt,
-  asNumber,
-  asRecord,
-  asString,
-  decodeBytes,
-  jobStatus,
-  optionalString,
-  spendPeriod,
   toAgentInfo,
   toChannelInfo,
   toJobInfo,
   toRateLimitStatus,
 } from '../decoding.js';
-import { StellarAgentError } from '../../errors.js';
-
-describe('asRecord', () => {
-  it('passes a plain object through', () => {
-    expect(asRecord({ a: 1 })).toEqual({ a: 1 });
-  });
-
-  it('converts a Map to a plain object', () => {
-    expect(asRecord(new Map([['a', 1]]))).toEqual({ a: 1 });
-  });
-
-  it('rejects an array', () => {
-    expect(() => asRecord([1, 2])).toThrow(StellarAgentError);
-  });
-
-  it('rejects a primitive', () => {
-    expect(() => asRecord(42)).toThrow(StellarAgentError);
-  });
-});
-
-describe('asBigInt', () => {
-  it('passes a bigint through', () => {
-    expect(asBigInt(7n)).toBe(7n);
-  });
-
-  it('converts a safe-integer number', () => {
-    expect(asBigInt(7)).toBe(7n);
-  });
-
-  it('unwraps a { value } wrapper (as scValToNative produces for u128/i128)', () => {
-    expect(asBigInt({ value: 7n })).toBe(7n);
-  });
-
-  it('rejects a non-numeric value', () => {
-    expect(() => asBigInt('7')).toThrow(StellarAgentError);
-  });
-});
-
-describe('asNumber', () => {
-  it('passes a safe-integer number through', () => {
-    expect(asNumber(42)).toBe(42);
-  });
-
-  it('converts a bigint', () => {
-    expect(asNumber(42n)).toBe(42);
-  });
-
-  it('rejects a non-integer', () => {
-    expect(() => asNumber(1.5)).toThrow(StellarAgentError);
-  });
-});
-
-describe('asString', () => {
-  it('passes a string through', () => {
-    expect(asString('hello')).toBe('hello');
-  });
-
-  it('rejects a value with no string representation to fall back on', () => {
-    expect(() => asString(42)).toThrow(StellarAgentError);
-  });
-});
-
-describe('optionalString', () => {
-  it('returns null for null/undefined', () => {
-    expect(optionalString(null)).toBeNull();
-    expect(optionalString(undefined)).toBeNull();
-  });
-
-  it('decodes a present value', () => {
-    expect(optionalString('hello')).toBe('hello');
-  });
-});
-
-describe('decodeBytes', () => {
-  it('decodes a Buffer as UTF-8', () => {
-    expect(decodeBytes(Buffer.from('hello', 'utf8'))).toBe('hello');
-  });
-
-  it('decodes a Uint8Array as UTF-8', () => {
-    expect(decodeBytes(new TextEncoder().encode('hello'))).toBe('hello');
-  });
-
-  it('rejects a non-bytes value', () => {
-    expect(() => decodeBytes('hello')).toThrow(StellarAgentError);
-  });
-});
-
-describe('jobStatus', () => {
-  it('normalises a PascalCase symbol-vector tag to snake_case', () => {
-    expect(jobStatus(['PendingRelease'])).toBe('pending_release');
-    expect(jobStatus(['Open'])).toBe('open');
-  });
-
-  it('rejects an unknown tag', () => {
-    expect(() => jobStatus(['NotARealStatus'])).toThrow(StellarAgentError);
-  });
-});
-
-describe('spendPeriod', () => {
-  it('normalises a PascalCase symbol-vector tag to snake_case', () => {
-    expect(spendPeriod(['Hourly'])).toBe('hourly');
-    expect(spendPeriod(['PerLedger'])).toBe('per_ledger');
-  });
-
-  it('rejects an unknown tag', () => {
-    expect(() => spendPeriod(['Weekly'])).toThrow(StellarAgentError);
-  });
-});
 
 describe('toAgentInfo', () => {
   it('maps a raw AgentWalletFactory record onto AgentInfo', () => {
@@ -145,17 +29,21 @@ describe('toAgentInfo', () => {
 });
 
 describe('toChannelInfo', () => {
-  it('maps a raw PaymentChannel record onto ChannelInfo', () => {
+  it('maps a raw PaymentChannel record onto ChannelInfo, ignoring fields ChannelInfo does not surface', () => {
     const info = toChannelInfo(3n, {
       agent: 'GAGENT',
       owner: 'GOWNER',
       token: 'CTOKEN',
       limit_per_period: 50n,
-      period: ['Hourly'],
+      period: 'hourly',
       spent_this_period: 10n,
       period_start_ledger: 700,
       total_spent: 20n,
       active: true,
+      allocated: 0n,
+      collateral: 100n,
+      dispute_ledgers: 17280,
+      voucher_signer: null,
     });
     expect(info).toEqual({
       id: 3n,
@@ -173,18 +61,19 @@ describe('toChannelInfo', () => {
 });
 
 describe('toJobInfo', () => {
-  it('maps a raw Escrow record onto JobInfo, decoding bytes and Options', () => {
+  it('maps a raw Escrow record onto JobInfo, decoding the UTF-8 byte fields', () => {
     const info = toJobInfo(4n, {
       requester: 'GREQ',
       worker: 'GWORKER',
       arbiter: null,
       token: 'CTOKEN',
       amount: 25n,
-      task_description: Buffer.from('task'),
-      result: Buffer.from('done'),
+      task_description: new TextEncoder().encode('task'),
+      result: new TextEncoder().encode('done'),
       deadline_ledger: 99,
-      status: ['PendingRelease'],
+      status: 'pending_release',
       created_at: 8,
+      dispute_deadline_ledger: null,
     });
     expect(info).toEqual({
       id: 4n,
@@ -208,11 +97,12 @@ describe('toJobInfo', () => {
       arbiter: null,
       token: 'CTOKEN',
       amount: 25n,
-      task_description: Buffer.from('task'),
+      task_description: new TextEncoder().encode('task'),
       result: null,
       deadline_ledger: 99,
-      status: ['Open'],
+      status: 'open',
       created_at: 8,
+      dispute_deadline_ledger: null,
     });
     expect(info.result).toBeNull();
     expect(info.worker).toBeNull();
@@ -223,6 +113,8 @@ describe('toRateLimitStatus', () => {
   it('maps a raw RateLimiter record onto RateLimitStatus, converting stroops to decimal strings', () => {
     const status = toRateLimitStatus({
       active: true,
+      agent: 'GAGENT',
+      owner: 'GOWNER',
       max_per_tx: 10_000_000n,
       max_per_hour: 20_000_000n,
       max_per_day: 30_000_000n,

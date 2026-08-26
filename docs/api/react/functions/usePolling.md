@@ -8,7 +8,7 @@
 
 > **usePolling**\<`T`\>(`fetcher`, `__namedParameters?`): [`UsePollingResult`](../interfaces/UsePollingResult.md)\<`T`\>
 
-Defined in: [internal/usePolling.ts:42](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/internal/usePolling.ts#L42)
+Defined in: [internal/usePolling.ts:42](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L42)
 
 Polls `fetcher` on an interval, exposing `idle` -> `loading` -> `ready` |
 `error` state and a manual `refetch`.

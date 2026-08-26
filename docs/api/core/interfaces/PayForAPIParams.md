@@ -6,7 +6,7 @@
 
 # Interface: PayForAPIParams
 
-Defined in: [types/index.ts:129](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L129)
+Defined in: [types/index.ts:142](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L142)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:129](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **endpoint**: `string`
 
-Defined in: [types/index.ts:131](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L131)
+Defined in: [types/index.ts:144](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L144)
 
 API endpoint being paid for (stored in memo)
 
@@ -24,7 +24,7 @@ API endpoint being paid for (stored in memo)
 
 > **amount**: `string`
 
-Defined in: [types/index.ts:133](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L133)
+Defined in: [types/index.ts:146](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L146)
 
 Amount to pay, denominated in the channel's settlement asset
 
@@ -34,7 +34,7 @@ Amount to pay, denominated in the channel's settlement asset
 
 > `optional` **asset?**: `string`
 
-Defined in: [types/index.ts:135](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L135)
+Defined in: [types/index.ts:148](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L148)
 
 Asset to pay with (must match the channel's settlement asset)
 
@@ -44,7 +44,7 @@ Asset to pay with (must match the channel's settlement asset)
 
 > `optional` **channelId?**: `bigint`
 
-Defined in: [types/index.ts:137](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L137)
+Defined in: [types/index.ts:150](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L150)
 
 Channel ID to use (uses default if not specified)
 
@@ -54,7 +54,7 @@ Channel ID to use (uses default if not specified)
 
 > `optional` **recipient?**: `string`
 
-Defined in: [types/index.ts:142](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L142)
+Defined in: [types/index.ts:155](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L155)
 
 Stellar account or contract receiving the payment. Defaults to the
 agent address for compatibility; real API payments should set this.
@@ -65,7 +65,7 @@ agent address for compatibility; real API payments should set this.
 
 > `optional` **destAsset?**: `string`
 
-Defined in: [types/index.ts:152](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L152)
+Defined in: [types/index.ts:165](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L165)
 
 Asset the recipient should actually receive, if different from the
 channel's settlement asset (`asset`) — e.g. a channel funded in USDC
@@ -81,7 +81,7 @@ is still enforced in the channel's settlement asset regardless of
 
 > `optional` **minReceived?**: `string`
 
-Defined in: [types/index.ts:161](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L161)
+Defined in: [types/index.ts:174](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L174)
 
 Minimum amount of `destAsset` the recipient must receive (slippage
 floor), as a string in `destAsset` units. Required when `destAsset` is

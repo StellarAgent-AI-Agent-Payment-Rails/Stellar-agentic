@@ -6,7 +6,7 @@
 
 # Interface: TxResult
 
-Defined in: [types/index.ts:292](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L292)
+Defined in: [types/index.ts:305](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L305)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:292](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **hash**: `string`
 
-Defined in: [types/index.ts:294](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L294)
+Defined in: [types/index.ts:307](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L307)
 
 Transaction hash
 
@@ -24,7 +24,7 @@ Transaction hash
 
 > **success**: `boolean`
 
-Defined in: [types/index.ts:296](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L296)
+Defined in: [types/index.ts:309](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L309)
 
 Whether the transaction succeeded
 
@@ -34,6 +34,6 @@ Whether the transaction succeeded
 
 > `optional` **ledger?**: `number`
 
-Defined in: [types/index.ts:298](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L298)
+Defined in: [types/index.ts:311](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L311)
 
 Ledger number it was confirmed in

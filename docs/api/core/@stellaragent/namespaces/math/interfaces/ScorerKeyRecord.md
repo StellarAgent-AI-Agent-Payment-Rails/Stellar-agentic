@@ -6,7 +6,7 @@
 
 # Interface: ScorerKeyRecord
 
-Defined in: [math/attestation.ts:98](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/attestation.ts#L98)
+Defined in: [math/attestation.ts:98](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L98)
 
 One scorer key a verifier is willing to trust, and for how long.
 
@@ -16,7 +16,7 @@ One scorer key a verifier is willing to trust, and for how long.
 
 > **epoch**: `number`
 
-Defined in: [math/attestation.ts:100](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/attestation.ts#L100)
+Defined in: [math/attestation.ts:100](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L100)
 
 Matches [BidAttestation.keyEpoch](BidAttestation.md#keyepoch).
 
@@ -26,7 +26,7 @@ Matches [BidAttestation.keyEpoch](BidAttestation.md#keyepoch).
 
 > **publicKey**: `string`
 
-Defined in: [math/attestation.ts:102](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/attestation.ts#L102)
+Defined in: [math/attestation.ts:102](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L102)
 
 The Stellar public address this epoch is allowed to sign with.
 
@@ -36,7 +36,7 @@ The Stellar public address this epoch is allowed to sign with.
 
 > `optional` **validFrom?**: `number`
 
-Defined in: [math/attestation.ts:104](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/attestation.ts#L104)
+Defined in: [math/attestation.ts:104](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L104)
 
 Unix seconds before which this epoch's key was not yet in use, if bounded.
 
@@ -46,6 +46,6 @@ Unix seconds before which this epoch's key was not yet in use, if bounded.
 
 > `optional` **validUntil?**: `number`
 
-Defined in: [math/attestation.ts:106](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/attestation.ts#L106)
+Defined in: [math/attestation.ts:106](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L106)
 
 Unix seconds after which this epoch's key was retired, if bounded.

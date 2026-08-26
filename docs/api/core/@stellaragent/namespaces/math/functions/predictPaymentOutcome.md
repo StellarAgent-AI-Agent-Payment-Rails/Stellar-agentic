@@ -8,7 +8,7 @@
 
 > **predictPaymentOutcome**(`__namedParameters`): [`PaymentPrediction`](../interfaces/PaymentPrediction.md)
 
-Defined in: [math/predict.ts:165](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/predict.ts#L165)
+Defined in: [math/predict.ts:165](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L165)
 
 Predict whether a proposed `amount` would be blocked by a channel's spend
 limit and/or a configured rate limiter, without an RPC round trip.

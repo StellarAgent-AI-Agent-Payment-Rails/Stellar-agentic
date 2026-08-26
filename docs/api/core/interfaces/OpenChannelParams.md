@@ -6,7 +6,7 @@
 
 # Interface: OpenChannelParams
 
-Defined in: [types/index.ts:112](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L112)
+Defined in: [types/index.ts:125](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L125)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:112](https://github.com/Nanle-code/Stellar-agentic/b
 
 > `optional` **token?**: `string`
 
-Defined in: [types/index.ts:121](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L121)
+Defined in: [types/index.ts:134](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L134)
 
 Token to use for payments (defaults to XLM). This remains the
 channel's single funding/settlement asset — `limitPerPeriod` is always
@@ -29,7 +29,7 @@ channel itself multi-asset.
 
 > **deposit**: `string`
 
-Defined in: [types/index.ts:123](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L123)
+Defined in: [types/index.ts:136](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L136)
 
 Initial deposit amount (as string to avoid precision issues)
 
@@ -39,7 +39,7 @@ Initial deposit amount (as string to avoid precision issues)
 
 > **limitPerPeriod**: `string`
 
-Defined in: [types/index.ts:125](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L125)
+Defined in: [types/index.ts:138](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L138)
 
 Max spend per period, denominated in `token`
 
@@ -49,4 +49,4 @@ Max spend per period, denominated in `token`
 
 > **period**: [`SpendPeriod`](../type-aliases/SpendPeriod.md)
 
-Defined in: [types/index.ts:126](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L126)
+Defined in: [types/index.ts:139](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L139)

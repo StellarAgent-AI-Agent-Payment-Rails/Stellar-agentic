@@ -150,6 +150,48 @@ export type {
   Sep43Like,
 } from './signer.js';
 
+// ─── Telemetry (tracing, metrics, logging) ───────────────────────────────────
+//
+// Opt-in via `StellarAgentConfig.telemetry`; a no-op with zero overhead when
+// omitted. See ./telemetry/index.ts.
+
+export {
+  initTelemetry,
+  getTelemetry,
+  createTelemetry,
+  RedactingLogger,
+  InMemoryTracer,
+  InMemoryMetrics,
+  redactForExport,
+  noopLogger,
+  noopTracer,
+  noopMetrics,
+  SemConv,
+  SpanNames,
+  MetricNames,
+  SEMCONV_VERSION,
+  createOtelBridge,
+} from './telemetry/index.js';
+export type { OtelBridgeOptions } from './telemetry/index.js';
+export {
+  createPaymentId,
+  registerPaymentTrace,
+  attachTransactionHash,
+  lookupPaymentIdByTxHash,
+  getPaymentTrace,
+  clearPaymentTraceRegistry,
+  activePaymentTraceCount,
+} from './telemetry/context.js';
+export type { PaymentTraceRecord } from './telemetry/context.js';
+export type {
+  TelemetryConfig,
+  TelemetryContext,
+  Logger,
+  Tracer,
+  Metrics,
+  RecordedSpan,
+} from './telemetry/index.js';
+
 // ─── StellarAgent ─────────────────────────────────────────────────────────────
 //
 // The class itself lives under ./agent/, split into invocation, encoding,

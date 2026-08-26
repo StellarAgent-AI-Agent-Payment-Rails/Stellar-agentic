@@ -18,6 +18,9 @@
 - [KeypairSigner](classes/KeypairSigner.md)
 - [RemoteSigner](classes/RemoteSigner.md)
 - [SignerAdapter](classes/SignerAdapter.md)
+- [RedactingLogger](classes/RedactingLogger.md)
+- [InMemoryMetrics](classes/InMemoryMetrics.md)
+- [InMemoryTracer](classes/InMemoryTracer.md)
 
 ## Interfaces
 
@@ -29,6 +32,14 @@
 - [Signer](interfaces/Signer.md)
 - [RemoteSignerOptions](interfaces/RemoteSignerOptions.md)
 - [Sep43Like](interfaces/Sep43Like.md)
+- [PaymentTraceRecord](interfaces/PaymentTraceRecord.md)
+- [TelemetryConfig](interfaces/TelemetryConfig.md)
+- [TelemetryContext](interfaces/TelemetryContext.md)
+- [Logger](interfaces/Logger.md)
+- [Metrics](interfaces/Metrics.md)
+- [OtelBridgeOptions](interfaces/OtelBridgeOptions.md)
+- [Tracer](interfaces/Tracer.md)
+- [RecordedSpan](interfaces/RecordedSpan.md)
 - [NetworkConfig](interfaces/NetworkConfig.md)
 - [SpendLimit](interfaces/SpendLimit.md)
 - [StellarAgentConfig](interfaces/StellarAgentConfig.md)
@@ -59,6 +70,13 @@
 - [CONTRACT\_KEYS](variables/CONTRACT_KEYS.md)
 - [UNCONFIGURED\_CONTRACTS](variables/UNCONFIGURED_CONTRACTS.md)
 - [FALLBACK\_LEDGER\_CLOSE\_SECONDS](variables/FALLBACK_LEDGER_CLOSE_SECONDS.md)
+- [noopLogger](variables/noopLogger.md)
+- [noopMetrics](variables/noopMetrics.md)
+- [SEMCONV\_VERSION](variables/SEMCONV_VERSION.md)
+- [SemConv](variables/SemConv.md)
+- [SpanNames](variables/SpanNames.md)
+- [MetricNames](variables/MetricNames.md)
+- [noopTracer](variables/noopTracer.md)
 
 ## Functions
 
@@ -71,6 +89,18 @@
 - [estimateSecondsRemaining](functions/estimateSecondsRemaining.md)
 - [fetchLedgerCloseEstimate](functions/fetchLedgerCloseEstimate.md)
 - [isSigner](functions/isSigner.md)
+- [createPaymentId](functions/createPaymentId.md)
+- [registerPaymentTrace](functions/registerPaymentTrace.md)
+- [attachTransactionHash](functions/attachTransactionHash.md)
+- [lookupPaymentIdByTxHash](functions/lookupPaymentIdByTxHash.md)
+- [getPaymentTrace](functions/getPaymentTrace.md)
+- [clearPaymentTraceRegistry](functions/clearPaymentTraceRegistry.md)
+- [activePaymentTraceCount](functions/activePaymentTraceCount.md)
+- [getTelemetry](functions/getTelemetry.md)
+- [createTelemetry](functions/createTelemetry.md)
+- [initTelemetry](functions/initTelemetry.md)
+- [redactForExport](functions/redactForExport.md)
+- [createOtelBridge](functions/createOtelBridge.md)
 
 ## References
 

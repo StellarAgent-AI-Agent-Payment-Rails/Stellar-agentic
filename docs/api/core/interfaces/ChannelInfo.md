@@ -6,7 +6,7 @@
 
 # Interface: ChannelInfo
 
-Defined in: [types/index.ts:164](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L164)
+Defined in: [types/index.ts:177](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L177)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:164](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **id**: `bigint`
 
-Defined in: [types/index.ts:165](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L165)
+Defined in: [types/index.ts:178](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L178)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:165](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **agent**: `string`
 
-Defined in: [types/index.ts:166](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L166)
+Defined in: [types/index.ts:179](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L179)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:166](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **owner**: `string`
 
-Defined in: [types/index.ts:167](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L167)
+Defined in: [types/index.ts:180](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L180)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:167](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **token**: `string`
 
-Defined in: [types/index.ts:168](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L168)
+Defined in: [types/index.ts:181](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L181)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types/index.ts:168](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **limitPerPeriod**: `bigint`
 
-Defined in: [types/index.ts:169](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L169)
+Defined in: [types/index.ts:182](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L182)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types/index.ts:169](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **spentThisPeriod**: `bigint`
 
-Defined in: [types/index.ts:170](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L170)
+Defined in: [types/index.ts:183](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L183)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [types/index.ts:170](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **totalSpent**: `bigint`
 
-Defined in: [types/index.ts:171](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L171)
+Defined in: [types/index.ts:184](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L184)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [types/index.ts:171](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **active**: `boolean`
 
-Defined in: [types/index.ts:172](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L172)
+Defined in: [types/index.ts:185](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L185)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [types/index.ts:172](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **period**: [`SpendPeriod`](../type-aliases/SpendPeriod.md)
 
-Defined in: [types/index.ts:174](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L174)
+Defined in: [types/index.ts:187](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L187)
 
 Reset cadence for `spentThisPeriod`, mirroring `Channel.period` on-chain.
 
@@ -88,7 +88,7 @@ Reset cadence for `spentThisPeriod`, mirroring `Channel.period` on-chain.
 
 > **periodStartLedger**: `number`
 
-Defined in: [types/index.ts:182](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L182)
+Defined in: [types/index.ts:195](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L195)
 
 Ledger sequence at which the current period started, mirroring
 `Channel.period_start_ledger`. `PaymentChannel.pay` resets

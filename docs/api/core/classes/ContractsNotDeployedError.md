@@ -6,7 +6,7 @@
 
 # Class: ContractsNotDeployedError
 
-Defined in: [contracts.ts:159](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L159)
+Defined in: [contracts.ts:159](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L159)
 
 Thrown when an agent is created against contracts that are not deployed.
 
@@ -20,7 +20,7 @@ Thrown when an agent is created against contracts that are not deployed.
 
 > **new ContractsNotDeployedError**(`network`, `missing`): `ContractsNotDeployedError`
 
-Defined in: [contracts.ts:164](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L164)
+Defined in: [contracts.ts:164](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L164)
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: [contracts.ts:164](https://github.com/Nanle-code/Stellar-agentic/blo
 
 > `readonly` **network**: [`Network`](../type-aliases/Network.md)
 
-Defined in: [contracts.ts:160](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L160)
+Defined in: [contracts.ts:160](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L160)
 
 ***
 
@@ -54,6 +54,6 @@ Defined in: [contracts.ts:160](https://github.com/Nanle-code/Stellar-agentic/blo
 
 > `readonly` **missing**: (`"agentWalletFactory"` \| `"paymentChannel"` \| `"escrow"` \| `"rateLimiter"` \| `"circuitBreaker"`)[]
 
-Defined in: [contracts.ts:162](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L162)
+Defined in: [contracts.ts:162](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L162)
 
 The contract keys that failed validation, in `CONTRACT_KEYS` order.

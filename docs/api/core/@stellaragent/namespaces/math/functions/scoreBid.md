@@ -8,7 +8,7 @@
 
 > **scoreBid**(`bid`, `maxBid`, `maxLatency`, `weights?`): [`ScoredBid`](../interfaces/ScoredBid.md)
 
-Defined in: [math/bid.ts:115](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/bid.ts#L115)
+Defined in: [math/bid.ts:115](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L115)
 
 Compute a deterministic composite score for a single bid.
 

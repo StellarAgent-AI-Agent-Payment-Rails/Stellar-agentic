@@ -22,6 +22,8 @@ import { resolveContracts, assertDeployed } from '../contracts.js';
 import { KeypairSigner, SigningError } from '../signer.js';
 import type { Signer } from '../signer.js';
 import type { LedgerCloseEstimate } from '../ledgerTime.js';
+import { initTelemetry } from '../telemetry/index.js';
+import type { TelemetryContext } from '../telemetry/index.js';
 
 import { createNetworkClients, fundFromFriendbot } from './config.js';
 import { getLatestLedger, runInvocation } from './invocation.js';
@@ -62,6 +64,7 @@ export class StellarAgent {
   private horizon: Horizon.Server;
   private rpc: SorobanRpc.Server;
   private activeChannelId?: bigint;
+  private telemetry: TelemetryContext;
 
   private constructor(
     signer: Signer,
@@ -69,12 +72,14 @@ export class StellarAgent {
     networkConfig: NetworkConfig,
     contracts: ContractAddresses,
     assetContracts: Record<string, string>,
+    telemetry: TelemetryContext,
   ) {
     this.signer = signer;
     this.publicKey = publicKey;
     this.networkConfig = networkConfig;
     this.contracts = contracts;
     this.assetContracts = assetContracts;
+    this.telemetry = telemetry;
     const { horizon, rpc } = createNetworkClients(networkConfig);
     this.horizon = horizon;
     this.rpc = rpc;
@@ -135,12 +140,24 @@ export class StellarAgent {
       assertDeployed(config.network, contracts);
     }
 
+    const telemetry = await initTelemetry({
+      enabled: config.telemetry?.enabled,
+      serviceName: config.telemetry?.serviceName,
+      otlpEndpoint: config.telemetry?.otlpEndpoint,
+      logLevel: config.telemetry?.logLevel,
+      tracer: config.telemetry?.tracer,
+      metrics: config.telemetry?.metrics,
+      network: config.network,
+      agentAddress: publicKey,
+    });
+
     const agent = new StellarAgent(
       signer,
       publicKey,
       networkConfig,
       contracts,
       config.assetContracts ?? {},
+      telemetry,
     );
 
     // Only a freshly generated keypair gets friendbot funding — a supplied
@@ -463,7 +480,13 @@ export class StellarAgent {
     readOnly = false,
   ): Promise<{ value: unknown; tx: TxResult }> {
     return runInvocation(
-      { signer: this.signer, rpc: this.rpc, networkConfig: this.networkConfig, address: this.address },
+      {
+        signer: this.signer,
+        rpc: this.rpc,
+        networkConfig: this.networkConfig,
+        address: this.address,
+        telemetry: this.telemetry,
+      },
       contractId,
       method,
       args,

@@ -8,7 +8,7 @@
 
 > **useChannel**(`channelId`, `options?`): [`UsePollingResult`](../interfaces/UsePollingResult.md)\<`ChannelInfo`\>
 
-Defined in: [hooks/useChannel.ts:13](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useChannel.ts#L13)
+Defined in: [hooks/useChannel.ts:13](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useChannel.ts#L13)
 
 Polls `PaymentChannel.get_channel` for `channelId` via the current
 `StellarAgent`. Disabled (stays `idle`) until both the agent is `ready`

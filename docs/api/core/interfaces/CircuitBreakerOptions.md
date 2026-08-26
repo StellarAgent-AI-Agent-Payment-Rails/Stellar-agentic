@@ -6,7 +6,7 @@
 
 # Interface: CircuitBreakerOptions
 
-Defined in: [circuitBreaker.ts:66](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/circuitBreaker.ts#L66)
+Defined in: [circuitBreaker.ts:66](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L66)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [circuitBreaker.ts:66](https://github.com/Nanle-code/Stellar-agentic
 
 > **rpcUrl**: `string`
 
-Defined in: [circuitBreaker.ts:71](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/circuitBreaker.ts#L71)
+Defined in: [circuitBreaker.ts:71](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L71)
 
 Soroban RPC endpoint (e.g., https://soroban-testnet.stellar.org).
 Ignored when `rpc` is provided.
@@ -25,7 +25,7 @@ Ignored when `rpc` is provided.
 
 > **contractId**: `string`
 
-Defined in: [circuitBreaker.ts:73](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/circuitBreaker.ts#L73)
+Defined in: [circuitBreaker.ts:73](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L73)
 
 The contract ID (address) of the deployed CircuitBreaker contract.
 
@@ -35,7 +35,7 @@ The contract ID (address) of the deployed CircuitBreaker contract.
 
 > `optional` **networkPassphrase?**: `string`
 
-Defined in: [circuitBreaker.ts:75](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/circuitBreaker.ts#L75)
+Defined in: [circuitBreaker.ts:75](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L75)
 
 Network passphrase to sign transactions for. Defaults to testnet.
 
@@ -45,7 +45,7 @@ Network passphrase to sign transactions for. Defaults to testnet.
 
 > `optional` **signer?**: [`Signer`](Signer.md)
 
-Defined in: [circuitBreaker.ts:81](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/circuitBreaker.ts#L81)
+Defined in: [circuitBreaker.ts:81](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L81)
 
 Default signer for write methods. When set, callers can omit passing a
 signer/secret on each call. Prefer [Signer](Signer.md) (remote/HSM) over raw
@@ -57,6 +57,6 @@ secret keys in production.
 
 > `optional` **rpc?**: `Server`
 
-Defined in: [circuitBreaker.ts:83](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/circuitBreaker.ts#L83)
+Defined in: [circuitBreaker.ts:83](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L83)
 
 Inject a Soroban RPC client (used by unit tests).

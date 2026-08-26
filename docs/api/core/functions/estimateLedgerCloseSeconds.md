@@ -8,7 +8,7 @@
 
 > **estimateLedgerCloseSeconds**(`samples`): `number`
 
-Defined in: [ledgerTime.ts:52](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L52)
+Defined in: [ledgerTime.ts:52](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L52)
 
 Derive the observed average seconds-per-ledger from a set of recent ledger
 close samples, by summing the wall-clock gaps between consecutive

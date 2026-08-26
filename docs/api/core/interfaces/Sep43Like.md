@@ -6,7 +6,7 @@
 
 # Interface: Sep43Like
 
-Defined in: [signer.ts:408](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L408)
+Defined in: [signer.ts:408](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L408)
 
 Wrap anything already exposing SEP-43's method shape — Freighter and other
 browser wallets, `@ledgerhq`-backed signers, an in-house module — as a
@@ -22,7 +22,7 @@ agent's hot key (see the module doc).
 
 > **getAddress**(): `string` \| `Promise`\<`string`\> \| `Promise`\<\{ `address`: `string`; \}\> \| \{ `address`: `string`; \}
 
-Defined in: [signer.ts:409](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L409)
+Defined in: [signer.ts:409](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L409)
 
 #### Returns
 
@@ -34,7 +34,7 @@ Defined in: [signer.ts:409](https://github.com/Nanle-code/Stellar-agentic/blob/8
 
 > **signTransaction**(`xdr`, `opts?`): `Promise`\<`string` \| \{ `signedTxXdr`: `string`; \}\>
 
-Defined in: [signer.ts:410](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L410)
+Defined in: [signer.ts:410](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L410)
 
 #### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [signer.ts:410](https://github.com/Nanle-code/Stellar-agentic/blob/8
 
 > `optional` **signAuthEntry**(`entryXdr`, `opts?`): `Promise`\<`string` \| \{ `signedAuthEntry`: `string`; \}\>
 
-Defined in: [signer.ts:414](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L414)
+Defined in: [signer.ts:414](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L414)
 
 #### Parameters
 

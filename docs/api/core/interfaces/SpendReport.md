@@ -6,7 +6,7 @@
 
 # Interface: SpendReport
 
-Defined in: [types/index.ts:185](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L185)
+Defined in: [types/index.ts:198](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L198)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:185](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **spentThisPeriod**: `string`
 
-Defined in: [types/index.ts:186](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L186)
+Defined in: [types/index.ts:199](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L199)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:186](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **remainingThisPeriod**: `string`
 
-Defined in: [types/index.ts:187](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L187)
+Defined in: [types/index.ts:200](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L200)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types/index.ts:187](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **totalLifetime**: `string`
 
-Defined in: [types/index.ts:188](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L188)
+Defined in: [types/index.ts:201](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L201)

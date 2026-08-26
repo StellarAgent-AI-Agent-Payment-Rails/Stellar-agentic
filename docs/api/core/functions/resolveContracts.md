@@ -8,7 +8,7 @@
 
 > **resolveContracts**(`network`, `overrides?`): [`ContractAddresses`](../interfaces/ContractAddresses.md)
 
-Defined in: [contracts.ts:141](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L141)
+Defined in: [contracts.ts:141](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L141)
 
 Resolve the contract addresses for a network.
 

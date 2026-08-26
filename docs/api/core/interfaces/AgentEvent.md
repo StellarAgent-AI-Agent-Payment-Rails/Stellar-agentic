@@ -6,7 +6,7 @@
 
 # Interface: AgentEvent
 
-Defined in: [types/index.ts:283](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L283)
+Defined in: [types/index.ts:296](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L296)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:283](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **type**: `"payment"` \| `"job_created"` \| `"job_completed"` \| `"rate_limit_hit"` \| `"agent_killed"`
 
-Defined in: [types/index.ts:284](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L284)
+Defined in: [types/index.ts:297](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L297)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:284](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **agentId**: `bigint`
 
-Defined in: [types/index.ts:285](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L285)
+Defined in: [types/index.ts:298](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L298)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:285](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **timestamp**: `number`
 
-Defined in: [types/index.ts:286](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L286)
+Defined in: [types/index.ts:299](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L299)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [types/index.ts:286](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **data**: `Record`\<`string`, `unknown`\>
 
-Defined in: [types/index.ts:287](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L287)
+Defined in: [types/index.ts:300](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L300)

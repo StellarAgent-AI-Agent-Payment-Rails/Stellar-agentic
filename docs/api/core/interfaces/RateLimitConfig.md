@@ -6,7 +6,7 @@
 
 # Interface: RateLimitConfig
 
-Defined in: [types/index.ts:232](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L232)
+Defined in: [types/index.ts:245](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L245)
 
 ## Extended by
 
@@ -18,7 +18,7 @@ Defined in: [types/index.ts:232](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerTx**: `string`
 
-Defined in: [types/index.ts:233](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L233)
+Defined in: [types/index.ts:246](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L246)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [types/index.ts:233](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerHour**: `string`
 
-Defined in: [types/index.ts:234](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L234)
+Defined in: [types/index.ts:247](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L247)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [types/index.ts:234](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerDay**: `string`
 
-Defined in: [types/index.ts:235](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L235)
+Defined in: [types/index.ts:248](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L248)
 
 ***
 
@@ -42,4 +42,4 @@ Defined in: [types/index.ts:235](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxTxsPerHour**: `number`
 
-Defined in: [types/index.ts:236](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L236)
+Defined in: [types/index.ts:249](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L249)

@@ -7,5 +7,6 @@
   "excludeExternals": true,
   "excludePrivate": true,
   "excludeInternal": true,
-  "sort": ["source-order"]
+  "sort": ["source-order"],
+  "gitRevision": "main"
 }

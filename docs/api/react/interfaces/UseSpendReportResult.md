@@ -6,7 +6,7 @@
 
 # Interface: UseSpendReportResult
 
-Defined in: [hooks/useSpendReport.ts:37](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useSpendReport.ts#L37)
+Defined in: [hooks/useSpendReport.ts:37](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useSpendReport.ts#L37)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: [hooks/useSpendReport.ts:37](https://github.com/Nanle-code/Stellar-a
 
 > **hasPendingPayments**: `boolean`
 
-Defined in: [hooks/useSpendReport.ts:39](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useSpendReport.ts#L39)
+Defined in: [hooks/useSpendReport.ts:39](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useSpendReport.ts#L39)
 
 Whether `data` currently includes unconfirmed optimistic payments.
 
@@ -28,7 +28,7 @@ Whether `data` currently includes unconfirmed optimistic payments.
 
 > **data**: `SpendReport` \| `null`
 
-Defined in: [internal/usePolling.ts:6](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/internal/usePolling.ts#L6)
+Defined in: [internal/usePolling.ts:6](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L6)
 
 #### Inherited from
 
@@ -40,7 +40,7 @@ Defined in: [internal/usePolling.ts:6](https://github.com/Nanle-code/Stellar-age
 
 > **status**: [`AsyncStatus`](../type-aliases/AsyncStatus.md)
 
-Defined in: [internal/usePolling.ts:7](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/internal/usePolling.ts#L7)
+Defined in: [internal/usePolling.ts:7](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L7)
 
 #### Inherited from
 
@@ -52,7 +52,7 @@ Defined in: [internal/usePolling.ts:7](https://github.com/Nanle-code/Stellar-age
 
 > **error**: `Error` \| `null`
 
-Defined in: [internal/usePolling.ts:8](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/internal/usePolling.ts#L8)
+Defined in: [internal/usePolling.ts:8](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L8)
 
 #### Inherited from
 
@@ -64,7 +64,7 @@ Defined in: [internal/usePolling.ts:8](https://github.com/Nanle-code/Stellar-age
 
 > **refetch**: () => `void`
 
-Defined in: [internal/usePolling.ts:20](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/internal/usePolling.ts#L20)
+Defined in: [internal/usePolling.ts:20](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L20)
 
 Fetch immediately, outside the regular interval.
 

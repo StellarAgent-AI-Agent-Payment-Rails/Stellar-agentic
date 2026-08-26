@@ -1,9 +1,16 @@
 /** Read-only `StellarAgent` operations: contract reads and Horizon lookups. */
 import type { Horizon } from '@stellar/stellar-sdk';
 import { StellarAgentError } from '../errors.js';
+import { expectBigInt } from '../decode.js';
 import { fromStroops } from '../math/index.js';
 import { fetchLedgerCloseEstimate } from '../ledgerTime.js';
 import type { LedgerCloseEstimate } from '../ledgerTime.js';
+import {
+  decodeAgentInfo,
+  decodeChannel,
+  decodeJob,
+  decodeRateLimit,
+} from '../generated/contract-types.js';
 import type {
   AgentInfo,
   ChannelInfo,
@@ -12,7 +19,7 @@ import type {
   SpendReport,
 } from '../types/index.js';
 import { addressVal, i128Val, u64Val } from './encoding.js';
-import { asBigInt, asRecord, toAgentInfo, toChannelInfo, toJobInfo, toRateLimitStatus } from './decoding.js';
+import { toAgentInfo, toChannelInfo, toJobInfo, toRateLimitStatus } from './decoding.js';
 import { UNCONFIGURED_RATE_LIMIT } from './config.js';
 import type { InvokeFn } from './invocation.js';
 
@@ -22,8 +29,8 @@ export async function getAgent(
   agentWalletFactory: string,
   agentId: bigint,
 ): Promise<AgentInfo> {
-  const value = asRecord((await invoke(agentWalletFactory, 'get_agent', [u64Val(agentId)], true)).value);
-  return toAgentInfo(agentId, value);
+  const raw = decodeAgentInfo((await invoke(agentWalletFactory, 'get_agent', [u64Val(agentId)], true)).value);
+  return toAgentInfo(agentId, raw);
 }
 
 /** Current XLM balance, or `'0'` if the account doesn't exist yet. */
@@ -60,7 +67,7 @@ export async function getSpendReport(
   );
   return {
     spentThisPeriod: fromStroops(channel.spentThisPeriod),
-    remainingThisPeriod: fromStroops(asBigInt(remaining.value)),
+    remainingThisPeriod: fromStroops(expectBigInt(remaining.value, 'remaining_this_period result')),
     totalLifetime: fromStroops(channel.totalSpent),
   };
 }
@@ -71,8 +78,8 @@ export async function getChannel(
   paymentChannel: string,
   channelId: bigint,
 ): Promise<ChannelInfo> {
-  const value = asRecord((await invoke(paymentChannel, 'get_channel', [u64Val(channelId)], true)).value);
-  return toChannelInfo(channelId, value);
+  const raw = decodeChannel((await invoke(paymentChannel, 'get_channel', [u64Val(channelId)], true)).value);
+  return toChannelInfo(channelId, raw);
 }
 
 /** Info about an escrow job. */
@@ -81,8 +88,8 @@ export async function getJob(
   escrow: string,
   jobId: bigint,
 ): Promise<JobInfo> {
-  const value = asRecord((await invoke(escrow, 'get_job', [u64Val(jobId)], true)).value);
-  return toJobInfo(jobId, value);
+  const raw = decodeJob((await invoke(escrow, 'get_job', [u64Val(jobId)], true)).value);
+  return toJobInfo(jobId, raw);
 }
 
 /**
@@ -107,7 +114,7 @@ export async function getRateLimitStatus(
     }
     throw error;
   }
-  return toRateLimitStatus(asRecord(raw.value));
+  return toRateLimitStatus(decodeRateLimit(raw.value));
 }
 
 /** See `StellarAgent.getLedgerCloseEstimate` for the derivation and its caveats. */

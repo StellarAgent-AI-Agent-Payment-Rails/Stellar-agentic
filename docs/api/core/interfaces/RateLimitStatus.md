@@ -6,7 +6,7 @@
 
 # Interface: RateLimitStatus
 
-Defined in: [types/index.ts:240](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L240)
+Defined in: [types/index.ts:253](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L253)
 
 Current rate-limit usage alongside the configured limits, for `RateLimiter`.
 
@@ -20,7 +20,7 @@ Current rate-limit usage alongside the configured limits, for `RateLimiter`.
 
 > **maxPerTx**: `string`
 
-Defined in: [types/index.ts:233](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L233)
+Defined in: [types/index.ts:246](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L246)
 
 #### Inherited from
 
@@ -32,7 +32,7 @@ Defined in: [types/index.ts:233](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerHour**: `string`
 
-Defined in: [types/index.ts:234](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L234)
+Defined in: [types/index.ts:247](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L247)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [types/index.ts:234](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerDay**: `string`
 
-Defined in: [types/index.ts:235](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L235)
+Defined in: [types/index.ts:248](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L248)
 
 #### Inherited from
 
@@ -56,7 +56,7 @@ Defined in: [types/index.ts:235](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxTxsPerHour**: `number`
 
-Defined in: [types/index.ts:236](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L236)
+Defined in: [types/index.ts:249](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L249)
 
 #### Inherited from
 
@@ -68,7 +68,7 @@ Defined in: [types/index.ts:236](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **spentThisHour**: `string`
 
-Defined in: [types/index.ts:242](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L242)
+Defined in: [types/index.ts:255](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L255)
 
 Amount spent in the current rolling hour
 
@@ -78,7 +78,7 @@ Amount spent in the current rolling hour
 
 > **spentToday**: `string`
 
-Defined in: [types/index.ts:244](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L244)
+Defined in: [types/index.ts:257](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L257)
 
 Amount spent in the current rolling day
 
@@ -88,7 +88,7 @@ Amount spent in the current rolling day
 
 > **txsThisHour**: `number`
 
-Defined in: [types/index.ts:246](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L246)
+Defined in: [types/index.ts:259](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L259)
 
 Transaction count in the current rolling hour
 
@@ -98,7 +98,7 @@ Transaction count in the current rolling hour
 
 > **configured**: `boolean`
 
-Defined in: [types/index.ts:256](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L256)
+Defined in: [types/index.ts:269](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L269)
 
 Whether `RateLimiter.set_limits` has ever been called for this agent
 (mirrors the contract's internal `has_limit` check). When `false`,
@@ -114,7 +114,7 @@ an agent can be `configured: true, active: false` (killed).
 
 > **active**: `boolean`
 
-Defined in: [types/index.ts:264](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L264)
+Defined in: [types/index.ts:277](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L277)
 
 Mirrors the contract's `RateLimit.active` flag (set by `kill_agent`).
 Note this does **not** by itself change what `RateLimiter.check`
@@ -128,7 +128,7 @@ blocking signal on its own.
 
 > **hourWindowStartLedger**: `number`
 
-Defined in: [types/index.ts:266](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L266)
+Defined in: [types/index.ts:279](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L279)
 
 Ledger sequence at which the current hourly window started.
 
@@ -138,6 +138,6 @@ Ledger sequence at which the current hourly window started.
 
 > **dayWindowStartLedger**: `number`
 
-Defined in: [types/index.ts:268](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L268)
+Defined in: [types/index.ts:281](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L281)
 
 Ledger sequence at which the current daily window started.

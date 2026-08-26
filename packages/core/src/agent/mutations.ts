@@ -18,7 +18,7 @@ import {
   u32Val,
   u64Val,
 } from './encoding.js';
-import { asBigInt } from './decoding.js';
+import { expectBigInt } from '../decode.js';
 import type { InvokeFn } from './invocation.js';
 
 /** Register a wallet in the configured AgentWalletFactory contract. */
@@ -33,7 +33,7 @@ export async function createAgentWallet(
     addressVal(address),
     xdr.ScVal.scvString(name),
   ]);
-  return asBigInt(result.value);
+  return expectBigInt(result.value, 'create_agent result');
 }
 
 /** Open a payment channel. Deposits tokens and sets a per-period spend limit. */
@@ -53,7 +53,7 @@ export async function openChannel(
     i128Val(params.limitPerPeriod),
     enumVal(spendPeriodVariant(params.period)),
   ]);
-  return asBigInt(result.value);
+  return expectBigInt(result.value, 'open_channel result');
 }
 
 /** Close a payment channel and return its remaining token balance. */
@@ -146,7 +146,7 @@ export async function requestWork(
     u32Val(deadline),
     params.arbiter ? addressVal(params.arbiter) : xdr.ScVal.scvVoid(),
   ]);
-  return asBigInt(result.value);
+  return expectBigInt(result.value, 'create_job result');
 }
 
 /** Accept an open escrow job as a worker agent. */

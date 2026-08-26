@@ -8,7 +8,7 @@
 
 > **verifyBidAttestation**(`bids`, `result`, `attestation`, `trustedKeys`, `options?`): [`BidAttestationVerification`](../type-aliases/BidAttestationVerification.md)
 
-Defined in: [math/attestation.ts:278](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/math/attestation.ts#L278)
+Defined in: [math/attestation.ts:278](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L278)
 
 Independently confirm that a scoring service didn't cheat.
 

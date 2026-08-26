@@ -8,7 +8,7 @@
 
 > **assertDeployed**(`network`, `contracts`): `void`
 
-Defined in: [contracts.ts:192](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/contracts.ts#L192)
+Defined in: [contracts.ts:192](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L192)
 
 Throw unless every contract address is a real deployed contract ID.
 

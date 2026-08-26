@@ -6,7 +6,7 @@
 
 # Interface: AgentInfo
 
-Defined in: [types/index.ts:100](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L100)
+Defined in: [types/index.ts:113](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L113)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:100](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **id**: `bigint`
 
-Defined in: [types/index.ts:101](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L101)
+Defined in: [types/index.ts:114](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L114)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:101](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **address**: `string`
 
-Defined in: [types/index.ts:102](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L102)
+Defined in: [types/index.ts:115](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L115)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:102](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **name**: `string`
 
-Defined in: [types/index.ts:103](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L103)
+Defined in: [types/index.ts:116](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L116)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:103](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **owner**: `string`
 
-Defined in: [types/index.ts:104](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L104)
+Defined in: [types/index.ts:117](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L117)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types/index.ts:104](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **active**: `boolean`
 
-Defined in: [types/index.ts:105](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L105)
+Defined in: [types/index.ts:118](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L118)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types/index.ts:105](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **createdAt**: `number`
 
-Defined in: [types/index.ts:106](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L106)
+Defined in: [types/index.ts:119](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L119)
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: [types/index.ts:106](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **totalOps**: `bigint`
 
-Defined in: [types/index.ts:107](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L107)
+Defined in: [types/index.ts:120](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L120)

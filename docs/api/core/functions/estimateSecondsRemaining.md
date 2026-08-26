@@ -8,7 +8,7 @@
 
 > **estimateSecondsRemaining**(`ledgersRemaining`, `avgLedgerCloseSeconds`): `number`
 
-Defined in: [ledgerTime.ts:86](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L86)
+Defined in: [ledgerTime.ts:86](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L86)
 
 Convert a ledger count into an estimated number of wall-clock seconds
 using an already-derived average close time. Purely `ledgers *

@@ -6,7 +6,7 @@
 
 # Class: KeypairSigner
 
-Defined in: [signer.ts:138](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L138)
+Defined in: [signer.ts:138](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L138)
 
 The original behaviour, kept for backward compatibility: an in-memory
 `Keypair`.
@@ -30,7 +30,7 @@ follows enumerable properties.
 
 > **new KeypairSigner**(`keypair`): `KeypairSigner`
 
-Defined in: [signer.ts:141](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L141)
+Defined in: [signer.ts:141](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L141)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [signer.ts:141](https://github.com/Nanle-code/Stellar-agentic/blob/8
 
 > `static` **fromSecret**(`secretKey`): `KeypairSigner`
 
-Defined in: [signer.ts:149](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L149)
+Defined in: [signer.ts:149](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L149)
 
 Build from a `S...` secret key string.
 
@@ -68,7 +68,7 @@ Build from a `S...` secret key string.
 
 > `static` **random**(): `KeypairSigner`
 
-Defined in: [signer.ts:154](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L154)
+Defined in: [signer.ts:154](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L154)
 
 Generate a fresh random keypair.
 
@@ -82,7 +82,7 @@ Generate a fresh random keypair.
 
 > **getPublicKey**(): `Promise`\<`string`\>
 
-Defined in: [signer.ts:158](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L158)
+Defined in: [signer.ts:158](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L158)
 
 The Stellar public address (`G...`) this signer signs for.
 
@@ -104,7 +104,7 @@ returns just the address.
 
 > **publicKey**(): `string`
 
-Defined in: [signer.ts:163](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L163)
+Defined in: [signer.ts:163](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L163)
 
 Synchronous accessor — available because the key is local.
 
@@ -118,7 +118,7 @@ Synchronous accessor — available because the key is local.
 
 > **exportSecret**(): `string`
 
-Defined in: [signer.ts:174](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L174)
+Defined in: [signer.ts:174](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L174)
 
 Reveal the raw secret.
 
@@ -136,7 +136,7 @@ that happens by reading a property.
 
 > **signTransaction**(`xdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:178](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L178)
+Defined in: [signer.ts:178](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L178)
 
 Sign a transaction envelope.
 
@@ -168,7 +168,7 @@ base64 **signed** transaction envelope XDR
 
 > **signAuthEntry**(`authEntryXdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:189](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L189)
+Defined in: [signer.ts:189](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L189)
 
 Sign a Soroban authorization entry.
 

@@ -135,6 +135,43 @@ jobs:
       - name: Build, lint, typecheck, and test
         run: pnpm turbo run build lint typecheck test ${TURBO_FILTERS}
 
+  # ── Generated contract types ──────────────────────────────────────────────
+  #
+  # packages/core/src/generated/contract-types.ts and
+  # python/src/stellaragent/generated/contract_types.py are generated from
+  # contracts/specs/*.json (see scripts/generate-contract-types.ts and #371).
+  # This job needs no Rust toolchain — it only reads the committed spec
+  # JSON — so it is the fast half of the CI gate: the `contracts` job's
+  # `generate-specs.sh --check` catches a spec gone stale against the built
+  # WASM, and this catches the generated SDK types gone stale against the
+  # spec. Either one failing means a contract struct's shape changed and the
+  # SDK has not caught up yet.
+  contract-types:
+    name: Generated contract types
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        # Version is taken from the "packageManager" field in package.json.
+        # Passing "version" here as well makes the action abort with
+        # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generated TS/Python contract types are up to date
+        run: pnpm contract-types:check
+
   # ── Public API surface + generated reference ─────────────────────────────
   #
   # Two independent things, both derived from the same TSDoc comments:

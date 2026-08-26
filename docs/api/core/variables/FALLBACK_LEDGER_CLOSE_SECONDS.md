@@ -8,7 +8,7 @@
 
 > `const` **FALLBACK\_LEDGER\_CLOSE\_SECONDS**: `5` = `5`
 
-Defined in: [ledgerTime.ts:37](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L37)
+Defined in: [ledgerTime.ts:37](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L37)
 
 Fallback average ledger close time, in seconds, used only when fewer than
 two samples are available to derive a real observed average from (e.g. a

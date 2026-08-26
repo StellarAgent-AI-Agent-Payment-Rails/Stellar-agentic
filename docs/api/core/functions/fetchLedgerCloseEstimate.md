@@ -8,7 +8,7 @@
 
 > **fetchLedgerCloseEstimate**(`horizonUrl`, `sampleSize?`): `Promise`\<[`LedgerCloseEstimate`](../interfaces/LedgerCloseEstimate.md)\>
 
-Defined in: [ledgerTime.ts:126](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L126)
+Defined in: [ledgerTime.ts:126](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L126)
 
 Fetch the most recent `sampleSize` ledgers from Horizon and derive both
 the current ledger sequence and an observed average close time from them

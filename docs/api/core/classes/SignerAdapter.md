@@ -6,7 +6,7 @@
 
 # Class: SignerAdapter
 
-Defined in: [signer.ts:420](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L420)
+Defined in: [signer.ts:420](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L420)
 
 Somewhere that can sign on behalf of one Stellar account.
 
@@ -24,7 +24,7 @@ and some signed bytes.
 
 > **new SignerAdapter**(`wallet`): `SignerAdapter`
 
-Defined in: [signer.ts:423](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L423)
+Defined in: [signer.ts:423](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L423)
 
 #### Parameters
 
@@ -42,7 +42,7 @@ Defined in: [signer.ts:423](https://github.com/Nanle-code/Stellar-agentic/blob/8
 
 > **getPublicKey**(): `Promise`\<`string`\>
 
-Defined in: [signer.ts:427](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L427)
+Defined in: [signer.ts:427](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L427)
 
 The Stellar public address (`G...`) this signer signs for.
 
@@ -64,7 +64,7 @@ returns just the address.
 
 > **signTransaction**(`xdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:436](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L436)
+Defined in: [signer.ts:436](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L436)
 
 Sign a transaction envelope.
 
@@ -96,7 +96,7 @@ base64 **signed** transaction envelope XDR
 
 > **signAuthEntry**(`authEntryXdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:443](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L443)
+Defined in: [signer.ts:443](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L443)
 
 Sign a Soroban authorization entry.
 

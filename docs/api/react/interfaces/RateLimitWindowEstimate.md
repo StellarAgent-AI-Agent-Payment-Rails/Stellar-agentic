@@ -6,7 +6,7 @@
 
 # Interface: RateLimitWindowEstimate
 
-Defined in: [hooks/useRateLimitStatus.ts:30](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useRateLimitStatus.ts#L30)
+Defined in: [hooks/useRateLimitStatus.ts:30](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L30)
 
 A ledger-count window, plus a wall-clock estimate derived from recently observed ledger close times.
 
@@ -16,7 +16,7 @@ A ledger-count window, plus a wall-clock estimate derived from recently observed
 
 > **ledgersRemaining**: `number`
 
-Defined in: [hooks/useRateLimitStatus.ts:32](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useRateLimitStatus.ts#L32)
+Defined in: [hooks/useRateLimitStatus.ts:32](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L32)
 
 Ledgers remaining until this window resets (0 once it has).
 
@@ -26,7 +26,7 @@ Ledgers remaining until this window resets (0 once it has).
 
 > **estimatedSecondsRemaining**: `number`
 
-Defined in: [hooks/useRateLimitStatus.ts:39](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useRateLimitStatus.ts#L39)
+Defined in: [hooks/useRateLimitStatus.ts:39](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L39)
 
 **Estimated** wall-clock seconds remaining — `ledgersRemaining *`
 an average ledger close time measured from recent Horizon ledgers, not

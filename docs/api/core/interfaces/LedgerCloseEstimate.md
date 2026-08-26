@@ -6,7 +6,7 @@
 
 # Interface: LedgerCloseEstimate
 
-Defined in: [ledgerTime.ts:105](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L105)
+Defined in: [ledgerTime.ts:105](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L105)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [ledgerTime.ts:105](https://github.com/Nanle-code/Stellar-agentic/bl
 
 > **currentLedger**: `number`
 
-Defined in: [ledgerTime.ts:107](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L107)
+Defined in: [ledgerTime.ts:107](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L107)
 
 The highest ledger sequence among the fetched samples — i.e. the current tip.
 
@@ -24,7 +24,7 @@ The highest ledger sequence among the fetched samples — i.e. the current tip.
 
 > **avgLedgerCloseSeconds**: `number`
 
-Defined in: [ledgerTime.ts:109](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L109)
+Defined in: [ledgerTime.ts:109](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L109)
 
 Observed (or, absent enough samples, fallback) average seconds per ledger.
 
@@ -34,7 +34,7 @@ Observed (or, absent enough samples, fallback) average seconds per ledger.
 
 > **observed**: `boolean`
 
-Defined in: [ledgerTime.ts:117](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/ledgerTime.ts#L117)
+Defined in: [ledgerTime.ts:117](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/ledgerTime.ts#L117)
 
 `true` when `avgLedgerCloseSeconds` came from real observed ledger
 closes; `false` when there weren't enough samples and the

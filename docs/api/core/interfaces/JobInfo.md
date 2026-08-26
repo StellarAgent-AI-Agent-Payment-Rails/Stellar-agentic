@@ -6,7 +6,7 @@
 
 # Interface: JobInfo
 
-Defined in: [types/index.ts:216](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L216)
+Defined in: [types/index.ts:229](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L229)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:216](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **id**: `bigint`
 
-Defined in: [types/index.ts:217](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L217)
+Defined in: [types/index.ts:230](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L230)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:217](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **requester**: `string`
 
-Defined in: [types/index.ts:218](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L218)
+Defined in: [types/index.ts:231](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L231)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:218](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **worker**: `string` \| `null`
 
-Defined in: [types/index.ts:219](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L219)
+Defined in: [types/index.ts:232](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L232)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:219](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **arbiter**: `string` \| `null`
 
-Defined in: [types/index.ts:220](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L220)
+Defined in: [types/index.ts:233](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L233)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types/index.ts:220](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **token**: `string`
 
-Defined in: [types/index.ts:221](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L221)
+Defined in: [types/index.ts:234](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L234)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types/index.ts:221](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **amount**: `bigint`
 
-Defined in: [types/index.ts:222](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L222)
+Defined in: [types/index.ts:235](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L235)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [types/index.ts:222](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **taskDescription**: `string`
 
-Defined in: [types/index.ts:223](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L223)
+Defined in: [types/index.ts:236](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L236)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [types/index.ts:223](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **result**: `string` \| `null`
 
-Defined in: [types/index.ts:224](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L224)
+Defined in: [types/index.ts:237](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L237)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [types/index.ts:224](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **deadlineLedger**: `number`
 
-Defined in: [types/index.ts:225](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L225)
+Defined in: [types/index.ts:238](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L238)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [types/index.ts:225](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **status**: [`JobStatus`](../type-aliases/JobStatus.md)
 
-Defined in: [types/index.ts:226](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L226)
+Defined in: [types/index.ts:239](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L239)
 
 ***
 
@@ -94,4 +94,4 @@ Defined in: [types/index.ts:226](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **createdAt**: `number`
 
-Defined in: [types/index.ts:227](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L227)
+Defined in: [types/index.ts:240](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L240)

@@ -6,7 +6,7 @@
 
 # Interface: StellarAgentConfig
 
-Defined in: [types/index.ts:42](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L42)
+Defined in: [types/index.ts:42](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L42)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:42](https://github.com/Nanle-code/Stellar-agentic/bl
 
 > **network**: [`Network`](../type-aliases/Network.md)
 
-Defined in: [types/index.ts:44](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L44)
+Defined in: [types/index.ts:44](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L44)
 
 Stellar network to connect to
 
@@ -24,7 +24,7 @@ Stellar network to connect to
 
 > `optional` **signer?**: `object`
 
-Defined in: [types/index.ts:56](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L56)
+Defined in: [types/index.ts:56](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L56)
 
 Where signing happens.
 
@@ -94,7 +94,7 @@ imports; see `signer.ts` for the interface and its implementations.
 
 > `optional` **secretKey?**: `string`
 
-Defined in: [types/index.ts:71](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L71)
+Defined in: [types/index.ts:71](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L71)
 
 Private key for the agent wallet (keep secret!).
 
@@ -108,7 +108,7 @@ with `signer`.
 
 > `optional` **spendLimit?**: [`SpendLimit`](SpendLimit.md)
 
-Defined in: [types/index.ts:73](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L73)
+Defined in: [types/index.ts:73](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L73)
 
 Spend limit enforced on-chain
 
@@ -118,7 +118,7 @@ Spend limit enforced on-chain
 
 > `optional` **contracts?**: `Partial`\<[`ContractAddresses`](ContractAddresses.md)\>
 
-Defined in: [types/index.ts:79](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L79)
+Defined in: [types/index.ts:79](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L79)
 
 Contract addresses. Anything omitted falls back to the
 `STELLARAGENT_<NETWORK>_<CONTRACT>` / `STELLARAGENT_<CONTRACT>`
@@ -130,7 +130,7 @@ environment variables, then to the network's unconfigured sentinel.
 
 > `optional` **assetContracts?**: `Record`\<`string`, `string`\>
 
-Defined in: [types/index.ts:84](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L84)
+Defined in: [types/index.ts:84](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L84)
 
 Token contract IDs keyed by friendly asset code (for example `USDC`).
 `XLM` resolves automatically, and a `C...` ID may be passed directly.
@@ -141,7 +141,7 @@ Token contract IDs keyed by friendly asset code (for example `USDC`).
 
 > `optional` **allowUnconfiguredContracts?**: `boolean`
 
-Defined in: [types/index.ts:97](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/types/index.ts#L97)
+Defined in: [types/index.ts:97](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L97)
 
 Skip the deployed-contracts check in `StellarAgent.create()`.
 
@@ -157,3 +157,40 @@ will still fail.
 ```ts
 false
 ```
+
+***
+
+### telemetry?
+
+> `optional` **telemetry?**: `object`
+
+Defined in: [types/index.ts:102](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L102)
+
+OpenTelemetry tracing, metrics, and logging. When omitted or
+`{ enabled: false }`, telemetry is a no-op with zero overhead.
+
+#### enabled?
+
+> `optional` **enabled?**: `boolean`
+
+#### serviceName?
+
+> `optional` **serviceName?**: `string`
+
+#### otlpEndpoint?
+
+> `optional` **otlpEndpoint?**: `string`
+
+#### logLevel?
+
+> `optional` **logLevel?**: `"debug"` \| `"info"` \| `"warn"` \| `"error"`
+
+#### tracer?
+
+> `optional` **tracer?**: [`Tracer`](Tracer.md)
+
+Test-only injection — not for production use.
+
+#### metrics?
+
+> `optional` **metrics?**: [`Metrics`](Metrics.md)

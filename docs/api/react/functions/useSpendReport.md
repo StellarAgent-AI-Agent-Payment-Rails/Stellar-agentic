@@ -8,7 +8,7 @@
 
 > **useSpendReport**(`options?`): [`UseSpendReportResult`](../interfaces/UseSpendReportResult.md)
 
-Defined in: [hooks/useSpendReport.ts:50](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/react/src/hooks/useSpendReport.ts#L50)
+Defined in: [hooks/useSpendReport.ts:50](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useSpendReport.ts#L50)
 
 Polls `PaymentChannel.remaining_this_period` (and friends) for the
 agent's active channel, with any in-flight `usePayForAPI()` payments

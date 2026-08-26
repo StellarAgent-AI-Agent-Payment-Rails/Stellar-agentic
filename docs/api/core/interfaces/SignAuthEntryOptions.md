@@ -6,7 +6,7 @@
 
 # Interface: SignAuthEntryOptions
 
-Defined in: [signer.ts:68](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L68)
+Defined in: [signer.ts:68](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L68)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [signer.ts:68](https://github.com/Nanle-code/Stellar-agentic/blob/89
 
 > **networkPassphrase**: `string`
 
-Defined in: [signer.ts:70](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L70)
+Defined in: [signer.ts:70](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L70)
 
 Network passphrase the signature must be bound to.
 
@@ -24,6 +24,6 @@ Network passphrase the signature must be bound to.
 
 > **validUntilLedgerSeq**: `number`
 
-Defined in: [signer.ts:72](https://github.com/Nanle-code/Stellar-agentic/blob/89bd9706be3624688bb5c198505399710140927e/packages/core/src/signer.ts#L72)
+Defined in: [signer.ts:72](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L72)
 
 Ledger sequence after which the authorization is no longer valid.

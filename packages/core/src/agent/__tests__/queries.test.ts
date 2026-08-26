@@ -64,6 +64,7 @@ describe('getSpendReport', () => {
             agent: 'GAGENT', owner: 'GOWNER', token: 'CTOKEN', limit_per_period: 50n,
             period: ['Hourly'], spent_this_period: 10n, period_start_ledger: 700,
             total_spent: 20n, active: true,
+            allocated: 0n, collateral: 100n, dispute_ledgers: 17280, voucher_signer: null,
           },
           tx: { hash: '', success: true },
         };
@@ -85,6 +86,7 @@ describe('getChannel', () => {
       agent: 'GAGENT', owner: 'GOWNER', token: 'CTOKEN', limit_per_period: 50n,
       period: ['Daily'], spent_this_period: 0n, period_start_ledger: 1,
       total_spent: 0n, active: true,
+      allocated: 0n, collateral: 100n, dispute_ledgers: 17280, voucher_signer: null,
     });
     const info = await getChannel(invoke, 'CCHANNEL', 3n);
     expect(info).toMatchObject({ id: 3n, period: 'daily' });
@@ -96,7 +98,7 @@ describe('getJob', () => {
     const invoke = invokeReturning({
       requester: 'GREQ', worker: null, arbiter: null, token: 'CTOKEN', amount: 1n,
       task_description: Buffer.from('t'), result: null, deadline_ledger: 1,
-      status: ['Open'], created_at: 1,
+      status: ['Open'], created_at: 1, dispute_deadline_ledger: null,
     });
     const info = await getJob(invoke, 'CESCROW', 4n);
     expect(info).toMatchObject({ id: 4n, status: 'open', result: null });
@@ -119,7 +121,8 @@ describe('getRateLimitStatus', () => {
 
   it('maps a configured raw record onto RateLimitStatus', async () => {
     const invoke = invokeReturning({
-      active: true, max_per_tx: 1n, max_per_hour: 2n, max_per_day: 3n, max_txs_per_hour: 1,
+      active: true, agent: TEST_PUBLIC, owner: TEST_PUBLIC,
+      max_per_tx: 1n, max_per_hour: 2n, max_per_day: 3n, max_txs_per_hour: 1,
       hourly_spend: 0n, daily_spend: 0n, hourly_tx_count: 0, hour_window_start: 0, day_window_start: 0,
     });
     const status = await getRateLimitStatus(invoke, 'CLIMITER', TEST_PUBLIC);
