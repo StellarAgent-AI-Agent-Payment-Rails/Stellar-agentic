@@ -175,6 +175,39 @@ jobs:
       - name: Generated TS/Python contract types are up to date
         run: pnpm contract-types:check
 
+  # ── Public API surface + generated reference ─────────────────────────────
+  #
+  # Two independent things, both derived from the same TSDoc comments:
+  #   - packages/*/api-report.d.ts, a small committed report of the public
+  #     class/type surface (private members stripped) — a diff here in review
+  #     is a public-API change, by construction.
+  #   - docs/api/, the full TypeDoc reference as markdown.
+  # Both are generated files; this job fails if either is stale relative to
+  # the source, which is what makes `pnpm docs:api` a real commitment rather
+  # than a suggestion someone forgets to run.
+  api-docs:
+    name: API surface + docs are up to date
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check public API report and generated docs
+        run: pnpm docs:api:check
+
   # ── Rust SDK ──────────────────────────────────────────────────────────────
   #
   # Separate from the `contracts` job on purpose. That one builds for
