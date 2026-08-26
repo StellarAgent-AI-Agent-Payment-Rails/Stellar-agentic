@@ -8,7 +8,7 @@
 
 > **isWithinSpendLimit**(`spentThisPeriod`, `limitPerPeriod`, `proposedAmount`): `boolean`
 
-Defined in: [math/bid.ts:249](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L249)
+Defined in: [math/bid.ts:249](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L249)
 
 Determine whether a proposed payment is within an agent's spend limit.
 

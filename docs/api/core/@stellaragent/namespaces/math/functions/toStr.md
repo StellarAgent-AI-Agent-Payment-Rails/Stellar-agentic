@@ -8,7 +8,7 @@
 
 > **toStr**(`value`, `places?`): `string`
 
-Defined in: [math/fixed-point.ts:168](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L168)
+Defined in: [math/fixed-point.ts:168](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L168)
 
 Stringify a BigNumber result back to a plain decimal string for storage or
 wire transmission.  Uses enough precision to avoid any scientific notation.

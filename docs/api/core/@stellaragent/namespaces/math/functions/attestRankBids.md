@@ -8,7 +8,7 @@
 
 > **attestRankBids**(`bids`, `weights?`, `scorerKeypair`, `options`): [`AttestedRanking`](../interfaces/AttestedRanking.md)
 
-Defined in: [math/attestation.ts:216](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L216)
+Defined in: [math/attestation.ts:216](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L216)
 
 Run `rankBids` and sign an attestation over the (bids, weights, result)
 triple with `scorerKeypair`.

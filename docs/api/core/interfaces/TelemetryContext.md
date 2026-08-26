@@ -6,7 +6,7 @@
 
 # Interface: TelemetryContext
 
-Defined in: [telemetry/index.ts:24](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L24)
+Defined in: [telemetry/index.ts:24](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L24)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [telemetry/index.ts:24](https://github.com/Nanle-code/Stellar-agenti
 
 > **enabled**: `boolean`
 
-Defined in: [telemetry/index.ts:25](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L25)
+Defined in: [telemetry/index.ts:25](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L25)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [telemetry/index.ts:25](https://github.com/Nanle-code/Stellar-agenti
 
 > **tracer**: [`Tracer`](Tracer.md)
 
-Defined in: [telemetry/index.ts:26](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L26)
+Defined in: [telemetry/index.ts:26](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L26)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [telemetry/index.ts:26](https://github.com/Nanle-code/Stellar-agenti
 
 > **metrics**: [`Metrics`](Metrics.md)
 
-Defined in: [telemetry/index.ts:27](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L27)
+Defined in: [telemetry/index.ts:27](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L27)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [telemetry/index.ts:27](https://github.com/Nanle-code/Stellar-agenti
 
 > **logger**: [`Logger`](Logger.md)
 
-Defined in: [telemetry/index.ts:28](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L28)
+Defined in: [telemetry/index.ts:28](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L28)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [telemetry/index.ts:28](https://github.com/Nanle-code/Stellar-agenti
 
 > `optional` **network?**: [`Network`](../type-aliases/Network.md)
 
-Defined in: [telemetry/index.ts:29](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L29)
+Defined in: [telemetry/index.ts:29](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L29)
 
 ***
 
@@ -54,4 +54,4 @@ Defined in: [telemetry/index.ts:29](https://github.com/Nanle-code/Stellar-agenti
 
 > `optional` **agentAddress?**: `string`
 
-Defined in: [telemetry/index.ts:30](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L30)
+Defined in: [telemetry/index.ts:30](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L30)

@@ -6,7 +6,7 @@
 
 # Interface: BidAttestation
 
-Defined in: [math/attestation.ts:63](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L63)
+Defined in: [math/attestation.ts:63](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L63)
 
 A signed claim that `rankBids(bids, weights)` produced `result` at
 `issuedAt`, under the key identified by `keyEpoch` / `scorerPublicKey`.
@@ -17,7 +17,7 @@ A signed claim that `rankBids(bids, weights)` produced `result` at
 
 > **version**: `1`
 
-Defined in: [math/attestation.ts:65](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L65)
+Defined in: [math/attestation.ts:65](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L65)
 
 Attestation schema version.
 
@@ -27,7 +27,7 @@ Attestation schema version.
 
 > **keyEpoch**: `number`
 
-Defined in: [math/attestation.ts:67](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L67)
+Defined in: [math/attestation.ts:67](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L67)
 
 Identifies which scorer keypair signed this — see key-rotation notes above.
 
@@ -37,7 +37,7 @@ Identifies which scorer keypair signed this — see key-rotation notes above.
 
 > **scorerPublicKey**: `string`
 
-Defined in: [math/attestation.ts:69](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L69)
+Defined in: [math/attestation.ts:69](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L69)
 
 The scorer's Stellar public address (`G...`) for this epoch.
 
@@ -47,7 +47,7 @@ The scorer's Stellar public address (`G...`) for this epoch.
 
 > **weights**: [`BidWeights`](BidWeights.md)
 
-Defined in: [math/attestation.ts:71](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L71)
+Defined in: [math/attestation.ts:71](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L71)
 
 The weights the scorer ran `rankBids` with.
 
@@ -57,7 +57,7 @@ The weights the scorer ran `rankBids` with.
 
 > **issuedAt**: `number`
 
-Defined in: [math/attestation.ts:73](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L73)
+Defined in: [math/attestation.ts:73](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L73)
 
 Unix seconds when this attestation was produced.
 
@@ -67,7 +67,7 @@ Unix seconds when this attestation was produced.
 
 > **expiresAt**: `number`
 
-Defined in: [math/attestation.ts:75](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L75)
+Defined in: [math/attestation.ts:75](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L75)
 
 Unix seconds after which this attestation must no longer be trusted.
 
@@ -77,7 +77,7 @@ Unix seconds after which this attestation must no longer be trusted.
 
 > **digest**: `string`
 
-Defined in: [math/attestation.ts:77](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L77)
+Defined in: [math/attestation.ts:77](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L77)
 
 Hex sha256 over the canonicalized (bids, weights, result) triple.
 
@@ -87,6 +87,6 @@ Hex sha256 over the canonicalized (bids, weights, result) triple.
 
 > **signature**: `string`
 
-Defined in: [math/attestation.ts:79](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L79)
+Defined in: [math/attestation.ts:79](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L79)
 
 Base64 ed25519 signature, produced by the scorer keypair, over the rest of this object.

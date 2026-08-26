@@ -8,6 +8,6 @@
 
 > `const` **CONTRACT\_KEYS**: readonly \[`"agentWalletFactory"`, `"paymentChannel"`, `"escrow"`, `"rateLimiter"`, `"circuitBreaker"`\]
 
-Defined in: [contracts.ts:43](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L43)
+Defined in: [contracts.ts:43](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L43)
 
 Every key of `ContractAddresses`, in deployment order.

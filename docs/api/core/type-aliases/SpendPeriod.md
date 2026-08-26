@@ -8,4 +8,4 @@
 
 > **SpendPeriod** = `"per_ledger"` \| `"hourly"` \| `"daily"`
 
-Defined in: [types/index.ts:31](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L31)
+Defined in: [types/index.ts:31](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L31)

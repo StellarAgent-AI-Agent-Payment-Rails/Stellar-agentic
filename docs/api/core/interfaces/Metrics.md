@@ -6,7 +6,7 @@
 
 # Interface: Metrics
 
-Defined in: [telemetry/metrics.ts:13](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L13)
+Defined in: [telemetry/metrics.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L13)
 
 ## Methods
 
@@ -14,7 +14,7 @@ Defined in: [telemetry/metrics.ts:13](https://github.com/Nanle-code/Stellar-agen
 
 > **recordHistogram**(`name`, `value`, `attributes?`): `void`
 
-Defined in: [telemetry/metrics.ts:14](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L14)
+Defined in: [telemetry/metrics.ts:14](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L14)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [telemetry/metrics.ts:14](https://github.com/Nanle-code/Stellar-agen
 
 > **incrementCounter**(`name`, `delta?`, `attributes?`): `void`
 
-Defined in: [telemetry/metrics.ts:15](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L15)
+Defined in: [telemetry/metrics.ts:15](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L15)
 
 #### Parameters
 

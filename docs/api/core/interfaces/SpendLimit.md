@@ -6,7 +6,7 @@
 
 # Interface: SpendLimit
 
-Defined in: [types/index.ts:33](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L33)
+Defined in: [types/index.ts:33](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L33)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:33](https://github.com/Nanle-code/Stellar-agentic/bl
 
 > **amount**: `string`
 
-Defined in: [types/index.ts:35](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L35)
+Defined in: [types/index.ts:35](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L35)
 
 Maximum amount per period
 
@@ -24,7 +24,7 @@ Maximum amount per period
 
 > **asset**: `string`
 
-Defined in: [types/index.ts:37](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L37)
+Defined in: [types/index.ts:37](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L37)
 
 Asset to limit (e.g. 'USDC')
 
@@ -34,6 +34,6 @@ Asset to limit (e.g. 'USDC')
 
 > **period**: [`SpendPeriod`](../type-aliases/SpendPeriod.md)
 
-Defined in: [types/index.ts:39](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L39)
+Defined in: [types/index.ts:39](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L39)
 
 How often the limit resets

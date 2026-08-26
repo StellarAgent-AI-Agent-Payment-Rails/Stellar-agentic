@@ -6,7 +6,7 @@
 
 # Interface: ScoredBid
 
-Defined in: [math/bid.ts:88](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L88)
+Defined in: [math/bid.ts:88](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L88)
 
 A scored bid ready for ranking
 
@@ -16,7 +16,7 @@ A scored bid ready for ranking
 
 > **agentAddress**: `string`
 
-Defined in: [math/bid.ts:89](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L89)
+Defined in: [math/bid.ts:89](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L89)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [math/bid.ts:89](https://github.com/Nanle-code/Stellar-agentic/blob/
 
 > **score**: `string`
 
-Defined in: [math/bid.ts:91](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L91)
+Defined in: [math/bid.ts:91](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L91)
 
 Final composite score 0–100, rounded down to 4 decimal places
 
@@ -34,7 +34,7 @@ Final composite score 0–100, rounded down to 4 decimal places
 
 > **breakdown**: `object`
 
-Defined in: [math/bid.ts:93](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L93)
+Defined in: [math/bid.ts:93](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L93)
 
 Individual sub-scores for transparency
 

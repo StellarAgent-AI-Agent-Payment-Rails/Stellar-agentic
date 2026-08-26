@@ -8,7 +8,7 @@
 
 > **rankBids**(`bids`, `weights?`): [`ScoredBid`](../interfaces/ScoredBid.md)[]
 
-Defined in: [math/bid.ts:192](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L192)
+Defined in: [math/bid.ts:192](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L192)
 
 Rank a set of competing agent bids deterministically.
 

@@ -8,7 +8,7 @@
 
 > **StellarAgentProvider**(`__namedParameters`): `Element`
 
-Defined in: [StellarAgentProvider.tsx:117](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L117)
+Defined in: [StellarAgentProvider.tsx:117](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L117)
 
 Owns a `StellarAgent` instance (built from `config` via
 `StellarAgent.create`, unless `agent` is supplied directly) and exposes

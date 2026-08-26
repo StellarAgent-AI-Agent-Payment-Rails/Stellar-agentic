@@ -6,7 +6,7 @@
 
 # Class: SigningError
 
-Defined in: [signer.ts:114](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L114)
+Defined in: [signer.ts:114](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L114)
 
 Thrown when a signer cannot produce a signature.
 
@@ -20,7 +20,7 @@ Thrown when a signer cannot produce a signature.
 
 > **new SigningError**(`message`, `cause?`): `SigningError`
 
-Defined in: [signer.ts:116](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L116)
+Defined in: [signer.ts:116](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L116)
 
 #### Parameters
 
@@ -46,4 +46,4 @@ Defined in: [signer.ts:116](https://github.com/Nanle-code/Stellar-agentic/blob/m
 
 > `readonly` `optional` **cause?**: `unknown`
 
-Defined in: [signer.ts:115](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L115)
+Defined in: [signer.ts:115](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L115)

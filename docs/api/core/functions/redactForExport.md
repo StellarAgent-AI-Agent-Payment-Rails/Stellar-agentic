@@ -8,7 +8,7 @@
 
 > **redactForExport**(`value`): `unknown`
 
-Defined in: [telemetry/logger.ts:54](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L54)
+Defined in: [telemetry/logger.ts:54](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L54)
 
 ## Parameters
 

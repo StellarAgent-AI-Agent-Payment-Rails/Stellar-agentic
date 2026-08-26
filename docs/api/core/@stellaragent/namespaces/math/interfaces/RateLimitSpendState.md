@@ -6,7 +6,7 @@
 
 # Interface: RateLimitSpendState
 
-Defined in: [math/predict.ts:88](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L88)
+Defined in: [math/predict.ts:88](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L88)
 
 The subset of `RateLimit` (contracts/rate_limiter/src/lib.rs) needed to predict `check`.
 
@@ -16,7 +16,7 @@ The subset of `RateLimit` (contracts/rate_limiter/src/lib.rs) needed to predict 
 
 > **configured**: `boolean`
 
-Defined in: [math/predict.ts:90](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L90)
+Defined in: [math/predict.ts:90](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L90)
 
 `has_limit(agent)` on-chain — `false` means `check()` always returns `true`.
 
@@ -26,7 +26,7 @@ Defined in: [math/predict.ts:90](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **active**: `boolean`
 
-Defined in: [math/predict.ts:92](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L92)
+Defined in: [math/predict.ts:92](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L92)
 
 `RateLimit.active` — see the module doc for why this does not gate `wouldBlock`.
 
@@ -36,7 +36,7 @@ Defined in: [math/predict.ts:92](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerTx**: `string`
 
-Defined in: [math/predict.ts:93](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L93)
+Defined in: [math/predict.ts:93](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L93)
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [math/predict.ts:93](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerHour**: `string`
 
-Defined in: [math/predict.ts:94](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L94)
+Defined in: [math/predict.ts:94](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L94)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [math/predict.ts:94](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxPerDay**: `string`
 
-Defined in: [math/predict.ts:95](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L95)
+Defined in: [math/predict.ts:95](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L95)
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: [math/predict.ts:95](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **maxTxsPerHour**: `number`
 
-Defined in: [math/predict.ts:96](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L96)
+Defined in: [math/predict.ts:96](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L96)
 
 ***
 
@@ -68,7 +68,7 @@ Defined in: [math/predict.ts:96](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **hourlySpend**: `string`
 
-Defined in: [math/predict.ts:97](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L97)
+Defined in: [math/predict.ts:97](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L97)
 
 ***
 
@@ -76,7 +76,7 @@ Defined in: [math/predict.ts:97](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **dailySpend**: `string`
 
-Defined in: [math/predict.ts:98](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L98)
+Defined in: [math/predict.ts:98](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L98)
 
 ***
 
@@ -84,7 +84,7 @@ Defined in: [math/predict.ts:98](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **hourlyTxCount**: `number`
 
-Defined in: [math/predict.ts:99](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L99)
+Defined in: [math/predict.ts:99](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L99)
 
 ***
 
@@ -92,7 +92,7 @@ Defined in: [math/predict.ts:99](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **hourWindowStartLedger**: `number`
 
-Defined in: [math/predict.ts:100](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L100)
+Defined in: [math/predict.ts:100](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L100)
 
 ***
 
@@ -100,4 +100,4 @@ Defined in: [math/predict.ts:100](https://github.com/Nanle-code/Stellar-agentic/
 
 > **dayWindowStartLedger**: `number`
 
-Defined in: [math/predict.ts:101](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L101)
+Defined in: [math/predict.ts:101](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L101)

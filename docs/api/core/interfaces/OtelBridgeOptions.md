@@ -6,7 +6,7 @@
 
 # Interface: OtelBridgeOptions
 
-Defined in: [telemetry/otel-bridge.ts:8](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L8)
+Defined in: [telemetry/otel-bridge.ts:8](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L8)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [telemetry/otel-bridge.ts:8](https://github.com/Nanle-code/Stellar-a
 
 > **serviceName**: `string`
 
-Defined in: [telemetry/otel-bridge.ts:9](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L9)
+Defined in: [telemetry/otel-bridge.ts:9](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L9)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [telemetry/otel-bridge.ts:9](https://github.com/Nanle-code/Stellar-a
 
 > **otlpEndpoint**: `string`
 
-Defined in: [telemetry/otel-bridge.ts:10](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L10)
+Defined in: [telemetry/otel-bridge.ts:10](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L10)

@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_BID\_WEIGHTS**: [`BidWeights`](../interfaces/BidWeights.md)
 
-Defined in: [math/bid.ts:80](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L80)
+Defined in: [math/bid.ts:80](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L80)
 
 Default weights — equal split across all four dimensions

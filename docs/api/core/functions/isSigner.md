@@ -8,7 +8,7 @@
 
 > **isSigner**(`value`): `value is Signer`
 
-Defined in: [signer.ts:460](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L460)
+Defined in: [signer.ts:460](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L460)
 
 Duck-typed check — `instanceof` fails across duplicated package copies.
 

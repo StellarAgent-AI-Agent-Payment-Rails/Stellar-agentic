@@ -8,7 +8,7 @@
 
 > **mul**(`a`, `b`): `BigNumber`
 
-Defined in: [math/fixed-point.ts:79](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L79)
+Defined in: [math/fixed-point.ts:79](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L79)
 
 Deterministic multiplication:  a × b
 

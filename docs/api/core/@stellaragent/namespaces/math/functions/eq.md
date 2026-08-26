@@ -8,7 +8,7 @@
 
 > **eq**(`a`, `b`): `boolean`
 
-Defined in: [math/fixed-point.ts:190](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L190)
+Defined in: [math/fixed-point.ts:190](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L190)
 
 ## Parameters
 

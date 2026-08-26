@@ -8,7 +8,7 @@
 
 > **sub**(`a`, `b`): `BigNumber`
 
-Defined in: [math/fixed-point.ts:74](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L74)
+Defined in: [math/fixed-point.ts:74](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L74)
 
 Deterministic subtraction:  a − b
 

@@ -8,7 +8,7 @@
 
 > **PublicAddress** = `string` & `object`
 
-Defined in: [circuitBreaker.ts:44](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L44)
+Defined in: [circuitBreaker.ts:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L44)
 
 Stellar account public key (`G...`). Secret keys (`S...`) are rejected.
 

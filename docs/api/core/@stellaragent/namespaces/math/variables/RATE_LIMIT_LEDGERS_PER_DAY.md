@@ -8,4 +8,4 @@
 
 > `const` **RATE\_LIMIT\_LEDGERS\_PER\_DAY**: `17280` = `17_280`
 
-Defined in: [math/predict.ts:74](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L74)
+Defined in: [math/predict.ts:74](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/predict.ts#L74)

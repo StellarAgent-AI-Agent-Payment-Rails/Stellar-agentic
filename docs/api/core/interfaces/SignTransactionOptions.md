@@ -6,7 +6,7 @@
 
 # Interface: SignTransactionOptions
 
-Defined in: [signer.ts:63](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L63)
+Defined in: [signer.ts:63](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L63)
 
 ## Properties
 
@@ -14,6 +14,6 @@ Defined in: [signer.ts:63](https://github.com/Nanle-code/Stellar-agentic/blob/ma
 
 > **networkPassphrase**: `string`
 
-Defined in: [signer.ts:65](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L65)
+Defined in: [signer.ts:65](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L65)
 
 Network passphrase the signature must be bound to.

@@ -8,7 +8,7 @@
 
 > **useRateLimitStatus**(`agentAddress`, `options?`): [`UseRateLimitStatusResult`](../type-aliases/UseRateLimitStatusResult.md)
 
-Defined in: [hooks/useRateLimitStatus.ts:175](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L175)
+Defined in: [hooks/useRateLimitStatus.ts:175](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L175)
 
 Pre-flight rate-limit + spend-limit status for `agentAddress`, polling
 `RateLimiter.get_limits` and (when `channelId` is given)

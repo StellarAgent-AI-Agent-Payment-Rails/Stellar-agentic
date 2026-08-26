@@ -8,7 +8,7 @@
 
 > **isDeployedAddress**(`address`): `boolean`
 
-Defined in: [contracts.ts:94](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L94)
+Defined in: [contracts.ts:94](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/contracts.ts#L94)
 
 Whether a string is a real, deployable Stellar contract ID.
 

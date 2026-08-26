@@ -8,5 +8,5 @@
   "excludePrivate": true,
   "excludeInternal": true,
   "sort": ["source-order"],
-  "gitRevision": "main"
+  "sourceLinkTemplate": "https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/{path}#L{line}"
 }

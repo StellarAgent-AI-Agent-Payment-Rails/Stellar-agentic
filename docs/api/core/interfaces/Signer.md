@@ -6,7 +6,7 @@
 
 # Interface: Signer
 
-Defined in: [signer.ts:82](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L82)
+Defined in: [signer.ts:82](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L82)
 
 Somewhere that can sign on behalf of one Stellar account.
 
@@ -20,7 +20,7 @@ and some signed bytes.
 
 > **getPublicKey**(): `Promise`\<`string`\>
 
-Defined in: [signer.ts:90](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L90)
+Defined in: [signer.ts:90](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L90)
 
 The Stellar public address (`G...`) this signer signs for.
 
@@ -38,7 +38,7 @@ returns just the address.
 
 > **signTransaction**(`xdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:98](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L98)
+Defined in: [signer.ts:98](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L98)
 
 Sign a transaction envelope.
 
@@ -66,7 +66,7 @@ base64 **signed** transaction envelope XDR
 
 > **signAuthEntry**(`authEntryXdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:110](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L110)
+Defined in: [signer.ts:110](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L110)
 
 Sign a Soroban authorization entry.
 

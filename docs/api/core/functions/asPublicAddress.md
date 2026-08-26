@@ -8,7 +8,7 @@
 
 > **asPublicAddress**(`value`): [`PublicAddress`](../type-aliases/PublicAddress.md)
 
-Defined in: [circuitBreaker.ts:50](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L50)
+Defined in: [circuitBreaker.ts:50](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/circuitBreaker.ts#L50)
 
 Parse and validate a Stellar public address. Rejects secret keys so a
 trusted-node list can never accidentally hold signing material.

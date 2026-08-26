@@ -6,7 +6,7 @@
 
 # Interface: StellarAgentProviderProps
 
-Defined in: [StellarAgentProvider.tsx:96](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L96)
+Defined in: [StellarAgentProvider.tsx:96](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L96)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [StellarAgentProvider.tsx:96](https://github.com/Nanle-code/Stellar-
 
 > **config**: `StellarAgentConfig`
 
-Defined in: [StellarAgentProvider.tsx:98](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L98)
+Defined in: [StellarAgentProvider.tsx:98](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L98)
 
 Same config shape accepted by `StellarAgent.create`.
 
@@ -24,7 +24,7 @@ Same config shape accepted by `StellarAgent.create`.
 
 > **children**: `ReactNode`
 
-Defined in: [StellarAgentProvider.tsx:99](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L99)
+Defined in: [StellarAgentProvider.tsx:99](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L99)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [StellarAgentProvider.tsx:99](https://github.com/Nanle-code/Stellar-
 
 > `optional` **agent?**: `StellarAgent`
 
-Defined in: [StellarAgentProvider.tsx:107](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L107)
+Defined in: [StellarAgentProvider.tsx:107](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L107)
 
 Provide an already-constructed agent (real or mocked) instead of
 having the provider call `StellarAgent.create(config)` itself. When

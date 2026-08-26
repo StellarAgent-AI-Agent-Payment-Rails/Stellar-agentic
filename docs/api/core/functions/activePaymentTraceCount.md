@@ -8,7 +8,7 @@
 
 > **activePaymentTraceCount**(): `number`
 
-Defined in: [telemetry/context.ts:49](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L49)
+Defined in: [telemetry/context.ts:49](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L49)
 
 ## Returns
 

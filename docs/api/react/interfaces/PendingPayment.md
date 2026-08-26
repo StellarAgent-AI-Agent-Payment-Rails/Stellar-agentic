@@ -6,7 +6,7 @@
 
 # Interface: PendingPayment
 
-Defined in: [StellarAgentProvider.tsx:44](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L44)
+Defined in: [StellarAgentProvider.tsx:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L44)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [StellarAgentProvider.tsx:44](https://github.com/Nanle-code/Stellar-
 
 > **id**: `string`
 
-Defined in: [StellarAgentProvider.tsx:45](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L45)
+Defined in: [StellarAgentProvider.tsx:45](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L45)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [StellarAgentProvider.tsx:45](https://github.com/Nanle-code/Stellar-
 
 > **amountStroops**: `bigint`
 
-Defined in: [StellarAgentProvider.tsx:46](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L46)
+Defined in: [StellarAgentProvider.tsx:46](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/StellarAgentProvider.tsx#L46)

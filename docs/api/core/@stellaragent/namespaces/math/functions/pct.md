@@ -8,7 +8,7 @@
 
 > **pct**(`value`, `total`, `decimalPlaces?`): `BigNumber`
 
-Defined in: [math/fixed-point.ts:101](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L101)
+Defined in: [math/fixed-point.ts:101](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L101)
 
 Percentage of `value` out of `total` (0 – 100), rounded down to
 `decimalPlaces` (default 4).  Safe for progress-bar rendering.

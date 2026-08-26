@@ -8,7 +8,7 @@
 
 > `const` **MetricNames**: `object`
 
-Defined in: [telemetry/semantic.ts:71](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L71)
+Defined in: [telemetry/semantic.ts:71](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L71)
 
 Metric names exported by the SDK and indexer.
 

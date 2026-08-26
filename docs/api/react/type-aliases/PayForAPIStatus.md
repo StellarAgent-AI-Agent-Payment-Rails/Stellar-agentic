@@ -8,4 +8,4 @@
 
 > **PayForAPIStatus** = `"idle"` \| `"pending"` \| `"success"` \| `"error"`
 
-Defined in: [hooks/usePayForAPI.ts:5](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/usePayForAPI.ts#L5)
+Defined in: [hooks/usePayForAPI.ts:5](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/hooks/usePayForAPI.ts#L5)

@@ -8,7 +8,7 @@
 
 > **fmt**(`value`, `places?`): `string`
 
-Defined in: [math/fixed-point.ts:160](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L160)
+Defined in: [math/fixed-point.ts:160](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L160)
 
 Format a decimal amount for display, rounding down to `places` decimal
 places.  Never uses `Number.toFixed` to avoid float coercion.

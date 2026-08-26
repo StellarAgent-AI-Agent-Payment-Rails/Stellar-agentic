@@ -6,7 +6,7 @@
 
 # Interface: ContractAddresses
 
-Defined in: [types/index.ts:286](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L286)
+Defined in: [types/index.ts:286](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L286)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:286](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **agentWalletFactory**: `string`
 
-Defined in: [types/index.ts:287](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L287)
+Defined in: [types/index.ts:287](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L287)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:287](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **paymentChannel**: `string`
 
-Defined in: [types/index.ts:288](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L288)
+Defined in: [types/index.ts:288](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L288)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:288](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **escrow**: `string`
 
-Defined in: [types/index.ts:289](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L289)
+Defined in: [types/index.ts:289](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L289)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:289](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **rateLimiter**: `string`
 
-Defined in: [types/index.ts:290](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L290)
+Defined in: [types/index.ts:290](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L290)
 
 ***
 
@@ -46,4 +46,4 @@ Defined in: [types/index.ts:290](https://github.com/Nanle-code/Stellar-agentic/b
 
 > **circuitBreaker**: `string`
 
-Defined in: [types/index.ts:291](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L291)
+Defined in: [types/index.ts:291](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L291)

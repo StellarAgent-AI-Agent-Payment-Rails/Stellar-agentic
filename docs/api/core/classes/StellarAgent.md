@@ -6,7 +6,7 @@
 
 # Class: StellarAgent
 
-Defined in: [agent/StellarAgent.ts:50](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L50)
+Defined in: [agent/StellarAgent.ts:50](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L50)
 
 Main SDK class for AI Agent payment operations on Stellar.
 
@@ -33,7 +33,7 @@ await agent.payForAPI({
 
 > **get** **address**(): `string`
 
-Defined in: [agent/StellarAgent.ts:195](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L195)
+Defined in: [agent/StellarAgent.ts:195](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L195)
 
 The agent's Stellar public address.
 
@@ -52,7 +52,7 @@ identically for a remote signer that never exposes its secret.
 
 > **get** **secretKey**(): `string`
 
-Defined in: [agent/StellarAgent.ts:213](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L213)
+Defined in: [agent/StellarAgent.ts:213](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L213)
 
 The agent's secret key.
 
@@ -83,7 +83,7 @@ when signing is not backed by a local keypair
 
 > **get** **holdsSecretKey**(): `boolean`
 
-Defined in: [agent/StellarAgent.ts:230](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L230)
+Defined in: [agent/StellarAgent.ts:230](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L230)
 
 Whether this agent holds key material in-process.
 
@@ -100,7 +100,7 @@ production deployment is not running with an in-memory secret.
 
 > `static` **create**(`config`): `Promise`\<`StellarAgent`\>
 
-Defined in: [agent/StellarAgent.ts:117](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L117)
+Defined in: [agent/StellarAgent.ts:117](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L117)
 
 Create a new StellarAgent instance.
 
@@ -149,7 +149,7 @@ when contracts are not deployed
 
 > `static` **fromSecret**(`secretKey`, `network?`, `options?`): `Promise`\<`StellarAgent`\>
 
-Defined in: [agent/StellarAgent.ts:179](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L179)
+Defined in: [agent/StellarAgent.ts:179](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L179)
 
 Restore an agent from an existing secret key.
 
@@ -181,7 +181,7 @@ agent could only ever target contracts resolved from the environment.
 
 > **createAgentWallet**(`name?`): `Promise`\<`bigint`\>
 
-Defined in: [agent/StellarAgent.ts:235](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L235)
+Defined in: [agent/StellarAgent.ts:235](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L235)
 
 Register this wallet in the configured AgentWalletFactory contract.
 
@@ -201,7 +201,7 @@ Register this wallet in the configured AgentWalletFactory contract.
 
 > **getAgent**(`agentId`): `Promise`\<[`AgentInfo`](../interfaces/AgentInfo.md)\>
 
-Defined in: [agent/StellarAgent.ts:245](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L245)
+Defined in: [agent/StellarAgent.ts:245](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L245)
 
 Read and decode an agent registered in AgentWalletFactory.
 
@@ -221,7 +221,7 @@ Read and decode an agent registered in AgentWalletFactory.
 
 > **openChannel**(`params`): `Promise`\<`bigint`\>
 
-Defined in: [agent/StellarAgent.ts:261](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L261)
+Defined in: [agent/StellarAgent.ts:261](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L261)
 
 Open a payment channel for this agent.
 Deposits tokens and sets a per-period spend limit.
@@ -244,7 +244,7 @@ The channel ID
 
 > **closeChannel**(`channelId?`): `Promise`\<[`TxResult`](../interfaces/TxResult.md)\>
 
-Defined in: [agent/StellarAgent.ts:275](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L275)
+Defined in: [agent/StellarAgent.ts:275](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L275)
 
 Close a payment channel and return its remaining token balance.
 
@@ -264,7 +264,7 @@ Close a payment channel and return its remaining token balance.
 
 > **payForAPI**(`params`): `Promise`\<[`TxResult`](../interfaces/TxResult.md)\>
 
-Defined in: [agent/StellarAgent.ts:320](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L320)
+Defined in: [agent/StellarAgent.ts:320](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L320)
 
 Pay for an API call. Deducts from the active payment channel.
 Respects on-chain spend limits automatically.
@@ -310,7 +310,7 @@ await agent.payForAPI({
 
 > **requestWork**(`params`): `Promise`\<`bigint`\>
 
-Defined in: [agent/StellarAgent.ts:355](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L355)
+Defined in: [agent/StellarAgent.ts:355](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L355)
 
 Create an escrow job delegating work to another agent.
 Locks payment until the work is delivered and released.
@@ -342,7 +342,7 @@ const job = await agent.requestWork({
 
 > **acceptJob**(`jobId`): `Promise`\<[`TxResult`](../interfaces/TxResult.md)\>
 
-Defined in: [agent/StellarAgent.ts:370](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L370)
+Defined in: [agent/StellarAgent.ts:370](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L370)
 
 Accept an open escrow job as a worker agent
 
@@ -362,7 +362,7 @@ Accept an open escrow job as a worker agent
 
 > **submitResult**(`jobId`, `result`): `Promise`\<[`TxResult`](../interfaces/TxResult.md)\>
 
-Defined in: [agent/StellarAgent.ts:377](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L377)
+Defined in: [agent/StellarAgent.ts:377](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L377)
 
 Submit work result for an escrow job
 
@@ -386,7 +386,7 @@ Submit work result for an escrow job
 
 > **releasePayment**(`jobId`): `Promise`\<[`TxResult`](../interfaces/TxResult.md)\>
 
-Defined in: [agent/StellarAgent.ts:390](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L390)
+Defined in: [agent/StellarAgent.ts:390](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L390)
 
 Release escrow payment to the worker after work is complete
 
@@ -406,7 +406,7 @@ Release escrow payment to the worker after work is complete
 
 > **setRateLimits**(`config`): `Promise`\<[`TxResult`](../interfaces/TxResult.md)\>
 
-Defined in: [agent/StellarAgent.ts:400](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L400)
+Defined in: [agent/StellarAgent.ts:400](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L400)
 
 Configure rate limits for this agent on-chain.
 Protects against runaway spending.
@@ -427,7 +427,7 @@ Protects against runaway spending.
 
 > **checkRateLimit**(`amount`): `Promise`\<`boolean`\>
 
-Defined in: [agent/StellarAgent.ts:407](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L407)
+Defined in: [agent/StellarAgent.ts:407](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L407)
 
 Check if a payment would be blocked by rate limits (read-only)
 
@@ -447,7 +447,7 @@ Check if a payment would be blocked by rate limits (read-only)
 
 > **getBalance**(): `Promise`\<`string`\>
 
-Defined in: [agent/StellarAgent.ts:416](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L416)
+Defined in: [agent/StellarAgent.ts:416](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L416)
 
 Get current XLM balance
 
@@ -461,7 +461,7 @@ Get current XLM balance
 
 > **getSpendReport**(): `Promise`\<[`SpendReport`](../interfaces/SpendReport.md)\>
 
-Defined in: [agent/StellarAgent.ts:423](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L423)
+Defined in: [agent/StellarAgent.ts:423](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L423)
 
 Get spend report for the current period
 
@@ -475,7 +475,7 @@ Get spend report for the current period
 
 > **getChannel**(`channelId`): `Promise`\<[`ChannelInfo`](../interfaces/ChannelInfo.md)\>
 
-Defined in: [agent/StellarAgent.ts:430](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L430)
+Defined in: [agent/StellarAgent.ts:430](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L430)
 
 Get info about a payment channel
 
@@ -495,7 +495,7 @@ Get info about a payment channel
 
 > **getJob**(`jobId`): `Promise`\<[`JobInfo`](../interfaces/JobInfo.md)\>
 
-Defined in: [agent/StellarAgent.ts:437](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L437)
+Defined in: [agent/StellarAgent.ts:437](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L437)
 
 Get info about a job
 
@@ -515,7 +515,7 @@ Get info about a job
 
 > **getRateLimitStatus**(`agentAddress?`): `Promise`\<[`RateLimitStatus`](../interfaces/RateLimitStatus.md)\>
 
-Defined in: [agent/StellarAgent.ts:450](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L450)
+Defined in: [agent/StellarAgent.ts:450](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L450)
 
 Get current rate-limit usage alongside the configured limits.
 
@@ -541,7 +541,7 @@ limits) when omitted.
 
 > **getLedgerCloseEstimate**(): `Promise`\<[`LedgerCloseEstimate`](../interfaces/LedgerCloseEstimate.md)\>
 
-Defined in: [agent/StellarAgent.ts:465](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L465)
+Defined in: [agent/StellarAgent.ts:465](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/agent/StellarAgent.ts#L465)
 
 Derive the current ledger sequence and an *estimated* average ledger
 close time from a handful of recently observed ledgers via Horizon.

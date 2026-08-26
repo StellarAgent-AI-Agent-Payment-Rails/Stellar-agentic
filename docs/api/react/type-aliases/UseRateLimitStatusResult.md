@@ -8,4 +8,4 @@
 
 > **UseRateLimitStatusResult** = [`UsePollingResult`](../interfaces/UsePollingResult.md)\<[`UseRateLimitStatusData`](../interfaces/UseRateLimitStatusData.md)\>
 
-Defined in: [hooks/useRateLimitStatus.ts:76](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L76)
+Defined in: [hooks/useRateLimitStatus.ts:76](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/hooks/useRateLimitStatus.ts#L76)

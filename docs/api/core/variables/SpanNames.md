@@ -8,7 +8,7 @@
 
 > `const` **SpanNames**: `object`
 
-Defined in: [telemetry/semantic.ts:59](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L59)
+Defined in: [telemetry/semantic.ts:59](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L59)
 
 Span names for the SDK invocation lifecycle.
 

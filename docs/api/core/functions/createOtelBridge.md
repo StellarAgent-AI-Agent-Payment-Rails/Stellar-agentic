@@ -8,7 +8,7 @@
 
 > **createOtelBridge**(`options`): `Promise`\<\{ `tracer`: [`Tracer`](../interfaces/Tracer.md); `metrics`: [`Metrics`](../interfaces/Metrics.md); \}\>
 
-Defined in: [telemetry/otel-bridge.ts:13](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L13)
+Defined in: [telemetry/otel-bridge.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/otel-bridge.ts#L13)
 
 ## Parameters
 

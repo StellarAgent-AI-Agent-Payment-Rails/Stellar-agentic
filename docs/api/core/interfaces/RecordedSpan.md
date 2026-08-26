@@ -6,7 +6,7 @@
 
 # Interface: RecordedSpan
 
-Defined in: [telemetry/tracer.ts:40](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L40)
+Defined in: [telemetry/tracer.ts:40](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L40)
 
 In-memory span recorder for tests — no OpenTelemetry dependency.
 
@@ -16,7 +16,7 @@ In-memory span recorder for tests — no OpenTelemetry dependency.
 
 > **name**: `string`
 
-Defined in: [telemetry/tracer.ts:41](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L41)
+Defined in: [telemetry/tracer.ts:41](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L41)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [telemetry/tracer.ts:41](https://github.com/Nanle-code/Stellar-agent
 
 > **attributes**: `SemanticAttributes`
 
-Defined in: [telemetry/tracer.ts:42](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L42)
+Defined in: [telemetry/tracer.ts:42](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L42)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [telemetry/tracer.ts:42](https://github.com/Nanle-code/Stellar-agent
 
 > **exceptions**: `unknown`[]
 
-Defined in: [telemetry/tracer.ts:43](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L43)
+Defined in: [telemetry/tracer.ts:43](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L43)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [telemetry/tracer.ts:43](https://github.com/Nanle-code/Stellar-agent
 
 > **ended**: `boolean`
 
-Defined in: [telemetry/tracer.ts:44](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L44)
+Defined in: [telemetry/tracer.ts:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L44)

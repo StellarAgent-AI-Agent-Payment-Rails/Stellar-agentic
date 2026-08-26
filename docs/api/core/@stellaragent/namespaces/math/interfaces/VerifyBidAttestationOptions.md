@@ -6,7 +6,7 @@
 
 # Interface: VerifyBidAttestationOptions
 
-Defined in: [math/attestation.ts:112](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L112)
+Defined in: [math/attestation.ts:112](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L112)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [math/attestation.ts:112](https://github.com/Nanle-code/Stellar-agen
 
 > `optional` **now?**: () => `number`
 
-Defined in: [math/attestation.ts:114](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L114)
+Defined in: [math/attestation.ts:114](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/attestation.ts#L114)
 
 Injectable clock, for tests.
 

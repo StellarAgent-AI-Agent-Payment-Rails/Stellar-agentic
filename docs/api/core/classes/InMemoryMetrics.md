@@ -6,7 +6,7 @@
 
 # Class: InMemoryMetrics
 
-Defined in: [telemetry/metrics.ts:24](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L24)
+Defined in: [telemetry/metrics.ts:24](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L24)
 
 In-memory metrics recorder for tests.
 
@@ -30,7 +30,7 @@ In-memory metrics recorder for tests.
 
 > `readonly` **histograms**: `HistogramRecord`[] = `[]`
 
-Defined in: [telemetry/metrics.ts:25](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L25)
+Defined in: [telemetry/metrics.ts:25](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L25)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [telemetry/metrics.ts:25](https://github.com/Nanle-code/Stellar-agen
 
 > `readonly` **counters**: `CounterRecord`[] = `[]`
 
-Defined in: [telemetry/metrics.ts:26](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L26)
+Defined in: [telemetry/metrics.ts:26](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L26)
 
 ## Methods
 
@@ -46,7 +46,7 @@ Defined in: [telemetry/metrics.ts:26](https://github.com/Nanle-code/Stellar-agen
 
 > **recordHistogram**(`name`, `value`, `attributes?`): `void`
 
-Defined in: [telemetry/metrics.ts:28](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L28)
+Defined in: [telemetry/metrics.ts:28](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L28)
 
 #### Parameters
 
@@ -76,7 +76,7 @@ Defined in: [telemetry/metrics.ts:28](https://github.com/Nanle-code/Stellar-agen
 
 > **incrementCounter**(`name`, `delta?`, `attributes?`): `void`
 
-Defined in: [telemetry/metrics.ts:36](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L36)
+Defined in: [telemetry/metrics.ts:36](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/metrics.ts#L36)
 
 #### Parameters
 

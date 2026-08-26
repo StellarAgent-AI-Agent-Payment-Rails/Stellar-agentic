@@ -8,7 +8,7 @@
 
 > `const` **SemConv**: `object`
 
-Defined in: [telemetry/semantic.ts:13](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L13)
+Defined in: [telemetry/semantic.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L13)
 
 ## Type Declaration
 

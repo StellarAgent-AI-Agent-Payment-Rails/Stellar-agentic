@@ -8,4 +8,4 @@
 
 > **AsyncStatus** = `"idle"` \| `"loading"` \| `"ready"` \| `"error"`
 
-Defined in: [internal/usePolling.ts:3](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L3)
+Defined in: [internal/usePolling.ts:3](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/internal/usePolling.ts#L3)

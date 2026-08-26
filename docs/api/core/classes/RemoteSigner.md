@@ -6,7 +6,7 @@
 
 # Class: RemoteSigner
 
-Defined in: [signer.ts:270](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L270)
+Defined in: [signer.ts:270](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L270)
 
 A [Signer](../interfaces/Signer.md) backed by an HTTP signing service.
 
@@ -55,7 +55,7 @@ the main advantage of moving the key behind a boundary in the first place.
 
 > **new RemoteSigner**(`options`): `RemoteSigner`
 
-Defined in: [signer.ts:277](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L277)
+Defined in: [signer.ts:277](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L277)
 
 #### Parameters
 
@@ -73,7 +73,7 @@ Defined in: [signer.ts:277](https://github.com/Nanle-code/Stellar-agentic/blob/m
 
 > **getPublicKey**(): `Promise`\<`string`\>
 
-Defined in: [signer.ts:295](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L295)
+Defined in: [signer.ts:295](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L295)
 
 The Stellar public address (`G...`) this signer signs for.
 
@@ -95,7 +95,7 @@ returns just the address.
 
 > **signTransaction**(`xdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:315](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L315)
+Defined in: [signer.ts:315](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L315)
 
 Sign a transaction envelope.
 
@@ -127,7 +127,7 @@ base64 **signed** transaction envelope XDR
 
 > **signAuthEntry**(`authEntryXdr`, `options`): `Promise`\<`string`\>
 
-Defined in: [signer.ts:327](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/signer.ts#L327)
+Defined in: [signer.ts:327](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/signer.ts#L327)
 
 Sign a Soroban authorization entry.
 

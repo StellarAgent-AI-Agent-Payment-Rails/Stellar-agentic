@@ -6,7 +6,7 @@
 
 # Interface: NetworkConfig
 
-Defined in: [types/index.ts:5](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L5)
+Defined in: [types/index.ts:5](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L5)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:5](https://github.com/Nanle-code/Stellar-agentic/blo
 
 > **rpcUrl**: `string`
 
-Defined in: [types/index.ts:6](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L6)
+Defined in: [types/index.ts:6](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L6)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:6](https://github.com/Nanle-code/Stellar-agentic/blo
 
 > **networkPassphrase**: `string`
 
-Defined in: [types/index.ts:7](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L7)
+Defined in: [types/index.ts:7](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L7)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types/index.ts:7](https://github.com/Nanle-code/Stellar-agentic/blo
 
 > **horizonUrl**: `string`
 
-Defined in: [types/index.ts:8](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L8)
+Defined in: [types/index.ts:8](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L8)

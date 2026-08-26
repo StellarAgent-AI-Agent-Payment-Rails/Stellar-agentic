@@ -8,7 +8,7 @@
 
 > **clearPaymentTraceRegistry**(): `void`
 
-Defined in: [telemetry/context.ts:44](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L44)
+Defined in: [telemetry/context.ts:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L44)
 
 Test helper — clears registries between tests.
 

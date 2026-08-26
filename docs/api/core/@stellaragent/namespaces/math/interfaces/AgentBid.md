@@ -6,7 +6,7 @@
 
 # Interface: AgentBid
 
-Defined in: [math/bid.ts:42](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L42)
+Defined in: [math/bid.ts:42](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L42)
 
 A single agent's bid for an escrow job
 
@@ -16,7 +16,7 @@ A single agent's bid for an escrow job
 
 > **agentAddress**: `string`
 
-Defined in: [math/bid.ts:44](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L44)
+Defined in: [math/bid.ts:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L44)
 
 Unique agent address
 
@@ -26,7 +26,7 @@ Unique agent address
 
 > **price**: `string`
 
-Defined in: [math/bid.ts:49](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L49)
+Defined in: [math/bid.ts:49](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L49)
 
 Price the agent is willing to accept for the job.
 Must be a decimal string (e.g. "0.05") — never a JS number.
@@ -37,7 +37,7 @@ Must be a decimal string (e.g. "0.05") — never a JS number.
 
 > **reputation**: `string`
 
-Defined in: [math/bid.ts:54](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L54)
+Defined in: [math/bid.ts:54](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L54)
 
 Agent's reputation score 0–100 (integer or decimal string).
 Sourced from on-chain historical data.
@@ -48,7 +48,7 @@ Sourced from on-chain historical data.
 
 > **estimatedLatencySeconds**: `string`
 
-Defined in: [math/bid.ts:59](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L59)
+Defined in: [math/bid.ts:59](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L59)
 
 Expected task completion time in seconds (decimal string).
 Lower is better.
@@ -59,7 +59,7 @@ Lower is better.
 
 > **successRate**: `string`
 
-Defined in: [math/bid.ts:64](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L64)
+Defined in: [math/bid.ts:64](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L64)
 
 Lifetime success rate as a decimal fraction 0–1 (e.g. "0.97").
 Computed as successfulJobs / totalJobs.

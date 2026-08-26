@@ -8,7 +8,7 @@
 
 > `const` **SEMCONV\_VERSION**: `"1.0.0"` = `'1.0.0'`
 
-Defined in: [telemetry/semantic.ts:8](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L8)
+Defined in: [telemetry/semantic.ts:8](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/semantic.ts#L8)
 
 StellarAgent semantic conventions for OpenTelemetry spans and metrics.
 

@@ -8,7 +8,7 @@
 
 > **usePayForAPI**(): [`UsePayForAPIResult`](../interfaces/UsePayForAPIResult.md)
 
-Defined in: [hooks/usePayForAPI.ts:40](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/react/src/hooks/usePayForAPI.ts#L40)
+Defined in: [hooks/usePayForAPI.ts:40](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/react/src/hooks/usePayForAPI.ts#L40)
 
 Mutation hook for `StellarAgent.payForAPI`, with optimistic-update
 support: as soon as `payForAPI(params)` is called, `params.amount` is

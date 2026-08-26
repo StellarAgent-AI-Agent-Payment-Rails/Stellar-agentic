@@ -8,6 +8,6 @@
 
 > `const` **BPS\_SCALE**: `BigNumber`
 
-Defined in: [math/fixed-point.ts:49](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L49)
+Defined in: [math/fixed-point.ts:49](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L49)
 
 Basis-point denominator (100.00% = 10 000 bps)

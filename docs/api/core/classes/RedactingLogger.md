@@ -6,7 +6,7 @@
 
 # Class: RedactingLogger
 
-Defined in: [telemetry/logger.ts:70](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L70)
+Defined in: [telemetry/logger.ts:70](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L70)
 
 ## Implements
 
@@ -18,7 +18,7 @@ Defined in: [telemetry/logger.ts:70](https://github.com/Nanle-code/Stellar-agent
 
 > **new RedactingLogger**(`options?`): `RedactingLogger`
 
-Defined in: [telemetry/logger.ts:74](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L74)
+Defined in: [telemetry/logger.ts:74](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L74)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [telemetry/logger.ts:74](https://github.com/Nanle-code/Stellar-agent
 
 > **debug**(`message`, `attributes?`): `void`
 
-Defined in: [telemetry/logger.ts:79](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L79)
+Defined in: [telemetry/logger.ts:79](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L79)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Defined in: [telemetry/logger.ts:79](https://github.com/Nanle-code/Stellar-agent
 
 > **info**(`message`, `attributes?`): `void`
 
-Defined in: [telemetry/logger.ts:83](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L83)
+Defined in: [telemetry/logger.ts:83](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L83)
 
 #### Parameters
 
@@ -88,7 +88,7 @@ Defined in: [telemetry/logger.ts:83](https://github.com/Nanle-code/Stellar-agent
 
 > **warn**(`message`, `attributes?`): `void`
 
-Defined in: [telemetry/logger.ts:87](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L87)
+Defined in: [telemetry/logger.ts:87](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L87)
 
 #### Parameters
 
@@ -114,7 +114,7 @@ Defined in: [telemetry/logger.ts:87](https://github.com/Nanle-code/Stellar-agent
 
 > **error**(`message`, `attributes?`): `void`
 
-Defined in: [telemetry/logger.ts:91](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L91)
+Defined in: [telemetry/logger.ts:91](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/logger.ts#L91)
 
 #### Parameters
 

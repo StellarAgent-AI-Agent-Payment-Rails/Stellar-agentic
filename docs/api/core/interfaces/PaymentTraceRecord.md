@@ -6,7 +6,7 @@
 
 # Interface: PaymentTraceRecord
 
-Defined in: [telemetry/context.ts:4](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L4)
+Defined in: [telemetry/context.ts:4](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L4)
 
 In-process registry linking submitted tx hashes to SDK payment trace IDs.
 
@@ -16,7 +16,7 @@ In-process registry linking submitted tx hashes to SDK payment trace IDs.
 
 > **paymentId**: `string`
 
-Defined in: [telemetry/context.ts:5](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L5)
+Defined in: [telemetry/context.ts:5](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L5)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [telemetry/context.ts:5](https://github.com/Nanle-code/Stellar-agent
 
 > **agentAddress**: `string`
 
-Defined in: [telemetry/context.ts:6](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L6)
+Defined in: [telemetry/context.ts:6](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L6)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [telemetry/context.ts:6](https://github.com/Nanle-code/Stellar-agent
 
 > **method**: `string`
 
-Defined in: [telemetry/context.ts:7](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L7)
+Defined in: [telemetry/context.ts:7](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L7)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [telemetry/context.ts:7](https://github.com/Nanle-code/Stellar-agent
 
 > `optional` **amount?**: `string`
 
-Defined in: [telemetry/context.ts:8](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L8)
+Defined in: [telemetry/context.ts:8](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L8)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [telemetry/context.ts:8](https://github.com/Nanle-code/Stellar-agent
 
 > `optional` **endpoint?**: `string`
 
-Defined in: [telemetry/context.ts:9](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L9)
+Defined in: [telemetry/context.ts:9](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L9)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [telemetry/context.ts:9](https://github.com/Nanle-code/Stellar-agent
 
 > **submittedAt**: `number`
 
-Defined in: [telemetry/context.ts:10](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L10)
+Defined in: [telemetry/context.ts:10](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L10)
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: [telemetry/context.ts:10](https://github.com/Nanle-code/Stellar-agen
 
 > `optional` **transactionHash?**: `string`
 
-Defined in: [telemetry/context.ts:11](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L11)
+Defined in: [telemetry/context.ts:11](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L11)

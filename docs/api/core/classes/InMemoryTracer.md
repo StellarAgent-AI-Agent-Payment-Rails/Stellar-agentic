@@ -6,7 +6,7 @@
 
 # Class: InMemoryTracer
 
-Defined in: [telemetry/tracer.ts:47](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L47)
+Defined in: [telemetry/tracer.ts:47](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L47)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [telemetry/tracer.ts:47](https://github.com/Nanle-code/Stellar-agent
 
 > `readonly` **spans**: [`RecordedSpan`](../interfaces/RecordedSpan.md)[] = `[]`
 
-Defined in: [telemetry/tracer.ts:48](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L48)
+Defined in: [telemetry/tracer.ts:48](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L48)
 
 ## Methods
 
@@ -36,7 +36,7 @@ Defined in: [telemetry/tracer.ts:48](https://github.com/Nanle-code/Stellar-agent
 
 > **startSpan**(`name`, `attributes?`): `Span`
 
-Defined in: [telemetry/tracer.ts:50](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L50)
+Defined in: [telemetry/tracer.ts:50](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L50)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Defined in: [telemetry/tracer.ts:50](https://github.com/Nanle-code/Stellar-agent
 
 > **startActiveSpan**\<`T`\>(`name`, `attributes`, `fn`): `T` \| `Promise`\<`T`\>
 
-Defined in: [telemetry/tracer.ts:72](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L72)
+Defined in: [telemetry/tracer.ts:72](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/tracer.ts#L72)
 
 #### Type Parameters
 

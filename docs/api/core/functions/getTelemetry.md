@@ -8,7 +8,7 @@
 
 > **getTelemetry**(): [`TelemetryContext`](../interfaces/TelemetryContext.md)
 
-Defined in: [telemetry/index.ts:40](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L40)
+Defined in: [telemetry/index.ts:40](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/index.ts#L40)
 
 ## Returns
 

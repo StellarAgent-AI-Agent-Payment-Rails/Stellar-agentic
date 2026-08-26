@@ -8,7 +8,7 @@
 
 > **isZero**(`a`): `boolean`
 
-Defined in: [math/fixed-point.ts:194](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L194)
+Defined in: [math/fixed-point.ts:194](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/fixed-point.ts#L194)
 
 ## Parameters
 

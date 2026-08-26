@@ -8,7 +8,7 @@
 
 > **selectBestBid**(`bids`, `weights?`): [`ScoredBid`](../interfaces/ScoredBid.md) \| `null`
 
-Defined in: [math/bid.ts:228](https://github.com/Nanle-code/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L228)
+Defined in: [math/bid.ts:228](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/bid.ts#L228)
 
 Select the single best bid from a pool.
 Returns `null` when the pool is empty.
