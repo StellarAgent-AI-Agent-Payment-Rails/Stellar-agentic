@@ -1,0 +1,26 @@
+# CODEOWNERS — routes review requests by area
+# Each pattern maps to the GitHub user responsible for that area.
+
+# Default — catch-all for anything not listed below
+*  @Edoscoba
+
+# Smart contracts (Rust / Soroban)
+contracts/  @Edoscoba
+zk/         @Edoscoba
+
+# TypeScript SDKs
+packages/core/   @Nanle-code
+packages/react/  @Nanle-code
+packages/cli/    @Nanle-code
+
+# Dashboard
+dashboard/  @Enniwealth
+
+# Python SDK
+python/     @Enniwealth
+
+# CI and infrastructure
+.github/    @Edoscoba
+
+# Documentation — open to all
+docs/       @Edoscoba
