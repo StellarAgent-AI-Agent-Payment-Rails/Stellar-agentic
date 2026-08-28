@@ -6,13 +6,14 @@ const expectedLengths: Record<string, number> = {
   "channel/paid": 5,
   "channel/convpaid": 7,
   "channel/topup": 3,
-  "channel/closed": 2,
+  "channel/closed": 3,
   "escrow/created": 3,
   "escrow/accepted": 2,
   "escrow/result": 2,
   "escrow/released": 3,
   "escrow/refunded": 3,
   "escrow/disputed": 2,
+  "escrow/resolved": 3,
   "rl/recorded": 2,
   "rl/killed": 1,
   "factory/created": 3,
@@ -71,7 +72,9 @@ export function decodeEvent(
 
   const nativeValues = tuple(scValToNative(raw.value), length, key);
   const values = nativeValues.map((value, index) =>
-    namespace === "state" && index === 1 ? "" : scalar(value),
+    (namespace === "state" && index === 1) || (key === "escrow/resolved" && index === 2)
+      ? ""
+      : scalar(value),
   );
   const base = {
     eventId: raw.id,
@@ -97,7 +100,7 @@ export function decodeEvent(
     case "channel/topup":
       return { ...base, namespace: "channel", action: "topup", channelId: values[0], owner: values[1], amount: values[2] };
     case "channel/closed":
-      return { ...base, namespace: "channel", action: "closed", channelId: values[0], owner: values[1] };
+      return { ...base, namespace: "channel", action: "closed", channelId: values[0], owner: values[1], refund: values[2] };
     case "escrow/created":
       return { ...base, namespace: "escrow", action: "created", jobId: values[0], requester: values[1], amount: values[2] };
     case "escrow/accepted":
@@ -109,6 +112,18 @@ export function decodeEvent(
       return { ...base, namespace: "escrow", action: "refunded", jobId: values[0], requester: values[1], amount: values[2] };
     case "escrow/disputed":
       return { ...base, namespace: "escrow", action: "disputed", jobId: values[0], requester: values[1] };
+    case "escrow/resolved":
+      if (typeof nativeValues[2] !== "boolean") {
+        throw new Error("escrow/resolved expected a boolean favor_worker value");
+      }
+      return {
+        ...base,
+        namespace: "escrow",
+        action: "resolved",
+        jobId: values[0],
+        arbiter: values[1],
+        favorWorker: nativeValues[2],
+      };
     case "rl/recorded":
       return { ...base, namespace: "rl", action: "recorded", agent: values[0], amount: values[1] };
     case "rl/killed":

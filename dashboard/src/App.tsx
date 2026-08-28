@@ -3,6 +3,7 @@ import { Sidebar } from './components/dashboard/Sidebar.js';
 import { OverviewPage } from './pages/OverviewPage.js';
 import { AgentsPage } from './pages/AgentsPage.js';
 import { PaymentsPage } from './pages/PaymentsPage.js';
+import { ReportsPage } from './pages/ReportsPage.js';
 import { JobsPage } from './pages/JobsPage.js';
 import { AlertsPage } from './pages/AlertsPage.js';
 import { HealthPage } from './pages/HealthPage.js';
@@ -38,6 +39,7 @@ export function App() {
             <Route path="/" element={<OverviewPage />} />
             <Route path="/agents" element={<AgentsPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
             <Route path="/jobs" element={<JobsPage />} />
             <Route path="/limits" element={<PlaceholderPage title="Rate Limits" />} />
             <Route path="/alerts" element={<AlertsPage />} />

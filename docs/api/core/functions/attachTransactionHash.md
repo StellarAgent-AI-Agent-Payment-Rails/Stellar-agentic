@@ -8,7 +8,7 @@
 
 > **attachTransactionHash**(`paymentId`, `transactionHash`): `void`
 
-Defined in: [telemetry/context.ts:28](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L28)
+Defined in: [telemetry/context.ts:26](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L26)
 
 ## Parameters
 

@@ -11,6 +11,7 @@ import {
   Zap,
   BellDot,
   HeartPulse,
+  FileBarChart,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
   { to: '/', icon: LayoutDashboard, label: 'Overview' },
   { to: '/agents', icon: Bot, label: 'Agents' },
   { to: '/payments', icon: ArrowLeftRight, label: 'Payments' },
+  { to: '/reports', icon: FileBarChart, label: 'Reports' },
   { to: '/jobs', icon: Briefcase, label: 'Escrow Jobs' },
   { to: '/alerts', icon: BellDot, label: 'Alerts' },
   { to: '/health', icon: HeartPulse, label: 'Health' },

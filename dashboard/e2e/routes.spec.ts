@@ -9,11 +9,12 @@ import { test, expect, type Page } from '@playwright/test';
  * (a bad import or a router regression turning a route into a blank screen).
  */
 
-/** The four fully-built routes, plus the two intentional placeholders. */
+/** The fully-built routes, plus the two intentional placeholders. */
 const MAIN_ROUTES = [
   { path: '/', heading: 'Overview' },
   { path: '/agents', heading: 'Agents' },
   { path: '/payments', heading: 'Payments' },
+  { path: '/reports', heading: 'Reports' },
   { path: '/jobs', heading: 'Escrow Jobs' },
 ] as const;
 
@@ -54,6 +55,7 @@ test.describe('main routes', () => {
       await expect(page.getByRole('link', { name: 'Overview' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Agents' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Payments' })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Reports' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Escrow Jobs' })).toBeVisible();
     });
 
