@@ -383,6 +383,121 @@ declare function attestRankBids(bids: AgentBid[], weights: BidWeights | undefine
  */
 declare function verifyBidAttestation(bids: AgentBid[], result: ScoredBid[], attestation: BidAttestation, trustedKeys: ScorerKeyDirectory, options?: VerifyBidAttestationOptions): BidAttestationVerification;
 
+/** Canonical, venue-neutral routing types. Amounts are integer base units. */
+type RouteVenue = 'direct' | 'amm' | 'path_payment';
+type RouteUnavailableCode = 'UNSUPPORTED_PAIR' | 'INSUFFICIENT_LIQUIDITY' | 'VENUE_UNAVAILABLE' | 'QUOTE_EXPIRED' | 'INVALID_QUOTE';
+/** One executable segment of a candidate route. */
+interface RouteHop {
+    venue: RouteVenue;
+    /** Stable venue identifier. A contract-backed venue uses its C... address. */
+    venueId: string;
+    sourceAsset: string;
+    destinationAsset: string;
+    sourceAmount: string;
+    expectedOutput: string;
+    /** Fee charged by this segment, in its source asset's base units. */
+    feeAmount: string;
+    /** Source-normalized fee, in basis points. */
+    feeBps: number;
+    /** Expected price impact/slippage, in basis points. */
+    slippageBps: number;
+    /** 0..10,000; 10,000 represents the most reliable quote. */
+    reliabilityBps: number;
+    /** Intermediate assets embedded in a classic Stellar path-payment quote. */
+    path?: string[];
+    /** Per-hop execution floor. The final route still has one end-to-end floor. */
+    minOutput?: string;
+}
+/** A normalized executable quote consumed by the deterministic selector. */
+interface RouteQuote {
+    /** Canonical identifier derived from assets, venues, and path. */
+    id: string;
+    sourceAsset: string;
+    destinationAsset: string;
+    sourceAmount: string;
+    expectedDestinationAmount: string;
+    totalFeeBps: number;
+    expectedSlippageBps: number;
+    reliabilityBps: number;
+    /** Economic depth, including assets embedded in path-payment operations. */
+    hopCount: number;
+    hops: RouteHop[];
+    /** Last ledger in which every component quote is valid. */
+    expiresAtLedger?: number;
+}
+interface RouteRequest {
+    sourceAsset: string;
+    destinationAsset: string;
+    /** Integer base units, not a decimal display amount. */
+    sourceAmount: string;
+    currentLedger?: number;
+    /** Assets that bounded multi-hop discovery may traverse. */
+    allowedIntermediates?: string[];
+}
+interface RouteProviderContext {
+    maxHops: number;
+    maxCandidates: number;
+}
+/** Venue adapter. Provider failures are isolated by the discovery engine. */
+interface RouteProvider {
+    readonly id: string;
+    discover(request: RouteRequest, context: RouteProviderContext): Promise<RouteHop[][]>;
+}
+/** Optional independent fair-value source; never treated as executable liquidity. */
+interface RoutePriceOracle {
+    readonly id: string;
+    quote(request: RouteRequest): Promise<OracleReference | null>;
+}
+interface OracleReference {
+    expectedDestinationAmount: string;
+    reliabilityBps: number;
+    expiresAtLedger?: number;
+}
+interface RouteDiscoveryOptions {
+    providers: RouteProvider[];
+    oracle?: RoutePriceOracle;
+    /** @default 3 */
+    maxHops?: number;
+    /** @default 32 */
+    maxCandidates?: number;
+}
+interface RouteDiscoveryFailure {
+    providerId: string;
+    code: RouteUnavailableCode;
+    message: string;
+}
+interface RouteDiscoveryResult {
+    routes: RouteQuote[];
+    failures: RouteDiscoveryFailure[];
+    oracleReference?: OracleReference;
+}
+interface AmmPair {
+    sourceAsset: string;
+    destinationAsset: string;
+}
+interface AmmHopQuote {
+    expectedOutput: string;
+    feeAmount?: string;
+    feeBps?: number;
+    slippageBps?: number;
+    reliabilityBps?: number;
+    minOutput?: string;
+}
+type AmmQuoteCallback = (pair: AmmPair, sourceAmount: string) => Promise<AmmHopQuote | null>;
+interface PathPaymentCandidate {
+    /** Stable liquidity-source identifier, or an execution-adapter contract ID. */
+    venueId: string;
+    /** Assets between source and destination, excluding both endpoints. */
+    path: string[];
+    expectedDestinationAmount: string;
+    feeAmount?: string;
+    feeBps?: number;
+    slippageBps?: number;
+    reliabilityBps?: number;
+    minDestinationAmount?: string;
+}
+type PathPaymentQuoteCallback = (request: RouteRequest) => Promise<PathPaymentCandidate[]>;
+
 /**
  * Signing abstraction.
  *
@@ -628,6 +743,80 @@ declare class SignerAdapter implements Signer {
 }
 /** Duck-typed check — `instanceof` fails across duplicated package copies. */
 declare function isSigner(value: unknown): value is Signer;
+
+/**
+ * Deterministic multi-asset route selection.
+ *
+ * The selector consumes only normalized integer quotes. It performs no I/O,
+ * reads no clock, uses no floating point, and defines a total tie-break order.
+ */
+
+declare const ROUTING_WEIGHT_SCALE = 10000;
+interface RoutingPolicy {
+    /** Relative weight of source-normalized fees. */
+    costWeight: number;
+    /** Relative weight of expected price impact. */
+    slippageWeight: number;
+    /** Relative weight of the reliability shortfall. */
+    reliabilityWeight: number;
+    /** Fixed score added for every economic hop after the first. */
+    hopPenalty: number;
+    /** Routes above this expected slippage are inadmissible. */
+    maxSlippageBps: number;
+    /** Routes below this reliability are inadmissible. */
+    minReliabilityBps: number;
+}
+declare const DEFAULT_ROUTING_POLICY: Readonly<RoutingPolicy>;
+interface RouteScoreBreakdown {
+    weightedCost: string;
+    weightedSlippage: string;
+    weightedReliability: string;
+    hopPenalty: string;
+}
+interface ScoredRoute extends RouteQuote {
+    /** Lower is better. Integer score for byte-identical TS/Python output. */
+    score: string;
+    breakdown: RouteScoreBreakdown;
+}
+/** Validate and score one normalized route, including policy admission bounds. */
+declare function scoreRoute(route: RouteQuote, policy?: RoutingPolicy): ScoredRoute;
+/** Whether a structurally valid route clears policy reliability/slippage bounds. */
+declare function isRouteEligible(route: RouteQuote, policy?: RoutingPolicy): boolean;
+/**
+ * Rank routes with a total, input-order-independent comparison:
+ * score, output (descending), slippage, hop count, then canonical route ID.
+ */
+declare function rankRoutes(routes: readonly RouteQuote[], policy?: RoutingPolicy): ScoredRoute[];
+/** Select the deterministic winner, or null when no route is admissible. */
+declare function selectRoute(routes: readonly RouteQuote[], policy?: RoutingPolicy): ScoredRoute | null;
+declare function validateRoutingPolicy(policy: RoutingPolicy): void;
+
+interface RoutePlannerOptions extends RouteDiscoveryOptions {
+    policy?: RoutingPolicy;
+    /** Maximum quote lifetime when venues provide no earlier expiry. @default 20 */
+    quoteValidityLedgers?: number;
+    /** Caller slippage used to derive the final minimum. @default 100 (1%) */
+    defaultSlippageToleranceBps?: number;
+}
+interface PaymentQuoteRequest extends RouteRequest {
+    slippageToleranceBps?: number;
+}
+/** Complete pre-commit artifact. Pass this object back to `payForAPI`. */
+interface PaymentQuote {
+    route: ScoredRoute;
+    minimumDestinationAmount: string;
+    quotedAtLedger: number;
+    validUntilLedger: number;
+    failures: RouteDiscoveryFailure[];
+}
+/** Discovery + deterministic selection + quote freshness in one reusable service. */
+declare class RoutePlanner {
+    constructor(options: RoutePlannerOptions);
+    quote(request: PaymentQuoteRequest): Promise<PaymentQuote>;
+    /** Validate a caller-selected route under the same safety policy. */
+    quoteOverride(request: PaymentQuoteRequest, override: RouteQuote): PaymentQuote;
+    assertFresh(quote: PaymentQuote, currentLedger: number): void;
+}
 
 interface HistogramRecord {
     name: string;
@@ -1166,6 +1355,17 @@ interface StellarAgentConfig {
     submissionQueue?: SubmissionQueue;
     /** Build a queue owned by this agent. Omitted fields use fleet-safe defaults. */
     submission?: SubmissionPipelineConfig;
+    /** Multi-venue discovery and deterministic route-selection configuration. */
+    routing?: RoutePlannerOptions;
+}
+interface QuoteParams {
+    sourceAsset: string;
+    destinationAsset: string;
+    /** Decimal display amount; converted to 7-decimal base units before discovery. */
+    amount: string;
+    allowedIntermediates?: string[];
+    /** 0..500 basis points. @default 100 */
+    slippageToleranceBps?: number;
 }
 interface FeeBumpConfig {
     /** @default true */
@@ -1226,6 +1426,8 @@ interface PayForAPIParams {
     amount: string;
     /** Asset to pay with (must match the channel's settlement asset) */
     asset?: string;
+    /** Explicit source asset; `asset` remains a backwards-compatible alias. */
+    sourceAsset?: string;
     /** Channel ID to use (uses default if not specified) */
     channelId?: bigint;
     /**
@@ -1243,6 +1445,8 @@ interface PayForAPIParams {
      * `destAsset`. Requires `minReceived` to also be set.
      */
     destAsset?: string;
+    /** Recipient asset; `destAsset` remains a backwards-compatible alias. */
+    recipientAsset?: string;
     /**
      * Minimum amount of `destAsset` the recipient must receive (slippage
      * floor), as a string in `destAsset` units. Required when `destAsset` is
@@ -1252,6 +1456,15 @@ interface PayForAPIParams {
      * full slippage/price-oracle design.
      */
     minReceived?: string;
+    /**
+     * Reuse a prior `quote()` result or override automatic selection with a
+     * normalized route. Policy, intent, amount, and expiry remain enforced.
+     */
+    route?: PaymentQuote | RouteQuote;
+    /** Intermediate assets automatic discovery may traverse. */
+    allowedIntermediates?: string[];
+    /** Automatic-quote slippage tolerance in basis points, capped at 500. */
+    slippageToleranceBps?: number;
 }
 interface ChannelInfo {
     id: bigint;
@@ -1373,6 +1586,12 @@ interface TxResult {
     feeSource?: string;
     /** Number of envelopes accepted for this operation, including a replacement. */
     submissionAttempts?: number;
+    /** Deterministic route executed for a converted payment. */
+    route?: RouteQuote;
+    /** Quoted destination amount in integer base units. */
+    expectedDestinationAmount?: string;
+    /** End-to-end contract floor in destination base units. */
+    minimumDestinationAmount?: string;
 }
 
 /**
@@ -1496,168 +1715,6 @@ declare function ledgersRemainingInWindow(windowStartLedger: number, ledgersPerW
  * an agent with no `RateLimiter` configured at all).
  */
 declare function predictPaymentOutcome({ channelState, rateLimitState, amount, currentLedger, }: PredictPaymentOutcomeParams): PaymentPrediction;
-
-/** Canonical, venue-neutral routing types. Amounts are integer base units. */
-type RouteVenue = 'direct' | 'amm' | 'path_payment';
-type RouteUnavailableCode = 'UNSUPPORTED_PAIR' | 'INSUFFICIENT_LIQUIDITY' | 'VENUE_UNAVAILABLE' | 'QUOTE_EXPIRED' | 'INVALID_QUOTE';
-/** One executable segment of a candidate route. */
-interface RouteHop {
-    venue: RouteVenue;
-    /** Stable venue identifier. A contract-backed venue uses its C... address. */
-    venueId: string;
-    sourceAsset: string;
-    destinationAsset: string;
-    sourceAmount: string;
-    expectedOutput: string;
-    /** Fee charged by this segment, in its source asset's base units. */
-    feeAmount: string;
-    /** Source-normalized fee, in basis points. */
-    feeBps: number;
-    /** Expected price impact/slippage, in basis points. */
-    slippageBps: number;
-    /** 0..10,000; 10,000 represents the most reliable quote. */
-    reliabilityBps: number;
-    /** Intermediate assets embedded in a classic Stellar path-payment quote. */
-    path?: string[];
-    /** Per-hop execution floor. The final route still has one end-to-end floor. */
-    minOutput?: string;
-}
-/** A normalized executable quote consumed by the deterministic selector. */
-interface RouteQuote {
-    /** Canonical identifier derived from assets, venues, and path. */
-    id: string;
-    sourceAsset: string;
-    destinationAsset: string;
-    sourceAmount: string;
-    expectedDestinationAmount: string;
-    totalFeeBps: number;
-    expectedSlippageBps: number;
-    reliabilityBps: number;
-    /** Economic depth, including assets embedded in path-payment operations. */
-    hopCount: number;
-    hops: RouteHop[];
-    /** Last ledger in which every component quote is valid. */
-    expiresAtLedger?: number;
-}
-interface RouteRequest {
-    sourceAsset: string;
-    destinationAsset: string;
-    /** Integer base units, not a decimal display amount. */
-    sourceAmount: string;
-    currentLedger?: number;
-    /** Assets that bounded multi-hop discovery may traverse. */
-    allowedIntermediates?: string[];
-}
-interface RouteProviderContext {
-    maxHops: number;
-    maxCandidates: number;
-}
-/** Venue adapter. Provider failures are isolated by the discovery engine. */
-interface RouteProvider {
-    readonly id: string;
-    discover(request: RouteRequest, context: RouteProviderContext): Promise<RouteHop[][]>;
-}
-/** Optional independent fair-value source; never treated as executable liquidity. */
-interface RoutePriceOracle {
-    readonly id: string;
-    quote(request: RouteRequest): Promise<OracleReference | null>;
-}
-interface OracleReference {
-    expectedDestinationAmount: string;
-    reliabilityBps: number;
-    expiresAtLedger?: number;
-}
-interface RouteDiscoveryOptions {
-    providers: RouteProvider[];
-    oracle?: RoutePriceOracle;
-    /** @default 3 */
-    maxHops?: number;
-    /** @default 32 */
-    maxCandidates?: number;
-}
-interface RouteDiscoveryFailure {
-    providerId: string;
-    code: RouteUnavailableCode;
-    message: string;
-}
-interface RouteDiscoveryResult {
-    routes: RouteQuote[];
-    failures: RouteDiscoveryFailure[];
-    oracleReference?: OracleReference;
-}
-interface AmmPair {
-    sourceAsset: string;
-    destinationAsset: string;
-}
-interface AmmHopQuote {
-    expectedOutput: string;
-    feeAmount?: string;
-    feeBps?: number;
-    slippageBps?: number;
-    reliabilityBps?: number;
-    minOutput?: string;
-}
-type AmmQuoteCallback = (pair: AmmPair, sourceAmount: string) => Promise<AmmHopQuote | null>;
-interface PathPaymentCandidate {
-    /** Stable liquidity-source identifier, or an execution-adapter contract ID. */
-    venueId: string;
-    /** Assets between source and destination, excluding both endpoints. */
-    path: string[];
-    expectedDestinationAmount: string;
-    feeAmount?: string;
-    feeBps?: number;
-    slippageBps?: number;
-    reliabilityBps?: number;
-    minDestinationAmount?: string;
-}
-type PathPaymentQuoteCallback = (request: RouteRequest) => Promise<PathPaymentCandidate[]>;
-
-/**
- * Deterministic multi-asset route selection.
- *
- * The selector consumes only normalized integer quotes. It performs no I/O,
- * reads no clock, uses no floating point, and defines a total tie-break order.
- */
-
-declare const ROUTING_WEIGHT_SCALE = 10000;
-interface RoutingPolicy {
-    /** Relative weight of source-normalized fees. */
-    costWeight: number;
-    /** Relative weight of expected price impact. */
-    slippageWeight: number;
-    /** Relative weight of the reliability shortfall. */
-    reliabilityWeight: number;
-    /** Fixed score added for every economic hop after the first. */
-    hopPenalty: number;
-    /** Routes above this expected slippage are inadmissible. */
-    maxSlippageBps: number;
-    /** Routes below this reliability are inadmissible. */
-    minReliabilityBps: number;
-}
-declare const DEFAULT_ROUTING_POLICY: Readonly<RoutingPolicy>;
-interface RouteScoreBreakdown {
-    weightedCost: string;
-    weightedSlippage: string;
-    weightedReliability: string;
-    hopPenalty: string;
-}
-interface ScoredRoute extends RouteQuote {
-    /** Lower is better. Integer score for byte-identical TS/Python output. */
-    score: string;
-    breakdown: RouteScoreBreakdown;
-}
-/** Validate and score one normalized route, including policy admission bounds. */
-declare function scoreRoute(route: RouteQuote, policy?: RoutingPolicy): ScoredRoute;
-/** Whether a structurally valid route clears policy reliability/slippage bounds. */
-declare function isRouteEligible(route: RouteQuote, policy?: RoutingPolicy): boolean;
-/**
- * Rank routes with a total, input-order-independent comparison:
- * score, output (descending), slippage, hop count, then canonical route ID.
- */
-declare function rankRoutes(routes: readonly RouteQuote[], policy?: RoutingPolicy): ScoredRoute[];
-/** Select the deterministic winner, or null when no route is admissible. */
-declare function selectRoute(routes: readonly RouteQuote[], policy?: RoutingPolicy): ScoredRoute | null;
-declare function validateRoutingPolicy(policy: RoutingPolicy): void;
 
 /**
  * Deterministic math utilities for Stellar Agent SDK.
@@ -1865,7 +1922,7 @@ interface LedgerCloseEstimate {
 declare function fetchLedgerCloseEstimate(horizonUrl: string, sampleSize?: number): Promise<LedgerCloseEstimate>;
 
 /** Stable machine-readable codes for StellarAgent failures. */
-type StellarAgentErrorCode = 'INVALID_ARGUMENT' | 'NO_ACTIVE_CHANNEL' | 'SPEND_LIMIT_EXCEEDED' | 'CHANNEL_NOT_FOUND' | 'CHANNEL_CLOSED' | 'JOB_NOT_FOUND' | 'JOB_NOT_OPEN' | 'JOB_EXPIRED' | 'NOT_AUTHORIZED' | 'RATE_LIMIT_NOT_FOUND' | 'CONTRACT_ERROR' | 'SIMULATION_FAILED' | 'SUBMISSION_FAILED' | 'TRANSACTION_FAILED' | 'TRANSACTION_TIMEOUT' | 'NETWORK_ERROR';
+type StellarAgentErrorCode = 'INVALID_ARGUMENT' | 'NO_ACTIVE_CHANNEL' | 'NO_ROUTE' | 'QUOTE_EXPIRED' | 'INVALID_ROUTE_OVERRIDE' | 'INSUFFICIENT_LIQUIDITY' | 'VENUE_UNAVAILABLE' | 'SPEND_LIMIT_EXCEEDED' | 'CHANNEL_NOT_FOUND' | 'CHANNEL_CLOSED' | 'JOB_NOT_FOUND' | 'JOB_NOT_OPEN' | 'JOB_EXPIRED' | 'NOT_AUTHORIZED' | 'RATE_LIMIT_NOT_FOUND' | 'CONTRACT_ERROR' | 'SIMULATION_FAILED' | 'SUBMISSION_FAILED' | 'TRANSACTION_FAILED' | 'TRANSACTION_TIMEOUT' | 'NETWORK_ERROR';
 /** Error thrown for SDK validation, Soroban RPC, and contract failures. */
 declare class StellarAgentError extends Error {
     readonly code: StellarAgentErrorCode;
@@ -2269,6 +2326,8 @@ declare class StellarAgent {
      * ```
      */
     payForAPI(params: PayForAPIParams): Promise<TxResult>;
+    /** Discover, score, and return the exact payment route before committing. */
+    quote(params: QuoteParams): Promise<PaymentQuote>;
     /**
      * Create an escrow job delegating work to another agent.
      * Locks payment until the work is delivered and released.
@@ -2345,4 +2404,4 @@ declare class StellarAgent {
     getLedgerCloseEstimate(): Promise<LedgerCloseEstimate>;
 }
 
-export { type AgentBid, type AgentEvent, type AgentInfo, type AmmHopQuote, type AmmPair, type AmmQuoteCallback, AmmRouteProvider, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, CallbackFeeStrategy, CallbackRouteProvider, type ChannelAccount, type ChannelAccountFactory, type ChannelAccountLease, ChannelAccountPool, type ChannelAccountPoolOptions, type ChannelInfo, type ChannelLeaseOutcome, ChannelPoolError, type ChannelPoolStats, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, DEFAULT_ROUTING_POLICY, DirectRouteProvider, FALLBACK_LEDGER_CLOSE_SECONDS, type FeeBumpConfig, type FeeCallback, type FeeContext, type FeeDistribution, type FeePercentile, type FeePhase, type FeeStats, type FeeStrategy, FixedFeeStrategy, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LeaseOptions, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, MultiplierFeeStrategy, type Network, type NetworkConfig, type OpenChannelParams, type OracleReference, type OtelBridgeOptions, type PathPaymentCandidate, type PathPaymentQuoteCallback, type PayForAPIParams, type PaymentPrediction, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, ROUTING_WEIGHT_SCALE, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, RecentFeeStrategy, type RecentFeeStrategyOptions, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, type RetryClassification, type RetryClassifier, type RouteDiscoveryFailure, type RouteDiscoveryOptions, type RouteDiscoveryResult, type RouteHop, type RoutePriceOracle, type RouteProvider, type RouteProviderContext, type RouteQuote, type RouteRequest, type RouteScoreBreakdown, type RouteUnavailableCode, RouteUnavailableError, type RouteVenue, type RoutingPolicy, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScoredRoute, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, type SponsorRpc, SponsorService, type SponsorServiceOptions, type SponsoredAccountOptions, SponsoredChannelAccountFactory, SponsorshipError, type SponsorshipRecord, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, StellarPathPaymentProvider, type SubmissionPipelineConfig, SubmissionQueue, SubmissionQueueError, type SubmissionQueueOptions, type SubmissionQueueStats, type SubmitOptions, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, applyOracleReference, asFeeStrategy, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, canonicalRouteId, clamp, classifySubmissionError, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, discoverRoutes, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isRouteEligible, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, normalizeRoute, pct, predictPaymentOutcome, rankBids, rankRoutes, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, scoreRoute, selectBestBid, selectRoute, sub, sumStrings, toStr, toStroops, validateRoutingPolicy, verifyBidAttestation };
+export { type AgentBid, type AgentEvent, type AgentInfo, type AmmHopQuote, type AmmPair, type AmmQuoteCallback, AmmRouteProvider, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, CallbackFeeStrategy, CallbackRouteProvider, type ChannelAccount, type ChannelAccountFactory, type ChannelAccountLease, ChannelAccountPool, type ChannelAccountPoolOptions, type ChannelInfo, type ChannelLeaseOutcome, ChannelPoolError, type ChannelPoolStats, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, DEFAULT_ROUTING_POLICY, DirectRouteProvider, FALLBACK_LEDGER_CLOSE_SECONDS, type FeeBumpConfig, type FeeCallback, type FeeContext, type FeeDistribution, type FeePercentile, type FeePhase, type FeeStats, type FeeStrategy, FixedFeeStrategy, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LeaseOptions, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, MultiplierFeeStrategy, type Network, type NetworkConfig, type OpenChannelParams, type OracleReference, type OtelBridgeOptions, type PathPaymentCandidate, type PathPaymentQuoteCallback, type PayForAPIParams, type PaymentPrediction, type PaymentQuote, type PaymentQuoteRequest, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, type QuoteParams, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, ROUTING_WEIGHT_SCALE, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, RecentFeeStrategy, type RecentFeeStrategyOptions, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, type RetryClassification, type RetryClassifier, type RouteDiscoveryFailure, type RouteDiscoveryOptions, type RouteDiscoveryResult, type RouteHop, RoutePlanner, type RoutePlannerOptions, type RoutePriceOracle, type RouteProvider, type RouteProviderContext, type RouteQuote, type RouteRequest, type RouteScoreBreakdown, type RouteUnavailableCode, RouteUnavailableError, type RouteVenue, type RoutingPolicy, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScoredRoute, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, type SponsorRpc, SponsorService, type SponsorServiceOptions, type SponsoredAccountOptions, SponsoredChannelAccountFactory, SponsorshipError, type SponsorshipRecord, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, StellarPathPaymentProvider, type SubmissionPipelineConfig, SubmissionQueue, SubmissionQueueError, type SubmissionQueueOptions, type SubmissionQueueStats, type SubmitOptions, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, applyOracleReference, asFeeStrategy, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, canonicalRouteId, clamp, classifySubmissionError, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, discoverRoutes, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isRouteEligible, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, normalizeRoute, pct, predictPaymentOutcome, rankBids, rankRoutes, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, scoreRoute, selectBestBid, selectRoute, sub, sumStrings, toStr, toStroops, validateRoutingPolicy, verifyBidAttestation };

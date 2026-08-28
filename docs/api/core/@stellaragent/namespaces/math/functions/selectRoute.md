@@ -8,7 +8,7 @@
 
 > **selectRoute**(`routes`, `policy?`): [`ScoredRoute`](../interfaces/ScoredRoute.md) \| `null`
 
-Defined in: math/routing.ts:107
+Defined in: [math/routing.ts:107](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L107)
 
 Select the deterministic winner, or null when no route is admissible.
 

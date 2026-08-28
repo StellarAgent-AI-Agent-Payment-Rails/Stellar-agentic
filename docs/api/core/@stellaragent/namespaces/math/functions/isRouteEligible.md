@@ -8,7 +8,7 @@
 
 > **isRouteEligible**(`route`, `policy?`): `boolean`
 
-Defined in: math/routing.ts:79
+Defined in: [math/routing.ts:79](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L79)
 
 Whether a structurally valid route clears policy reliability/slippage bounds.
 

@@ -6,7 +6,7 @@
 
 # Interface: ScoredRoute
 
-Defined in: math/routing.ts:42
+Defined in: [math/routing.ts:42](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L42)
 
 A normalized executable quote consumed by the deterministic selector.
 
@@ -20,7 +20,7 @@ A normalized executable quote consumed by the deterministic selector.
 
 > **score**: `string`
 
-Defined in: math/routing.ts:44
+Defined in: [math/routing.ts:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L44)
 
 Lower is better. Integer score for byte-identical TS/Python output.
 
@@ -30,7 +30,7 @@ Lower is better. Integer score for byte-identical TS/Python output.
 
 > **breakdown**: [`RouteScoreBreakdown`](RouteScoreBreakdown.md)
 
-Defined in: math/routing.ts:45
+Defined in: [math/routing.ts:45](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L45)
 
 ***
 

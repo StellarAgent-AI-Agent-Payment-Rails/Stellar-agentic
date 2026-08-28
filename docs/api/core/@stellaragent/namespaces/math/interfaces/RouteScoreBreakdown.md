@@ -6,7 +6,7 @@
 
 # Interface: RouteScoreBreakdown
 
-Defined in: math/routing.ts:35
+Defined in: [math/routing.ts:35](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L35)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: math/routing.ts:35
 
 > **weightedCost**: `string`
 
-Defined in: math/routing.ts:36
+Defined in: [math/routing.ts:36](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L36)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: math/routing.ts:36
 
 > **weightedSlippage**: `string`
 
-Defined in: math/routing.ts:37
+Defined in: [math/routing.ts:37](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L37)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: math/routing.ts:37
 
 > **weightedReliability**: `string`
 
-Defined in: math/routing.ts:38
+Defined in: [math/routing.ts:38](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L38)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: math/routing.ts:38
 
 > **hopPenalty**: `string`
 
-Defined in: math/routing.ts:39
+Defined in: [math/routing.ts:39](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L39)

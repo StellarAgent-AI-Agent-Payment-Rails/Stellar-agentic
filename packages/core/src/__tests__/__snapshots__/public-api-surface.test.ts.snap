@@ -29,6 +29,7 @@ exports[`exports the same set of names as before the module split 1`] = `
   "RecentFeeStrategy",
   "RedactingLogger",
   "RemoteSigner",
+  "RoutePlanner",
   "RouteUnavailableError",
   "SEMCONV_VERSION",
   "STROOP_SCALE",

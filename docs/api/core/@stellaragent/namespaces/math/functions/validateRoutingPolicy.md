@@ -8,7 +8,7 @@
 
 > **validateRoutingPolicy**(`policy`): `void`
 
-Defined in: math/routing.ts:114
+Defined in: [math/routing.ts:114](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L114)
 
 ## Parameters
 

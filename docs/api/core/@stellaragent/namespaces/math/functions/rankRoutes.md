@@ -8,7 +8,7 @@
 
 > **rankRoutes**(`routes`, `policy?`): [`ScoredRoute`](../interfaces/ScoredRoute.md)[]
 
-Defined in: math/routing.ts:91
+Defined in: [math/routing.ts:91](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/math/routing.ts#L91)
 
 Rank routes with a total, input-order-independent comparison:
 score, output (descending), slippage, hop count, then canonical route ID.

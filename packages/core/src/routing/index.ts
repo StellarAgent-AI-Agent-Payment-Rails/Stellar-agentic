@@ -11,6 +11,12 @@ export {
   StellarPathPaymentProvider,
   CallbackRouteProvider,
 } from './providers.js';
+export { RoutePlanner } from './planner.js';
+export type {
+  RoutePlannerOptions,
+  PaymentQuoteRequest,
+  PaymentQuote,
+} from './planner.js';
 export type {
   RouteVenue,
   RouteUnavailableCode,
@@ -30,4 +36,3 @@ export type {
   PathPaymentCandidate,
   PathPaymentQuoteCallback,
 } from './types.js';
-

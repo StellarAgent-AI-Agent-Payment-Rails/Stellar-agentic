@@ -13,6 +13,8 @@ import {
   bytesVal,
   enumVal,
   i128Val,
+  i128BaseUnitsVal,
+  paymentRouteVal,
   resolveAssetContract,
   spendPeriodVariant,
   u32Val,
@@ -20,6 +22,11 @@ import {
 } from './encoding.js';
 import { expectBigInt } from '../decode.js';
 import type { InvokeFn } from './invocation.js';
+import type { PaymentQuote } from '../routing/planner.js';
+
+export interface RoutedPaymentExecution {
+  quote: PaymentQuote;
+}
 
 /** Register a wallet in the configured AgentWalletFactory contract. */
 export async function createAgentWallet(
@@ -87,8 +94,16 @@ export async function payForAPI(
   networkPassphrase: string,
   channelId: bigint,
   params: PayForAPIParams,
+  routed?: RoutedPaymentExecution,
 ): Promise<TxResult> {
-  if ((params.destAsset !== undefined) !== (params.minReceived !== undefined)) {
+  const destAsset = params.recipientAsset ?? params.destAsset;
+  if (params.recipientAsset && params.destAsset && params.recipientAsset !== params.destAsset) {
+    throw new StellarAgentError(
+      'INVALID_ARGUMENT',
+      'recipientAsset and destAsset must refer to the same asset',
+    );
+  }
+  if (!routed && (destAsset !== undefined) !== (params.minReceived !== undefined)) {
     throw new StellarAgentError(
       'INVALID_ARGUMENT',
       'destAsset and minReceived must be set together',
@@ -101,17 +116,37 @@ export async function payForAPI(
     addressVal(params.recipient ?? address),
     i128Val(params.amount),
   ];
-  const args = params.destAsset === undefined
+  if (routed) {
+    if (!destAsset) {
+      throw new StellarAgentError('INVALID_ARGUMENT', 'A routed payment requires recipientAsset');
+    }
+    const result = await invoke(paymentChannel, 'pay_with_route', [
+      ...common,
+      addressVal(resolveAssetContract(destAsset, assetContracts, networkPassphrase)),
+      paymentRouteVal(routed.quote.route, assetContracts, networkPassphrase),
+      i128BaseUnitsVal(routed.quote.minimumDestinationAmount),
+      u32Val(routed.quote.validUntilLedger),
+      bytesVal(params.endpoint),
+    ]);
+    return {
+      ...result.tx,
+      route: routed.quote.route,
+      expectedDestinationAmount: routed.quote.route.expectedDestinationAmount,
+      minimumDestinationAmount: routed.quote.minimumDestinationAmount,
+    };
+  }
+
+  const args = destAsset === undefined
     ? [...common, bytesVal(params.endpoint)]
     : [
         ...common,
-        addressVal(resolveAssetContract(params.destAsset, assetContracts, networkPassphrase)),
+        addressVal(resolveAssetContract(destAsset, assetContracts, networkPassphrase)),
         i128Val(params.minReceived!),
         bytesVal(params.endpoint),
       ];
   return (await invoke(
     paymentChannel,
-    params.destAsset === undefined ? 'pay' : 'pay_with_conversion',
+    destAsset === undefined ? 'pay' : 'pay_with_conversion',
     args,
   )).tx;
 }

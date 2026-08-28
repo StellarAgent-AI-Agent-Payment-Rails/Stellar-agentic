@@ -90,6 +90,7 @@ export {
   AmmRouteProvider,
   StellarPathPaymentProvider,
   CallbackRouteProvider,
+  RoutePlanner,
 } from './routing/index.js';
 export type {
   RouteVenue,
@@ -109,6 +110,9 @@ export type {
   AmmQuoteCallback,
   PathPaymentCandidate,
   PathPaymentQuoteCallback,
+  RoutePlannerOptions,
+  PaymentQuoteRequest,
+  PaymentQuote,
 } from './routing/index.js';
 
 // ─── Ledger-window wall-clock estimation ─────────────────────────────
@@ -149,6 +153,7 @@ export type {
   TxResult,
   FeeBumpConfig,
   SubmissionPipelineConfig,
+  QuoteParams,
 } from './types/index.js';
 
 export { StellarAgentError } from './errors.js';

@@ -8,6 +8,10 @@
 
 Defined in: [routing/types.ts:86](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L86)
 
+## Extended by
+
+- [`RoutePlannerOptions`](RoutePlannerOptions.md)
+
 ## Properties
 
 ### providers

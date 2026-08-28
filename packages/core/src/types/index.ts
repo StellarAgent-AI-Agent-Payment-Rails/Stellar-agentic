@@ -130,6 +130,18 @@ export interface StellarAgentConfig {
   submissionQueue?: import('../fleet/submissionQueue.js').SubmissionQueue;
   /** Build a queue owned by this agent. Omitted fields use fleet-safe defaults. */
   submission?: SubmissionPipelineConfig;
+  /** Multi-venue discovery and deterministic route-selection configuration. */
+  routing?: import('../routing/planner.js').RoutePlannerOptions;
+}
+
+export interface QuoteParams {
+  sourceAsset: string;
+  destinationAsset: string;
+  /** Decimal display amount; converted to 7-decimal base units before discovery. */
+  amount: string;
+  allowedIntermediates?: string[];
+  /** 0..500 basis points. @default 100 */
+  slippageToleranceBps?: number;
 }
 
 export interface FeeBumpConfig {
@@ -202,6 +214,8 @@ export interface PayForAPIParams {
   amount: string;
   /** Asset to pay with (must match the channel's settlement asset) */
   asset?: string;
+  /** Explicit source asset; `asset` remains a backwards-compatible alias. */
+  sourceAsset?: string;
   /** Channel ID to use (uses default if not specified) */
   channelId?: bigint;
   /**
@@ -219,6 +233,8 @@ export interface PayForAPIParams {
    * `destAsset`. Requires `minReceived` to also be set.
    */
   destAsset?: string;
+  /** Recipient asset; `destAsset` remains a backwards-compatible alias. */
+  recipientAsset?: string;
   /**
    * Minimum amount of `destAsset` the recipient must receive (slippage
    * floor), as a string in `destAsset` units. Required when `destAsset` is
@@ -228,6 +244,15 @@ export interface PayForAPIParams {
    * full slippage/price-oracle design.
    */
   minReceived?: string;
+  /**
+   * Reuse a prior `quote()` result or override automatic selection with a
+   * normalized route. Policy, intent, amount, and expiry remain enforced.
+   */
+  route?: import('../routing/planner.js').PaymentQuote | import('../routing/types.js').RouteQuote;
+  /** Intermediate assets automatic discovery may traverse. */
+  allowedIntermediates?: string[];
+  /** Automatic-quote slippage tolerance in basis points, capped at 500. */
+  slippageToleranceBps?: number;
 }
 
 export interface ChannelInfo {
@@ -375,4 +400,10 @@ export interface TxResult {
   feeSource?: string;
   /** Number of envelopes accepted for this operation, including a replacement. */
   submissionAttempts?: number;
+  /** Deterministic route executed for a converted payment. */
+  route?: import('../routing/types.js').RouteQuote;
+  /** Quoted destination amount in integer base units. */
+  expectedDestinationAmount?: string;
+  /** End-to-end contract floor in destination base units. */
+  minimumDestinationAmount?: string;
 }
