@@ -2,6 +2,32 @@ export { createQueryServer } from "./api.js";
 export { loadEnvironment, type EnvironmentConfig } from "./config.js";
 export { decodeEvent } from "./decoder.js";
 export {
+  EmailReportTransport,
+  ReportDeliveryStore,
+  ScheduledReportService,
+  WebhookReportTransport,
+  eventStoreArtifactBuilder,
+  periodForRun,
+  type ClaimedDelivery,
+  type DeliveryStatus,
+  type DeliveryTransport,
+  type EmailDestination,
+  type EmailMessage,
+  type EmailSender,
+  type GeneratedReportArtifact,
+  type ReportArtifactBuilder,
+  type ReportCadence,
+  type ReportDelivery,
+  type ReportDestination,
+  type ReportSchedule,
+  type ReportScheduleInput,
+  type ScheduledReportServiceOptions,
+  type ScheduledReportTickResult,
+  type StoredReportArtifact,
+  type WebhookDestination,
+  type WebhookFetch,
+} from "./delivery.js";
+export {
   collectStatementExport,
   describeStatementExport,
   streamStatementExport,
