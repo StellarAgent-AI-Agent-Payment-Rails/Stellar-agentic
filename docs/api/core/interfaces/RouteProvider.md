@@ -6,7 +6,7 @@
 
 # Interface: RouteProvider
 
-Defined in: routing/types.ts:69
+Defined in: [routing/types.ts:69](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L69)
 
 Venue adapter. Provider failures are isolated by the discovery engine.
 
@@ -16,7 +16,7 @@ Venue adapter. Provider failures are isolated by the discovery engine.
 
 > `readonly` **id**: `string`
 
-Defined in: routing/types.ts:70
+Defined in: [routing/types.ts:70](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L70)
 
 ## Methods
 
@@ -24,7 +24,7 @@ Defined in: routing/types.ts:70
 
 > **discover**(`request`, `context`): `Promise`\<[`RouteHop`](RouteHop.md)[][]\>
 
-Defined in: routing/types.ts:71
+Defined in: [routing/types.ts:71](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L71)
 
 #### Parameters
 

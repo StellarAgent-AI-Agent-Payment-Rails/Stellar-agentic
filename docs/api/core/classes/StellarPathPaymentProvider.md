@@ -6,7 +6,7 @@
 
 # Class: StellarPathPaymentProvider
 
-Defined in: routing/providers.ts:131
+Defined in: [routing/providers.ts:131](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L131)
 
 Adapter around Horizon strict-send path discovery or a compatible service.
 
@@ -20,7 +20,7 @@ Adapter around Horizon strict-send path discovery or a compatible service.
 
 > **new StellarPathPaymentProvider**(`options`): `StellarPathPaymentProvider`
 
-Defined in: routing/providers.ts:135
+Defined in: [routing/providers.ts:135](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L135)
 
 #### Parameters
 
@@ -38,7 +38,7 @@ Defined in: routing/providers.ts:135
 
 > `readonly` **id**: `string`
 
-Defined in: routing/providers.ts:132
+Defined in: [routing/providers.ts:132](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L132)
 
 #### Implementation of
 
@@ -50,7 +50,7 @@ Defined in: routing/providers.ts:132
 
 > **discover**(`request`, `context`): `Promise`\<[`RouteHop`](../interfaces/RouteHop.md)[][]\>
 
-Defined in: routing/providers.ts:140
+Defined in: [routing/providers.ts:140](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L140)
 
 #### Parameters
 

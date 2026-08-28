@@ -6,7 +6,7 @@
 
 # Interface: AmmPair
 
-Defined in: routing/types.ts:107
+Defined in: [routing/types.ts:107](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L107)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: routing/types.ts:107
 
 > **sourceAsset**: `string`
 
-Defined in: routing/types.ts:108
+Defined in: [routing/types.ts:108](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L108)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: routing/types.ts:108
 
 > **destinationAsset**: `string`
 
-Defined in: routing/types.ts:109
+Defined in: [routing/types.ts:109](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L109)

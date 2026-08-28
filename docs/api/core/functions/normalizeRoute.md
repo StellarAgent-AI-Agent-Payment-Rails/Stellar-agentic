@@ -8,7 +8,7 @@
 
 > **normalizeRoute**(`request`, `hops`, `maxHops`): [`RouteQuote`](../interfaces/RouteQuote.md)
 
-Defined in: routing/discovery.ts:98
+Defined in: [routing/discovery.ts:98](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/discovery.ts#L98)
 
 ## Parameters
 

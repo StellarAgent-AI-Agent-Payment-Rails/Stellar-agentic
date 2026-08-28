@@ -8,7 +8,7 @@
 
 > **AmmQuoteCallback** = (`pair`, `sourceAmount`) => `Promise`\<[`AmmHopQuote`](../interfaces/AmmHopQuote.md) \| `null`\>
 
-Defined in: routing/types.ts:121
+Defined in: [routing/types.ts:121](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L121)
 
 ## Parameters
 

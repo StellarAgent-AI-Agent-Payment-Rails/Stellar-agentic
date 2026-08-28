@@ -6,7 +6,7 @@
 
 # Interface: RouteHop
 
-Defined in: routing/types.ts:13
+Defined in: [routing/types.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L13)
 
 One executable segment of a candidate route.
 
@@ -16,7 +16,7 @@ One executable segment of a candidate route.
 
 > **venue**: [`RouteVenue`](../type-aliases/RouteVenue.md)
 
-Defined in: routing/types.ts:14
+Defined in: [routing/types.ts:14](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L14)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: routing/types.ts:14
 
 > **venueId**: `string`
 
-Defined in: routing/types.ts:16
+Defined in: [routing/types.ts:16](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L16)
 
 Stable venue identifier. A contract-backed venue uses its C... address.
 
@@ -34,7 +34,7 @@ Stable venue identifier. A contract-backed venue uses its C... address.
 
 > **sourceAsset**: `string`
 
-Defined in: routing/types.ts:17
+Defined in: [routing/types.ts:17](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L17)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: routing/types.ts:17
 
 > **destinationAsset**: `string`
 
-Defined in: routing/types.ts:18
+Defined in: [routing/types.ts:18](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L18)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: routing/types.ts:18
 
 > **sourceAmount**: `string`
 
-Defined in: routing/types.ts:19
+Defined in: [routing/types.ts:19](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L19)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: routing/types.ts:19
 
 > **expectedOutput**: `string`
 
-Defined in: routing/types.ts:20
+Defined in: [routing/types.ts:20](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L20)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: routing/types.ts:20
 
 > **feeAmount**: `string`
 
-Defined in: routing/types.ts:22
+Defined in: [routing/types.ts:22](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L22)
 
 Fee charged by this segment, in its source asset's base units.
 
@@ -76,7 +76,7 @@ Fee charged by this segment, in its source asset's base units.
 
 > **feeBps**: `number`
 
-Defined in: routing/types.ts:24
+Defined in: [routing/types.ts:24](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L24)
 
 Source-normalized fee, in basis points.
 
@@ -86,7 +86,7 @@ Source-normalized fee, in basis points.
 
 > **slippageBps**: `number`
 
-Defined in: routing/types.ts:26
+Defined in: [routing/types.ts:26](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L26)
 
 Expected price impact/slippage, in basis points.
 
@@ -96,7 +96,7 @@ Expected price impact/slippage, in basis points.
 
 > **reliabilityBps**: `number`
 
-Defined in: routing/types.ts:28
+Defined in: [routing/types.ts:28](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L28)
 
 0..10,000; 10,000 represents the most reliable quote.
 
@@ -106,7 +106,7 @@ Defined in: routing/types.ts:28
 
 > `optional` **path?**: `string`[]
 
-Defined in: routing/types.ts:30
+Defined in: [routing/types.ts:30](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L30)
 
 Intermediate assets embedded in a classic Stellar path-payment quote.
 
@@ -116,6 +116,6 @@ Intermediate assets embedded in a classic Stellar path-payment quote.
 
 > `optional` **minOutput?**: `string`
 
-Defined in: routing/types.ts:32
+Defined in: [routing/types.ts:32](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L32)
 
 Per-hop execution floor. The final route still has one end-to-end floor.

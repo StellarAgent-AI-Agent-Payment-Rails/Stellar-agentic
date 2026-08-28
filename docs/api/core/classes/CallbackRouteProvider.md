@@ -6,7 +6,7 @@
 
 # Class: CallbackRouteProvider
 
-Defined in: routing/providers.ts:169
+Defined in: [routing/providers.ts:169](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L169)
 
 Small fixture/application adapter for a custom venue implementation.
 
@@ -20,7 +20,7 @@ Small fixture/application adapter for a custom venue implementation.
 
 > **new CallbackRouteProvider**(`id`, `callback`): `CallbackRouteProvider`
 
-Defined in: routing/providers.ts:173
+Defined in: [routing/providers.ts:173](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L173)
 
 #### Parameters
 
@@ -42,7 +42,7 @@ Defined in: routing/providers.ts:173
 
 > `readonly` **id**: `string`
 
-Defined in: routing/providers.ts:170
+Defined in: [routing/providers.ts:170](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L170)
 
 #### Implementation of
 
@@ -54,7 +54,7 @@ Defined in: routing/providers.ts:170
 
 > **discover**(`request`, `context`): `Promise`\<[`RouteHop`](../interfaces/RouteHop.md)[][]\>
 
-Defined in: routing/providers.ts:179
+Defined in: [routing/providers.ts:179](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L179)
 
 #### Parameters
 

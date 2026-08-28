@@ -379,6 +379,48 @@ Re-exports [RATE_LIMIT_LEDGERS_PER_DAY](@stellaragent/namespaces/math/variables/
 
 ***
 
+### ROUTING\_WEIGHT\_SCALE
+
+Re-exports [ROUTING_WEIGHT_SCALE](@stellaragent/namespaces/math/variables/ROUTING_WEIGHT_SCALE.md)
+
+***
+
+### DEFAULT\_ROUTING\_POLICY
+
+Re-exports [DEFAULT_ROUTING_POLICY](@stellaragent/namespaces/math/variables/DEFAULT_ROUTING_POLICY.md)
+
+***
+
+### scoreRoute
+
+Re-exports [scoreRoute](@stellaragent/namespaces/math/functions/scoreRoute.md)
+
+***
+
+### isRouteEligible
+
+Re-exports [isRouteEligible](@stellaragent/namespaces/math/functions/isRouteEligible.md)
+
+***
+
+### rankRoutes
+
+Re-exports [rankRoutes](@stellaragent/namespaces/math/functions/rankRoutes.md)
+
+***
+
+### selectRoute
+
+Re-exports [selectRoute](@stellaragent/namespaces/math/functions/selectRoute.md)
+
+***
+
+### validateRoutingPolicy
+
+Re-exports [validateRoutingPolicy](@stellaragent/namespaces/math/functions/validateRoutingPolicy.md)
+
+***
+
 ### AgentBid
 
 Re-exports [AgentBid](@stellaragent/namespaces/math/interfaces/AgentBid.md)
@@ -466,3 +508,21 @@ Re-exports [PaymentPrediction](@stellaragent/namespaces/math/interfaces/PaymentP
 ### BlockReason
 
 Re-exports [BlockReason](@stellaragent/namespaces/math/type-aliases/BlockReason.md)
+
+***
+
+### RoutingPolicy
+
+Re-exports [RoutingPolicy](@stellaragent/namespaces/math/interfaces/RoutingPolicy.md)
+
+***
+
+### RouteScoreBreakdown
+
+Re-exports [RouteScoreBreakdown](@stellaragent/namespaces/math/interfaces/RouteScoreBreakdown.md)
+
+***
+
+### ScoredRoute
+
+Re-exports [ScoredRoute](@stellaragent/namespaces/math/interfaces/ScoredRoute.md)

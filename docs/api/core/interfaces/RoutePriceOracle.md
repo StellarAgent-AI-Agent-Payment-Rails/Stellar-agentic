@@ -6,7 +6,7 @@
 
 # Interface: RoutePriceOracle
 
-Defined in: routing/types.ts:75
+Defined in: [routing/types.ts:75](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L75)
 
 Optional independent fair-value source; never treated as executable liquidity.
 
@@ -16,7 +16,7 @@ Optional independent fair-value source; never treated as executable liquidity.
 
 > `readonly` **id**: `string`
 
-Defined in: routing/types.ts:76
+Defined in: [routing/types.ts:76](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L76)
 
 ## Methods
 
@@ -24,7 +24,7 @@ Defined in: routing/types.ts:76
 
 > **quote**(`request`): `Promise`\<[`OracleReference`](OracleReference.md) \| `null`\>
 
-Defined in: routing/types.ts:77
+Defined in: [routing/types.ts:77](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L77)
 
 #### Parameters
 

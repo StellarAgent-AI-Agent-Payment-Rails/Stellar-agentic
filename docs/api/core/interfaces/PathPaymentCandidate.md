@@ -6,7 +6,7 @@
 
 # Interface: PathPaymentCandidate
 
-Defined in: routing/types.ts:126
+Defined in: [routing/types.ts:126](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L126)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: routing/types.ts:126
 
 > **venueId**: `string`
 
-Defined in: routing/types.ts:128
+Defined in: [routing/types.ts:128](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L128)
 
 Stable liquidity-source identifier, or an execution-adapter contract ID.
 
@@ -24,7 +24,7 @@ Stable liquidity-source identifier, or an execution-adapter contract ID.
 
 > **path**: `string`[]
 
-Defined in: routing/types.ts:130
+Defined in: [routing/types.ts:130](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L130)
 
 Assets between source and destination, excluding both endpoints.
 
@@ -34,7 +34,7 @@ Assets between source and destination, excluding both endpoints.
 
 > **expectedDestinationAmount**: `string`
 
-Defined in: routing/types.ts:131
+Defined in: [routing/types.ts:131](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L131)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: routing/types.ts:131
 
 > `optional` **feeAmount?**: `string`
 
-Defined in: routing/types.ts:132
+Defined in: [routing/types.ts:132](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L132)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: routing/types.ts:132
 
 > `optional` **feeBps?**: `number`
 
-Defined in: routing/types.ts:133
+Defined in: [routing/types.ts:133](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L133)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: routing/types.ts:133
 
 > `optional` **slippageBps?**: `number`
 
-Defined in: routing/types.ts:134
+Defined in: [routing/types.ts:134](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L134)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: routing/types.ts:134
 
 > `optional` **reliabilityBps?**: `number`
 
-Defined in: routing/types.ts:135
+Defined in: [routing/types.ts:135](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L135)
 
 ***
 
@@ -74,4 +74,4 @@ Defined in: routing/types.ts:135
 
 > `optional` **minDestinationAmount?**: `string`
 
-Defined in: routing/types.ts:136
+Defined in: [routing/types.ts:136](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L136)

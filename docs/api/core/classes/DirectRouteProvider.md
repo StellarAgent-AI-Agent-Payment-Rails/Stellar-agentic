@@ -6,7 +6,7 @@
 
 # Class: DirectRouteProvider
 
-Defined in: routing/providers.ts:13
+Defined in: [routing/providers.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L13)
 
 Same-asset candidate. It performs no conversion and charges no fee.
 
@@ -30,7 +30,7 @@ Same-asset candidate. It performs no conversion and charges no fee.
 
 > `readonly` **id**: `"direct"` = `'direct'`
 
-Defined in: routing/providers.ts:14
+Defined in: [routing/providers.ts:14](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L14)
 
 #### Implementation of
 
@@ -42,7 +42,7 @@ Defined in: routing/providers.ts:14
 
 > **discover**(`request`): `Promise`\<[`RouteHop`](../interfaces/RouteHop.md)[][]\>
 
-Defined in: routing/providers.ts:16
+Defined in: [routing/providers.ts:16](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/providers.ts#L16)
 
 #### Parameters
 

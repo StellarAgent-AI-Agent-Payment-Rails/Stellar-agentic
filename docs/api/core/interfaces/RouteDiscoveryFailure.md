@@ -6,7 +6,7 @@
 
 # Interface: RouteDiscoveryFailure
 
-Defined in: routing/types.ts:95
+Defined in: [routing/types.ts:95](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L95)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: routing/types.ts:95
 
 > **providerId**: `string`
 
-Defined in: routing/types.ts:96
+Defined in: [routing/types.ts:96](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L96)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: routing/types.ts:96
 
 > **code**: [`RouteUnavailableCode`](../type-aliases/RouteUnavailableCode.md)
 
-Defined in: routing/types.ts:97
+Defined in: [routing/types.ts:97](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L97)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: routing/types.ts:97
 
 > **message**: `string`
 
-Defined in: routing/types.ts:98
+Defined in: [routing/types.ts:98](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L98)

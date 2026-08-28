@@ -6,7 +6,7 @@
 
 # Interface: RouteDiscoveryOptions
 
-Defined in: routing/types.ts:86
+Defined in: [routing/types.ts:86](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L86)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: routing/types.ts:86
 
 > **providers**: [`RouteProvider`](RouteProvider.md)[]
 
-Defined in: routing/types.ts:87
+Defined in: [routing/types.ts:87](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L87)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: routing/types.ts:87
 
 > `optional` **oracle?**: [`RoutePriceOracle`](RoutePriceOracle.md)
 
-Defined in: routing/types.ts:88
+Defined in: [routing/types.ts:88](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L88)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: routing/types.ts:88
 
 > `optional` **maxHops?**: `number`
 
-Defined in: routing/types.ts:90
+Defined in: [routing/types.ts:90](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L90)
 
 #### Default
 
@@ -44,7 +44,7 @@ Defined in: routing/types.ts:90
 
 > `optional` **maxCandidates?**: `number`
 
-Defined in: routing/types.ts:92
+Defined in: [routing/types.ts:92](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L92)
 
 #### Default
 

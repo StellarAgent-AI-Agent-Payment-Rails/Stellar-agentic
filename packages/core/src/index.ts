@@ -42,6 +42,14 @@ export {
   LEDGERS_PER_CHANNEL_PERIOD,
   RATE_LIMIT_LEDGERS_PER_HOUR,
   RATE_LIMIT_LEDGERS_PER_DAY,
+  // deterministic routing
+  ROUTING_WEIGHT_SCALE,
+  DEFAULT_ROUTING_POLICY,
+  scoreRoute,
+  isRouteEligible,
+  rankRoutes,
+  selectRoute,
+  validateRoutingPolicy,
 } from './math/index.js';
 export type {
   AgentBid,
@@ -64,6 +72,11 @@ export type {
   PaymentPrediction,
   BlockReason,
 } from './math/predict.js';
+export type {
+  RoutingPolicy,
+  RouteScoreBreakdown,
+  ScoredRoute,
+} from './math/routing.js';
 
 // ─── Multi-asset route discovery ────────────────────────────────────────────
 

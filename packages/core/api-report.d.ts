@@ -1497,73 +1497,6 @@ declare function ledgersRemainingInWindow(windowStartLedger: number, ledgersPerW
  */
 declare function predictPaymentOutcome({ channelState, rateLimitState, amount, currentLedger, }: PredictPaymentOutcomeParams): PaymentPrediction;
 
-/**
- * Deterministic math utilities for Stellar Agent SDK.
- *
- * Import from this barrel to get both the fixed-point primitives and the
- * bidding algorithm helpers in one shot:
- *
- * @example
- * ```typescript
- * import { rankBids, fmt, toStroops } from '@stellaragent/core/math';
- * ```
- */
-
-type index_AgentBid = AgentBid;
-type index_AttestRankBidsOptions = AttestRankBidsOptions;
-type index_AttestedRanking = AttestedRanking;
-declare const index_BPS_SCALE: typeof BPS_SCALE;
-type index_BidAttestation = BidAttestation;
-type index_BidAttestationVerification = BidAttestationVerification;
-type index_BidWeights = BidWeights;
-declare const index_BigNumber: typeof BigNumber;
-type index_BlockReason = BlockReason;
-type index_ChannelSpendState = ChannelSpendState;
-declare const index_DEFAULT_BID_WEIGHTS: typeof DEFAULT_BID_WEIGHTS;
-declare const index_LEDGERS_PER_CHANNEL_PERIOD: typeof LEDGERS_PER_CHANNEL_PERIOD;
-type index_PaymentPrediction = PaymentPrediction;
-type index_PredictPaymentOutcomeParams = PredictPaymentOutcomeParams;
-declare const index_RATE_LIMIT_LEDGERS_PER_DAY: typeof RATE_LIMIT_LEDGERS_PER_DAY;
-declare const index_RATE_LIMIT_LEDGERS_PER_HOUR: typeof RATE_LIMIT_LEDGERS_PER_HOUR;
-type index_RateLimitSpendState = RateLimitSpendState;
-declare const index_STROOP_SCALE: typeof STROOP_SCALE;
-type index_ScoredBid = ScoredBid;
-type index_ScorerKeyDirectory = ScorerKeyDirectory;
-type index_ScorerKeyRecord = ScorerKeyRecord;
-type index_VerifyBidAttestationOptions = VerifyBidAttestationOptions;
-declare const index_add: typeof add;
-declare const index_attestRankBids: typeof attestRankBids;
-declare const index_bn: typeof bn;
-declare const index_clamp: typeof clamp;
-declare const index_div: typeof div;
-declare const index_eq: typeof eq;
-declare const index_fmt: typeof fmt;
-declare const index_fromStroops: typeof fromStroops;
-declare const index_gt: typeof gt;
-declare const index_gte: typeof gte;
-declare const index_isPositive: typeof isPositive;
-declare const index_isWindowExpired: typeof isWindowExpired;
-declare const index_isWithinSpendLimit: typeof isWithinSpendLimit;
-declare const index_isZero: typeof isZero;
-declare const index_ledgersRemainingInWindow: typeof ledgersRemainingInWindow;
-declare const index_lt: typeof lt;
-declare const index_lte: typeof lte;
-declare const index_mul: typeof mul;
-declare const index_pct: typeof pct;
-declare const index_predictPaymentOutcome: typeof predictPaymentOutcome;
-declare const index_rankBids: typeof rankBids;
-declare const index_remainingBudget: typeof remainingBudget;
-declare const index_scoreBid: typeof scoreBid;
-declare const index_selectBestBid: typeof selectBestBid;
-declare const index_sub: typeof sub;
-declare const index_sumStrings: typeof sumStrings;
-declare const index_toStr: typeof toStr;
-declare const index_toStroops: typeof toStroops;
-declare const index_verifyBidAttestation: typeof verifyBidAttestation;
-declare namespace index {
-  export { type index_AgentBid as AgentBid, type index_AttestRankBidsOptions as AttestRankBidsOptions, type index_AttestedRanking as AttestedRanking, index_BPS_SCALE as BPS_SCALE, type index_BidAttestation as BidAttestation, type index_BidAttestationVerification as BidAttestationVerification, type index_BidWeights as BidWeights, index_BigNumber as BigNumber, type index_BlockReason as BlockReason, type index_ChannelSpendState as ChannelSpendState, index_DEFAULT_BID_WEIGHTS as DEFAULT_BID_WEIGHTS, index_LEDGERS_PER_CHANNEL_PERIOD as LEDGERS_PER_CHANNEL_PERIOD, type index_PaymentPrediction as PaymentPrediction, type index_PredictPaymentOutcomeParams as PredictPaymentOutcomeParams, index_RATE_LIMIT_LEDGERS_PER_DAY as RATE_LIMIT_LEDGERS_PER_DAY, index_RATE_LIMIT_LEDGERS_PER_HOUR as RATE_LIMIT_LEDGERS_PER_HOUR, type index_RateLimitSpendState as RateLimitSpendState, index_STROOP_SCALE as STROOP_SCALE, type index_ScoredBid as ScoredBid, type index_ScorerKeyDirectory as ScorerKeyDirectory, type index_ScorerKeyRecord as ScorerKeyRecord, type index_VerifyBidAttestationOptions as VerifyBidAttestationOptions, index_add as add, index_attestRankBids as attestRankBids, index_bn as bn, index_clamp as clamp, index_div as div, index_eq as eq, index_fmt as fmt, index_fromStroops as fromStroops, index_gt as gt, index_gte as gte, index_isPositive as isPositive, index_isWindowExpired as isWindowExpired, index_isWithinSpendLimit as isWithinSpendLimit, index_isZero as isZero, index_ledgersRemainingInWindow as ledgersRemainingInWindow, index_lt as lt, index_lte as lte, index_mul as mul, index_pct as pct, index_predictPaymentOutcome as predictPaymentOutcome, index_rankBids as rankBids, index_remainingBudget as remainingBudget, index_scoreBid as scoreBid, index_selectBestBid as selectBestBid, index_sub as sub, index_sumStrings as sumStrings, index_toStr as toStr, index_toStroops as toStroops, index_verifyBidAttestation as verifyBidAttestation };
-}
-
 /** Canonical, venue-neutral routing types. Amounts are integer base units. */
 type RouteVenue = 'direct' | 'amm' | 'path_payment';
 type RouteUnavailableCode = 'UNSUPPORTED_PAIR' | 'INSUFFICIENT_LIQUIDITY' | 'VENUE_UNAVAILABLE' | 'QUOTE_EXPIRED' | 'INVALID_QUOTE';
@@ -1678,6 +1611,130 @@ interface PathPaymentCandidate {
     minDestinationAmount?: string;
 }
 type PathPaymentQuoteCallback = (request: RouteRequest) => Promise<PathPaymentCandidate[]>;
+
+/**
+ * Deterministic multi-asset route selection.
+ *
+ * The selector consumes only normalized integer quotes. It performs no I/O,
+ * reads no clock, uses no floating point, and defines a total tie-break order.
+ */
+
+declare const ROUTING_WEIGHT_SCALE = 10000;
+interface RoutingPolicy {
+    /** Relative weight of source-normalized fees. */
+    costWeight: number;
+    /** Relative weight of expected price impact. */
+    slippageWeight: number;
+    /** Relative weight of the reliability shortfall. */
+    reliabilityWeight: number;
+    /** Fixed score added for every economic hop after the first. */
+    hopPenalty: number;
+    /** Routes above this expected slippage are inadmissible. */
+    maxSlippageBps: number;
+    /** Routes below this reliability are inadmissible. */
+    minReliabilityBps: number;
+}
+declare const DEFAULT_ROUTING_POLICY: Readonly<RoutingPolicy>;
+interface RouteScoreBreakdown {
+    weightedCost: string;
+    weightedSlippage: string;
+    weightedReliability: string;
+    hopPenalty: string;
+}
+interface ScoredRoute extends RouteQuote {
+    /** Lower is better. Integer score for byte-identical TS/Python output. */
+    score: string;
+    breakdown: RouteScoreBreakdown;
+}
+/** Validate and score one normalized route, including policy admission bounds. */
+declare function scoreRoute(route: RouteQuote, policy?: RoutingPolicy): ScoredRoute;
+/** Whether a structurally valid route clears policy reliability/slippage bounds. */
+declare function isRouteEligible(route: RouteQuote, policy?: RoutingPolicy): boolean;
+/**
+ * Rank routes with a total, input-order-independent comparison:
+ * score, output (descending), slippage, hop count, then canonical route ID.
+ */
+declare function rankRoutes(routes: readonly RouteQuote[], policy?: RoutingPolicy): ScoredRoute[];
+/** Select the deterministic winner, or null when no route is admissible. */
+declare function selectRoute(routes: readonly RouteQuote[], policy?: RoutingPolicy): ScoredRoute | null;
+declare function validateRoutingPolicy(policy: RoutingPolicy): void;
+
+/**
+ * Deterministic math utilities for Stellar Agent SDK.
+ *
+ * Import from this barrel to get both the fixed-point primitives and the
+ * bidding algorithm helpers in one shot:
+ *
+ * @example
+ * ```typescript
+ * import { rankBids, fmt, toStroops } from '@stellaragent/core/math';
+ * ```
+ */
+
+type index_AgentBid = AgentBid;
+type index_AttestRankBidsOptions = AttestRankBidsOptions;
+type index_AttestedRanking = AttestedRanking;
+declare const index_BPS_SCALE: typeof BPS_SCALE;
+type index_BidAttestation = BidAttestation;
+type index_BidAttestationVerification = BidAttestationVerification;
+type index_BidWeights = BidWeights;
+declare const index_BigNumber: typeof BigNumber;
+type index_BlockReason = BlockReason;
+type index_ChannelSpendState = ChannelSpendState;
+declare const index_DEFAULT_BID_WEIGHTS: typeof DEFAULT_BID_WEIGHTS;
+declare const index_DEFAULT_ROUTING_POLICY: typeof DEFAULT_ROUTING_POLICY;
+declare const index_LEDGERS_PER_CHANNEL_PERIOD: typeof LEDGERS_PER_CHANNEL_PERIOD;
+type index_PaymentPrediction = PaymentPrediction;
+type index_PredictPaymentOutcomeParams = PredictPaymentOutcomeParams;
+declare const index_RATE_LIMIT_LEDGERS_PER_DAY: typeof RATE_LIMIT_LEDGERS_PER_DAY;
+declare const index_RATE_LIMIT_LEDGERS_PER_HOUR: typeof RATE_LIMIT_LEDGERS_PER_HOUR;
+declare const index_ROUTING_WEIGHT_SCALE: typeof ROUTING_WEIGHT_SCALE;
+type index_RateLimitSpendState = RateLimitSpendState;
+type index_RouteScoreBreakdown = RouteScoreBreakdown;
+type index_RoutingPolicy = RoutingPolicy;
+declare const index_STROOP_SCALE: typeof STROOP_SCALE;
+type index_ScoredBid = ScoredBid;
+type index_ScoredRoute = ScoredRoute;
+type index_ScorerKeyDirectory = ScorerKeyDirectory;
+type index_ScorerKeyRecord = ScorerKeyRecord;
+type index_VerifyBidAttestationOptions = VerifyBidAttestationOptions;
+declare const index_add: typeof add;
+declare const index_attestRankBids: typeof attestRankBids;
+declare const index_bn: typeof bn;
+declare const index_clamp: typeof clamp;
+declare const index_div: typeof div;
+declare const index_eq: typeof eq;
+declare const index_fmt: typeof fmt;
+declare const index_fromStroops: typeof fromStroops;
+declare const index_gt: typeof gt;
+declare const index_gte: typeof gte;
+declare const index_isPositive: typeof isPositive;
+declare const index_isRouteEligible: typeof isRouteEligible;
+declare const index_isWindowExpired: typeof isWindowExpired;
+declare const index_isWithinSpendLimit: typeof isWithinSpendLimit;
+declare const index_isZero: typeof isZero;
+declare const index_ledgersRemainingInWindow: typeof ledgersRemainingInWindow;
+declare const index_lt: typeof lt;
+declare const index_lte: typeof lte;
+declare const index_mul: typeof mul;
+declare const index_pct: typeof pct;
+declare const index_predictPaymentOutcome: typeof predictPaymentOutcome;
+declare const index_rankBids: typeof rankBids;
+declare const index_rankRoutes: typeof rankRoutes;
+declare const index_remainingBudget: typeof remainingBudget;
+declare const index_scoreBid: typeof scoreBid;
+declare const index_scoreRoute: typeof scoreRoute;
+declare const index_selectBestBid: typeof selectBestBid;
+declare const index_selectRoute: typeof selectRoute;
+declare const index_sub: typeof sub;
+declare const index_sumStrings: typeof sumStrings;
+declare const index_toStr: typeof toStr;
+declare const index_toStroops: typeof toStroops;
+declare const index_validateRoutingPolicy: typeof validateRoutingPolicy;
+declare const index_verifyBidAttestation: typeof verifyBidAttestation;
+declare namespace index {
+  export { type index_AgentBid as AgentBid, type index_AttestRankBidsOptions as AttestRankBidsOptions, type index_AttestedRanking as AttestedRanking, index_BPS_SCALE as BPS_SCALE, type index_BidAttestation as BidAttestation, type index_BidAttestationVerification as BidAttestationVerification, type index_BidWeights as BidWeights, index_BigNumber as BigNumber, type index_BlockReason as BlockReason, type index_ChannelSpendState as ChannelSpendState, index_DEFAULT_BID_WEIGHTS as DEFAULT_BID_WEIGHTS, index_DEFAULT_ROUTING_POLICY as DEFAULT_ROUTING_POLICY, index_LEDGERS_PER_CHANNEL_PERIOD as LEDGERS_PER_CHANNEL_PERIOD, type index_PaymentPrediction as PaymentPrediction, type index_PredictPaymentOutcomeParams as PredictPaymentOutcomeParams, index_RATE_LIMIT_LEDGERS_PER_DAY as RATE_LIMIT_LEDGERS_PER_DAY, index_RATE_LIMIT_LEDGERS_PER_HOUR as RATE_LIMIT_LEDGERS_PER_HOUR, index_ROUTING_WEIGHT_SCALE as ROUTING_WEIGHT_SCALE, type index_RateLimitSpendState as RateLimitSpendState, type index_RouteScoreBreakdown as RouteScoreBreakdown, type index_RoutingPolicy as RoutingPolicy, index_STROOP_SCALE as STROOP_SCALE, type index_ScoredBid as ScoredBid, type index_ScoredRoute as ScoredRoute, type index_ScorerKeyDirectory as ScorerKeyDirectory, type index_ScorerKeyRecord as ScorerKeyRecord, type index_VerifyBidAttestationOptions as VerifyBidAttestationOptions, index_add as add, index_attestRankBids as attestRankBids, index_bn as bn, index_clamp as clamp, index_div as div, index_eq as eq, index_fmt as fmt, index_fromStroops as fromStroops, index_gt as gt, index_gte as gte, index_isPositive as isPositive, index_isRouteEligible as isRouteEligible, index_isWindowExpired as isWindowExpired, index_isWithinSpendLimit as isWithinSpendLimit, index_isZero as isZero, index_ledgersRemainingInWindow as ledgersRemainingInWindow, index_lt as lt, index_lte as lte, index_mul as mul, index_pct as pct, index_predictPaymentOutcome as predictPaymentOutcome, index_rankBids as rankBids, index_rankRoutes as rankRoutes, index_remainingBudget as remainingBudget, index_scoreBid as scoreBid, index_scoreRoute as scoreRoute, index_selectBestBid as selectBestBid, index_selectRoute as selectRoute, index_sub as sub, index_sumStrings as sumStrings, index_toStr as toStr, index_toStroops as toStroops, index_validateRoutingPolicy as validateRoutingPolicy, index_verifyBidAttestation as verifyBidAttestation };
+}
 
 /** A provider may use this to classify a normal venue miss without throwing a generic error. */
 declare class RouteUnavailableError extends Error {
@@ -2288,4 +2345,4 @@ declare class StellarAgent {
     getLedgerCloseEstimate(): Promise<LedgerCloseEstimate>;
 }
 
-export { type AgentBid, type AgentEvent, type AgentInfo, type AmmHopQuote, type AmmPair, type AmmQuoteCallback, AmmRouteProvider, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, CallbackFeeStrategy, CallbackRouteProvider, type ChannelAccount, type ChannelAccountFactory, type ChannelAccountLease, ChannelAccountPool, type ChannelAccountPoolOptions, type ChannelInfo, type ChannelLeaseOutcome, ChannelPoolError, type ChannelPoolStats, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, DirectRouteProvider, FALLBACK_LEDGER_CLOSE_SECONDS, type FeeBumpConfig, type FeeCallback, type FeeContext, type FeeDistribution, type FeePercentile, type FeePhase, type FeeStats, type FeeStrategy, FixedFeeStrategy, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LeaseOptions, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, MultiplierFeeStrategy, type Network, type NetworkConfig, type OpenChannelParams, type OracleReference, type OtelBridgeOptions, type PathPaymentCandidate, type PathPaymentQuoteCallback, type PayForAPIParams, type PaymentPrediction, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, RecentFeeStrategy, type RecentFeeStrategyOptions, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, type RetryClassification, type RetryClassifier, type RouteDiscoveryFailure, type RouteDiscoveryOptions, type RouteDiscoveryResult, type RouteHop, type RoutePriceOracle, type RouteProvider, type RouteProviderContext, type RouteQuote, type RouteRequest, type RouteUnavailableCode, RouteUnavailableError, type RouteVenue, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, type SponsorRpc, SponsorService, type SponsorServiceOptions, type SponsoredAccountOptions, SponsoredChannelAccountFactory, SponsorshipError, type SponsorshipRecord, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, StellarPathPaymentProvider, type SubmissionPipelineConfig, SubmissionQueue, SubmissionQueueError, type SubmissionQueueOptions, type SubmissionQueueStats, type SubmitOptions, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, applyOracleReference, asFeeStrategy, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, canonicalRouteId, clamp, classifySubmissionError, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, discoverRoutes, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, normalizeRoute, pct, predictPaymentOutcome, rankBids, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, selectBestBid, sub, sumStrings, toStr, toStroops, verifyBidAttestation };
+export { type AgentBid, type AgentEvent, type AgentInfo, type AmmHopQuote, type AmmPair, type AmmQuoteCallback, AmmRouteProvider, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, CallbackFeeStrategy, CallbackRouteProvider, type ChannelAccount, type ChannelAccountFactory, type ChannelAccountLease, ChannelAccountPool, type ChannelAccountPoolOptions, type ChannelInfo, type ChannelLeaseOutcome, ChannelPoolError, type ChannelPoolStats, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, DEFAULT_ROUTING_POLICY, DirectRouteProvider, FALLBACK_LEDGER_CLOSE_SECONDS, type FeeBumpConfig, type FeeCallback, type FeeContext, type FeeDistribution, type FeePercentile, type FeePhase, type FeeStats, type FeeStrategy, FixedFeeStrategy, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LeaseOptions, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, MultiplierFeeStrategy, type Network, type NetworkConfig, type OpenChannelParams, type OracleReference, type OtelBridgeOptions, type PathPaymentCandidate, type PathPaymentQuoteCallback, type PayForAPIParams, type PaymentPrediction, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, ROUTING_WEIGHT_SCALE, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, RecentFeeStrategy, type RecentFeeStrategyOptions, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, type RetryClassification, type RetryClassifier, type RouteDiscoveryFailure, type RouteDiscoveryOptions, type RouteDiscoveryResult, type RouteHop, type RoutePriceOracle, type RouteProvider, type RouteProviderContext, type RouteQuote, type RouteRequest, type RouteScoreBreakdown, type RouteUnavailableCode, RouteUnavailableError, type RouteVenue, type RoutingPolicy, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScoredRoute, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, type SponsorRpc, SponsorService, type SponsorServiceOptions, type SponsoredAccountOptions, SponsoredChannelAccountFactory, SponsorshipError, type SponsorshipRecord, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, StellarPathPaymentProvider, type SubmissionPipelineConfig, SubmissionQueue, SubmissionQueueError, type SubmissionQueueOptions, type SubmissionQueueStats, type SubmitOptions, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, applyOracleReference, asFeeStrategy, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, canonicalRouteId, clamp, classifySubmissionError, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, discoverRoutes, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isRouteEligible, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, normalizeRoute, pct, predictPaymentOutcome, rankBids, rankRoutes, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, scoreRoute, selectBestBid, selectRoute, sub, sumStrings, toStr, toStroops, validateRoutingPolicy, verifyBidAttestation };

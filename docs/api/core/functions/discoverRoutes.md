@@ -8,7 +8,7 @@
 
 > **discoverRoutes**(`request`, `options`): `Promise`\<[`RouteDiscoveryResult`](../interfaces/RouteDiscoveryResult.md)\>
 
-Defined in: routing/discovery.ts:31
+Defined in: [routing/discovery.ts:31](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/discovery.ts#L31)
 
 Enumerate and normalize every provider independently. A broken or illiquid
 venue becomes a diagnostic entry while valid candidates remain selectable.

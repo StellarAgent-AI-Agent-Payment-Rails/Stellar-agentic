@@ -6,7 +6,7 @@
 
 # Interface: RouteProviderContext
 
-Defined in: routing/types.ts:63
+Defined in: [routing/types.ts:63](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L63)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: routing/types.ts:63
 
 > **maxHops**: `number`
 
-Defined in: routing/types.ts:64
+Defined in: [routing/types.ts:64](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L64)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: routing/types.ts:64
 
 > **maxCandidates**: `number`
 
-Defined in: routing/types.ts:65
+Defined in: [routing/types.ts:65](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/types.ts#L65)
