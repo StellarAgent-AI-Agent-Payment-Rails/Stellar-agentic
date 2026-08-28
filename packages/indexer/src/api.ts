@@ -46,8 +46,27 @@ export function createQueryServer(store: EventStore): Server {
         const limit = Math.min(Number(url.searchParams.get("limit") ?? 100), 1_000);
         const offset = Number(url.searchParams.get("offset") ?? 0);
         result = store.allEvents(limit, offset);
+      } else if (request.method === "GET" && url.pathname === "/ledger") {
+        const fromLedger = url.searchParams.get("fromLedger");
+        const throughLedger = url.searchParams.get("throughLedger");
+        result = store.ledgerEntries({
+          ...(fromLedger === null ? {} : { fromLedger: Number(fromLedger) }),
+          ...(throughLedger === null ? {} : { throughLedger: Number(throughLedger) }),
+          ...(url.searchParams.has("agent") ? { agent: url.searchParams.get("agent")! } : {}),
+          ...(url.searchParams.has("owner") ? { owner: url.searchParams.get("owner")! } : {}),
+          ...(url.searchParams.has("account") ? { account: url.searchParams.get("account")! } : {}),
+          ...(url.searchParams.has("asset") ? { asset: url.searchParams.get("asset")! } : {}),
+          limit: Math.min(Number(url.searchParams.get("limit") ?? 1_000), 100_000),
+          offset: Number(url.searchParams.get("offset") ?? 0),
+        });
+      } else if (request.method === "GET" && url.pathname === "/ledger/issues") {
+        result = store.ledgerIssues();
       } else if (request.method === "GET" && url.pathname === "/health") {
-        result = { ok: true, nextLedger: store.checkpoint() ?? null };
+        result = {
+          ok: true,
+          nextLedger: store.checkpoint() ?? null,
+          ledgerIssues: store.ledgerIssues().length,
+        };
       } else {
         response.statusCode = 404;
         result = { error: "not found" };
