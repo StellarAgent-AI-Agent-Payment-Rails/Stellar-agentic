@@ -2,6 +2,15 @@ export { createQueryServer } from "./api.js";
 export { loadEnvironment, type EnvironmentConfig } from "./config.js";
 export { decodeEvent } from "./decoder.js";
 export {
+  collectStatementExport,
+  describeStatementExport,
+  streamStatementExport,
+  type StatementExportDescriptor,
+  type StatementExportFormat,
+  type StatementExportOptions,
+  type VerifiableExportRow,
+} from "./export.js";
+export {
   NATIVE_ASSET,
   normalizeLedger,
   reconcileLedger,

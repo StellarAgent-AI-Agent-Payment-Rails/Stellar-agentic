@@ -1,11 +1,59 @@
 import { createServer, type Server } from "node:http";
 import { URL } from "node:url";
+import {
+  describeStatementExport,
+  streamStatementExport,
+  type StatementExportFormat,
+} from "./export.js";
 import type { EventStore } from "./store.js";
 
 export function createQueryServer(store: EventStore): Server {
   return createServer((request, response) => {
     try {
       const url = new URL(request.url ?? "/", "http://localhost");
+      const exportMatch = url.pathname.match(
+        /^\/reports\/statements\/(agent|owner)\/([^/]+)\/export$/,
+      );
+      if (request.method === "GET" && exportMatch) {
+        const requestedFormat = url.searchParams.get("format") ?? "csv";
+        if (!["csv", "json", "iif"].includes(requestedFormat)) {
+          response.statusCode = 400;
+          response.setHeader("content-type", "application/json; charset=utf-8");
+          response.end(JSON.stringify({ error: "format must be csv, json, or iif" }));
+          return;
+        }
+        const fromLedger = url.searchParams.get("fromLedger");
+        const throughLedger = url.searchParams.get("throughLedger");
+        const statement = store.statement({
+          subject: {
+            kind: exportMatch[1] as "agent" | "owner",
+            id: decodeURIComponent(exportMatch[2]),
+          },
+          period: {
+            ...(fromLedger === null ? {} : { fromLedger: Number(fromLedger) }),
+            ...(throughLedger === null ? {} : { throughLedger: Number(throughLedger) }),
+          },
+        });
+        const format = requestedFormat as StatementExportFormat;
+        const descriptor = describeStatementExport(statement, format);
+        response.statusCode = 200;
+        response.setHeader("content-type", descriptor.contentType);
+        response.setHeader(
+          "content-disposition",
+          `attachment; filename="${descriptor.filename}"`,
+        );
+        void (async () => {
+          for await (const chunk of streamStatementExport(statement, { format })) {
+            if (!response.write(chunk)) {
+              await new Promise<void>((resolve) => response.once("drain", resolve));
+            }
+          }
+          response.end();
+        })().catch((error: unknown) => {
+          response.destroy(error instanceof Error ? error : new Error(String(error)));
+        });
+        return;
+      }
       response.setHeader("content-type", "application/json; charset=utf-8");
 
       let result: unknown;
