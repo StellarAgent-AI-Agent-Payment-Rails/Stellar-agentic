@@ -121,6 +121,15 @@ describe('rankRoutes', () => {
       .toEqual(['\uE000-route', '\u{10000}-route']);
   });
 
+  it('orders an ID before its longer UTF-8 prefix extension in either input order', () => {
+    const prefix = route({ id: 'route' });
+    const extension = route({ id: 'route/long' });
+    expect(rankRoutes([extension, prefix]).map((entry) => entry.id))
+      .toEqual(['route', 'route/long']);
+    expect(rankRoutes([prefix, extension]).map((entry) => entry.id))
+      .toEqual(['route', 'route/long']);
+  });
+
   it('returns equal duplicate IDs without comparator instability', () => {
     const first = route({ id: 'same' });
     const second = route({ id: 'same' });

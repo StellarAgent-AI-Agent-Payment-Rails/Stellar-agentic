@@ -46,7 +46,7 @@ The six phases are retained as reviewable commits in this combined PR:
   then canonical ID in UTF-8 byte order.
 - Performs no I/O, clock reads, floating point, randomization, locale
   collation, or input-order-dependent comparison.
-- Adds the strict Python port and extends `fixtures/determinism.json` with 24
+- Adds the strict Python port and extends `fixtures/determinism.json` with 27
   routing cases across three policies, including i128 amounts, reversed input,
   exact ties, and non-BMP identifiers.
 

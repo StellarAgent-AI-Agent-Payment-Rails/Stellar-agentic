@@ -70,6 +70,11 @@ def test_rank_uses_utf8_byte_order_for_non_bmp_ids() -> None:
     ]
 
 
+def test_rank_orders_an_id_before_its_prefix_extension() -> None:
+    routes = [_route(id="route/long"), _route(id="route")]
+    assert [entry.id for entry in rank_routes(routes)] == ["route", "route/long"]
+
+
 def test_filter_and_empty_selection() -> None:
     unreliable = _route(reliabilityBps=0)
     slippery = _route(expectedSlippageBps=1001)

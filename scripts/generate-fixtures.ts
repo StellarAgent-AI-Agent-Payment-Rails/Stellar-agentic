@@ -415,6 +415,7 @@ const ROUTE_POOLS: Record<string, RouteQuote[]> = {
   ],
   allTies: ['z-route', 'A-route', 'a-route', 'M-route'].map((id) => routeFixture(id)),
   unicodeTies: ['\u{10000}-route', '\uE000-route'].map((id) => routeFixture(id)),
+  prefixTies: ['route/long', 'route'].map((id) => routeFixture(id)),
   tieBreaks: [
     routeFixture('low-output', { expectedDestinationAmount: '19999999' }),
     routeFixture('high-output', { expectedDestinationAmount: '20000001' }),
