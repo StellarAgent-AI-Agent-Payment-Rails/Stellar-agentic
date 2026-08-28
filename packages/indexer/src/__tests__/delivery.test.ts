@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   EmailReportTransport,
+  HttpEmailSender,
   ReportDeliveryStore,
   ScheduledReportService,
   WebhookReportTransport,
@@ -315,5 +316,74 @@ describe("delivery formats and transports", () => {
     expect(message!.text).toContain(claim.artifact.sha256);
     expect(Buffer.from(message!.attachment.content)).toEqual(Buffer.from("statement content"));
     store.close();
+  });
+
+  it("bridges email to a JSON provider with idempotency and base64 content", async () => {
+    let request: {
+      url: string;
+      headers: Record<string, string>;
+      body: string;
+    } | undefined;
+    const sender = new HttpEmailSender(
+      "https://mail.example.test/v1/send",
+      "gateway-token",
+      async (url, init) => {
+        request = { url, ...init };
+        return { ok: true, status: 202, async text() { return ""; } };
+      },
+    );
+    await sender.send({
+      to: ["finance@example.test"],
+      from: "reports@example.test",
+      subject: "Monthly statement",
+      text: "Attached",
+      messageId: "stable-message-id",
+      attachment: {
+        filename: "statement.csv",
+        contentType: "text/csv",
+        content: Buffer.from("transactionHash,ledger\ntx-1,100\n"),
+      },
+    });
+
+    expect(request).toMatchObject({
+      url: "https://mail.example.test/v1/send",
+      headers: {
+        authorization: "Bearer gateway-token",
+        "idempotency-key": "stable-message-id",
+      },
+    });
+    expect(JSON.parse(request!.body)).toMatchObject({
+      messageId: "stable-message-id",
+      attachment: {
+        filename: "statement.csv",
+        contentType: "text/csv",
+        contentBase64: Buffer.from("transactionHash,ledger\ntx-1,100\n")
+          .toString("base64"),
+      },
+    });
+    expect(request!.body).not.toContain('"content"');
+  });
+
+  it("reports email gateway failures for durable retry classification", async () => {
+    const sender = new HttpEmailSender(
+      "https://mail.example.test/v1/send",
+      undefined,
+      async () => ({
+        ok: false,
+        status: 503,
+        async text() { return "provider unavailable"; },
+      }),
+    );
+    await expect(sender.send({
+      to: ["finance@example.test"],
+      subject: "Statement",
+      text: "Attached",
+      messageId: "message-id",
+      attachment: {
+        filename: "statement.csv",
+        contentType: "text/csv",
+        content: Buffer.from("content"),
+      },
+    })).rejects.toThrow("email gateway returned 503: provider unavailable");
   });
 });

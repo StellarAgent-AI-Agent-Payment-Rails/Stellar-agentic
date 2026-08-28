@@ -20,6 +20,7 @@ import {
   type ReportFormat,
   type ReportSchedule,
   type ReportSubjectKind,
+  type BalancePosition,
   type Statement,
   type StatementCategoryTotal,
   type StatementLine,
@@ -68,6 +69,27 @@ function defaultNextRun(): string {
   value.setMinutes(0, 0, 0);
   const local = new Date(value.getTime() - value.getTimezoneOffset() * 60_000);
   return local.toISOString().slice(0, 16);
+}
+
+function parsePositions(value: string, label: string): BalancePosition[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value) as unknown;
+  } catch {
+    throw new Error(`${label} must be valid JSON`);
+  }
+  if (!Array.isArray(parsed)) throw new Error(`${label} must be a JSON array`);
+  for (const item of parsed) {
+    if (
+      typeof item !== 'object' || item === null
+      || typeof (item as BalancePosition).account !== 'string'
+      || typeof (item as BalancePosition).asset !== 'string'
+      || typeof (item as BalancePosition).amount !== 'string'
+    ) {
+      throw new Error(`${label} rows require string account, asset, and amount fields`);
+    }
+  }
+  return parsed as BalancePosition[];
 }
 
 function statusBadge(status: DeliveryStatus) {
@@ -151,6 +173,9 @@ export function ReportsPage() {
   const [fromLedger, setFromLedger] = useState('');
   const [throughLedger, setThroughLedger] = useState('');
   const [format, setFormat] = useState<ReportFormat>('csv');
+  const [attachReconciliation, setAttachReconciliation] = useState(false);
+  const [openingSnapshot, setOpeningSnapshot] = useState('[]');
+  const [closingSnapshot, setClosingSnapshot] = useState('[]');
   const [statement, setStatement] = useState<Statement | null>(null);
   const [selectedLine, setSelectedLine] = useState<StatementLine | null>(null);
   const [categoryDimension, setCategoryDimension] = useState<StatementCategoryTotal['dimension']>('payment_type');
@@ -183,7 +208,20 @@ export function ReportsPage() {
     setSelectedLine(null);
     try {
       const input = requestFromFields(subjectKind, subjectId, fromLedger, throughLedger);
-      setStatement(await api.statement(input));
+      if (attachReconciliation) {
+        if (input.period.throughLedger === undefined) {
+          throw new Error('A closing ledger is required for reconciliation');
+        }
+        setStatement(await api.reconciledStatement(input, {
+          ...(input.period.fromLedger === undefined
+            ? {} : { fromLedger: input.period.fromLedger }),
+          asOfLedger: input.period.throughLedger,
+          openingPositions: parsePositions(openingSnapshot, 'Opening snapshot'),
+          onChainPositions: parsePositions(closingSnapshot, 'Closing snapshot'),
+        }));
+      } else {
+        setStatement(await api.statement(input));
+      }
     } catch (caught) {
       setStatement(null);
       setError(caught instanceof Error ? caught.message : String(caught));
@@ -209,7 +247,6 @@ export function ReportsPage() {
   async function createSchedule(event: FormEvent): Promise<void> {
     event.preventDefault();
     setScheduleBusy(true);
-    setError(null);
     try {
       const subject = requestFromFields(subjectKind, subjectId, '', '').subject;
       if (!destinationValue.trim()) throw new Error('Webhook URL or email recipient is required');
@@ -284,6 +321,40 @@ export function ReportsPage() {
               {busy ? <RefreshCw size={15} className="animate-spin" /> : <FileSearch size={15} />}
               {busy ? 'Building…' : 'Build preview'}
             </button>
+            <label className="xl:col-span-6 flex items-center gap-2 text-sm text-sa-text-dim cursor-pointer">
+              <input
+                type="checkbox"
+                className="accent-sa-accent"
+                checked={attachReconciliation}
+                onChange={(event) => setAttachReconciliation(event.target.checked)}
+              />
+              Attach opening and closing on-chain balance checkpoints
+            </label>
+            {attachReconciliation && (
+              <>
+                <label className="xl:col-span-3">
+                  <span className={labelClass}>Opening snapshot JSON</span>
+                  <textarea
+                    className={`${inputClass} font-mono text-xs min-h-24`}
+                    value={openingSnapshot}
+                    onChange={(event) => setOpeningSnapshot(event.target.value)}
+                    placeholder='[{"account":"C…","asset":"C…","amount":"0"}]'
+                  />
+                </label>
+                <label className="xl:col-span-3">
+                  <span className={labelClass}>Closing snapshot JSON</span>
+                  <textarea
+                    className={`${inputClass} font-mono text-xs min-h-24`}
+                    value={closingSnapshot}
+                    onChange={(event) => setClosingSnapshot(event.target.value)}
+                    placeholder='[{"account":"C…","asset":"C…","amount":"100"}]'
+                  />
+                </label>
+                <p className="xl:col-span-6 text-xs text-sa-text-dim">
+                  Snapshot balances at the exact opening and closing ledger boundaries. Amounts are integer asset units.
+                </p>
+              </>
+            )}
           </form>
         </Card>
 
@@ -333,6 +404,34 @@ export function ReportsPage() {
                 </div>
               ) : <EmptyState message="No balances in this period" />}
             </Card>
+
+            {statement.reconciliation && (
+              <Card>
+                <SectionHeader
+                  title="Reconciliation detail"
+                  subtitle={`Indexed activity from ledger ${statement.reconciliation.fromLedger} through ${statement.reconciliation.asOfLedger}`}
+                />
+                {statement.reconciliation.lines.length ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead><tr className="border-b border-sa-border">
+                        {['Status', 'Account', 'Asset', 'Expected', 'On chain', 'Difference'].map((heading) => <th key={heading} className="label text-left py-2.5 px-3 first:pl-0">{heading}</th>)}
+                      </tr></thead>
+                      <tbody>{statement.reconciliation.lines.map((line) => (
+                        <tr key={`${line.account}:${line.asset}`} className="border-b border-sa-border/50">
+                          <td className="py-3 px-3 first:pl-0"><Badge variant={line.status === 'matched' ? 'success' : 'danger'}>{line.status.replace(/_/g, ' ')}</Badge></td>
+                          <td className="py-3 px-3"><AddressChip address={line.account} /></td>
+                          <td className="py-3 px-3 font-mono text-xs">{line.asset}</td>
+                          <td className="py-3 px-3 font-mono">{line.expectedAmount}</td>
+                          <td className="py-3 px-3 font-mono">{line.onChainAmount ?? 'missing'}</td>
+                          <td className="py-3 px-3 font-mono text-sa-red">{line.difference ?? '—'}</td>
+                        </tr>
+                      ))}</tbody>
+                    </table>
+                  </div>
+                ) : <EmptyState message="No account and asset positions were selected" />}
+              </Card>
+            )}
 
             <Card>
               <SectionHeader

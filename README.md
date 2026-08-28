@@ -39,6 +39,7 @@ stellaragent/
 ├── packages/
 │   ├── core/         # @stellaragent/core — the TypeScript SDK
 │   ├── react/        # @stellaragent/react — hooks
+│   ├── indexer/      # Audit ledger, reports, exports, delivery
 │   └── cli/          # @stellaragent/cli
 ├── python/           # stellaragent — the Python SDK
 ├── services/
@@ -228,6 +229,12 @@ cd dashboard
 npm install
 npm run dev
 ```
+
+The **Reports** view builds agent/owner statements, attaches exact on-chain
+balance reconciliation, streams CSV/JSON Lines/IIF, drills to transaction
+proof, and administers schedules/dead letters. See the explicit proof limits,
+deployment, verification, and recovery guide in
+[docs/audit-trail.md](docs/audit-trail.md).
 
 ---
 

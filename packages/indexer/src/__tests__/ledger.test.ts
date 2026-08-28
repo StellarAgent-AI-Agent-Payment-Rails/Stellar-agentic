@@ -398,6 +398,34 @@ describe("reconciliation", () => {
       .toMatchObject({ onChainAmount: null, status: "missing_on_chain" });
   });
 
+  it("reconciles an arbitrary inclusive period from its opening checkpoint", () => {
+    const entries = normalizeLedger(channelHistory().map(stored)).entries;
+    const result = reconcileLedger(entries, {
+      fromLedger: 12,
+      asOfLedger: 14,
+      accounts: [CHANNEL],
+      openingPositions: [{ account: CHANNEL, asset: USDC, amount: "900" }],
+      onChainPositions: [{ account: CHANNEL, asset: USDC, amount: "500" }],
+    });
+
+    expect(result).toMatchObject({
+      fromLedger: 12,
+      asOfLedger: 14,
+      reconciled: true,
+      checkedEntries: 3,
+      lines: [{
+        account: CHANNEL,
+        asset: USDC,
+        openingAmount: "900",
+        activityAmount: "-400",
+        expectedAmount: "500",
+        onChainAmount: "500",
+        difference: "0",
+        status: "matched",
+      }],
+    });
+  });
+
   it("rejects duplicate balance observations", () => {
     expect(() => reconcileLedger([], {
       asOfLedger: 1,
@@ -406,6 +434,15 @@ describe("reconciliation", () => {
         { account: OWNER, asset: USDC, amount: "1" },
       ],
     })).toThrow("duplicate on-chain position");
+    expect(() => reconcileLedger([], {
+      fromLedger: 2,
+      asOfLedger: 1,
+      onChainPositions: [{ account: OWNER, asset: USDC, amount: "1" }],
+    })).toThrow("fromLedger");
+    expect(() => reconcileLedger([], {
+      asOfLedger: 1,
+      onChainPositions: [],
+    })).toThrow("at least one observed balance");
   });
 });
 
@@ -465,6 +502,27 @@ describe("EventStore ledger persistence", () => {
     );
     expect(store.ledgerEntries().map((item) => item.txHash)).not.toContain("tx-close");
     expect(store.ledgerEntries({ kinds: ["network_fee"] })).toEqual([]);
+    store.close();
+  });
+
+  it("iterates stable pages without imposing a total reporting ceiling", () => {
+    const store = new EventStore(":memory:");
+    store.recordTransactionFees(Array.from({ length: 13 }, (_, index) => ({
+      txHash: `tx-page-${String(index).padStart(2, "0")}`,
+      ledger: 100 + index,
+      ledgerClosedAt: new Date(Date.UTC(2026, 0, 1, 0, 0, index)).toISOString(),
+      payer: OWNER,
+      charged: "1",
+      agent: AGENT,
+    })));
+
+    const iterated = [...store.iterateLedgerEntries({}, 5)];
+    expect(iterated).toHaveLength(13);
+    expect(iterated.map((entry) => entry.ledger)).toEqual(
+      Array.from({ length: 13 }, (_, index) => 100 + index),
+    );
+    expect(store.statement({ subject: { kind: "agent", id: AGENT }, period: {} })
+      .lines).toHaveLength(13);
     store.close();
   });
 });

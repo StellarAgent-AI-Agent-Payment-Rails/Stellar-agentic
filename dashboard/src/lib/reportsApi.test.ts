@@ -57,6 +57,27 @@ describe('reports API client', () => {
     });
   });
 
+  it('posts balance checkpoints to build a reconciled statement', async () => {
+    const reconciliation = {
+      fromLedger: 10,
+      asOfLedger: 20,
+      openingPositions: [{ account: 'CCHANNEL', asset: 'CUSDC', amount: '0' }],
+      onChainPositions: [{ account: 'CCHANNEL', asset: 'CUSDC', amount: '25' }],
+    };
+    const fetcher = vi.fn(async () => new Response(JSON.stringify({
+      statementId: 'reconciled',
+      reconciliation: { reconciled: true },
+    }), { status: 200 }));
+    const api = new ReportsApi('', fetcher);
+    await expect(api.reconciledStatement(request, reconciliation)).resolves
+      .toMatchObject({ reconciliation: { reconciled: true } });
+    expect(fetcher).toHaveBeenCalledWith(statementPath(request), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(reconciliation),
+    });
+  });
+
   it('surfaces server error messages', async () => {
     const api = new ReportsApi('', async () => new Response(
       JSON.stringify({ error: 'invalid delivery status' }),

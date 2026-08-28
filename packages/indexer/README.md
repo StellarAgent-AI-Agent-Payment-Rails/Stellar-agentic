@@ -11,6 +11,7 @@ export SOROBAN_RPC_URL=http://localhost:8000/soroban/rpc
 export INDEXER_START_LEDGER=1234
 export INDEXER_DEPLOYMENT_FILE=deployments/local.json
 export INDEXER_DATABASE=stellaragent-events.sqlite
+export REPORT_DATABASE=stellaragent-reports.sqlite
 
 pnpm --filter @stellaragent/indexer build
 pnpm --filter @stellaragent/indexer exec stellaragent-indexer catch-up
@@ -22,7 +23,10 @@ Instead of `INDEXER_DEPLOYMENT_FILE`, the four addresses can be supplied as
 `PAYMENT_CHANNEL_CONTRACT`, `ESCROW_CONTRACT`, `RATE_LIMITER_CONTRACT`, and
 `AGENT_WALLET_FACTORY_CONTRACT`. `INDEXER_ROLLBACK_WINDOW` defaults to 12
 ledgers, `INDEXER_FINALITY_LAG` to 1, `INDEXER_POLL_INTERVAL_MS` to 5000, and
-the REST server's `PORT` to 3001.
+the REST server's `PORT` to 3001. The report worker is enabled by default;
+`REPORT_POLL_INTERVAL_MS` defaults to 5000 and `REPORT_WORKER_ENABLED=false`
+creates an API-only replica. Email uses `REPORT_EMAIL_GATEWAY_URL` and optional
+`REPORT_EMAIL_GATEWAY_TOKEN`; CORS uses `AUDIT_API_CORS_ORIGIN`.
 
 Soroban RPC retains only a bounded event history. Set `INDEXER_START_LEDGER` to
 the earliest deployment ledger still retained by the selected RPC provider for
@@ -39,9 +43,18 @@ larger manual rollback.
   `GET /rate-limits/:address/state`, and `GET /agent-info/:id/state` — latest
   complete on-chain record reconstructed from state snapshot events
 - `GET /events?limit=100&offset=0` — ordered event feed
+- `GET /ledger` and `GET /ledger/issues` — normalized entries and data issues
+- `GET|POST /reports/statements/:kind/:address` — statement preview or
+  statement with supplied on-chain reconciliation
+- `GET /reports/statements/:kind/:address/export?format=csv|json|iif` —
+  backpressure-aware verifiable export
+- `GET|POST /reports/schedules`, `GET /reports/deliveries`, and
+  `POST /reports/deliveries/:id/replay` — delivery administration
 - `GET /health` — service status and next ledger checkpoint
 
-The same queries are available as typed methods on `EventStore`.
+The same queries are available as typed methods on `EventStore`;
+`iterateLedgerEntries` pages without a total-row ceiling. The operating and
+proof-boundary guide is [`../../docs/audit-trail.md`](../../docs/audit-trail.md).
 
 ## SQLite schema
 
@@ -50,6 +63,11 @@ also stores contract identity, ledger/transaction ordering data, normalized
 namespace/action/entity columns, decoded JSON, and the original topic/value XDR.
 `event_participants` is a many-to-many address/role index used by agent audit
 queries. `checkpoints` stores the next ledger for each stream.
+
+Balanced `ledger_entries`/`ledger_postings`, confirmed `transaction_fees`, and
+retained `ledger_issues` form the reporting layer. The separate report database
+stores schedules, immutable artifacts, SHA-256 digests, idempotency keys,
+leases, attempts, and dead letters.
 
 Each poll deliberately re-fetches `INDEXER_ROLLBACK_WINDOW` ledgers. In one
 SQLite transaction it deletes that ledger range, inserts the canonical response,

@@ -105,6 +105,44 @@ describe("audit query API", () => {
     expect(JSON.stringify(await list.json())).not.toContain("TOP_SECRET");
   });
 
+  it("attaches a period-aligned on-chain reconciliation to a statement", async () => {
+    const { baseUrl } = await start();
+    const checkpoint = {
+      fromLedger: 10,
+      asOfLedger: 20,
+      openingPositions: [{ account: "CCHANNEL", asset: "CUSDC", amount: "42" }],
+      onChainPositions: [{ account: "CCHANNEL", asset: "CUSDC", amount: "42" }],
+    };
+    const response = await fetch(
+      `${baseUrl}/reports/statements/agent/GAGENT?fromLedger=10&throughLedger=20`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(checkpoint),
+      },
+    );
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      period: { fromLedger: 10, throughLedger: 20 },
+      reconciliation: {
+        fromLedger: 10,
+        asOfLedger: 20,
+        reconciled: true,
+        lines: [{ expectedAmount: "42", onChainAmount: "42", status: "matched" }],
+      },
+    });
+
+    const mismatch = await fetch(
+      `${baseUrl}/reports/statements/agent/GAGENT?throughLedger=21`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(checkpoint),
+      },
+    );
+    expect(mismatch.status).toBe(400);
+  });
+
   it("filters dead letters and replays them through the administration route", async () => {
     const { baseUrl, deliveryStore } = await start();
     const now = "2026-08-28T10:00:00.000Z";

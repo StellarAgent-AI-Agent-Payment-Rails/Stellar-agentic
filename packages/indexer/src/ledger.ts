@@ -97,6 +97,8 @@ export interface BalancePosition {
 }
 
 export interface ReconciliationRequest {
+  /** Inclusive opening ledger. Opening positions are immediately before it. */
+  fromLedger?: number;
   /** Inclusive ledger boundary. */
   asOfLedger: number;
   /** Absolute balances immediately before this ledger range. */
@@ -121,6 +123,8 @@ export interface ReconciliationLine {
 }
 
 export interface ReconciliationResult {
+  /** Inclusive opening ledger used for activity, or zero for all indexed history. */
+  fromLedger: number;
   asOfLedger: number;
   reconciled: boolean;
   checkedEntries: number;
@@ -533,11 +537,26 @@ export function reconcileLedger(
   if (!Number.isSafeInteger(request.asOfLedger) || request.asOfLedger < 0) {
     throw new Error("asOfLedger must be a non-negative safe integer");
   }
+  const fromLedger = request.fromLedger ?? 0;
+  if (!Number.isSafeInteger(fromLedger) || fromLedger < 0) {
+    throw new Error("fromLedger must be a non-negative safe integer");
+  }
+  if (fromLedger > request.asOfLedger) {
+    throw new Error("fromLedger must not exceed asOfLedger");
+  }
+  if (!Array.isArray(request.onChainPositions) || request.onChainPositions.length === 0) {
+    throw new Error("onChainPositions must contain at least one observed balance");
+  }
+  if (request.accounts !== undefined && request.accounts.length === 0) {
+    throw new Error("accounts must contain at least one account when supplied");
+  }
   const accountFilter = request.accounts ? new Set(request.accounts) : undefined;
   const opening = positions(request.openingPositions ?? [], "opening");
   const observed = positions(request.onChainPositions, "on-chain");
   const activity = new Map<string, bigint>();
-  const relevant = entries.filter((item) => item.ledger <= request.asOfLedger);
+  const relevant = entries.filter(
+    (item) => item.ledger >= fromLedger && item.ledger <= request.asOfLedger,
+  );
   for (const item of relevant) {
     for (const itemPosting of item.postings) {
       if (accountFilter && !accountFilter.has(itemPosting.account)) continue;
@@ -575,6 +594,7 @@ export function reconcileLedger(
   }
   lines.sort((a, b) => a.account.localeCompare(b.account) || a.asset.localeCompare(b.asset));
   return {
+    fromLedger,
     asOfLedger: request.asOfLedger,
     reconciled: lines.every((line) => line.status === "matched"),
     checkedEntries: relevant.length,

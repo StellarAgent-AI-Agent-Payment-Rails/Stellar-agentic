@@ -49,6 +49,7 @@ const statement = {
     lastLedger: 15,
   },
   reconciliation: {
+    fromLedger: 10,
     asOfLedger: 20,
     reconciled: true,
     checkedEntries: 1,
@@ -57,17 +58,23 @@ const statement = {
 };
 
 test('builds a statement, changes export format, and drills to transaction evidence', async ({ page }) => {
+  let reconciliationBody: unknown;
   await page.route('**/reports/statements/agent/**', async (route) => {
+    reconciliationBody = route.request().postDataJSON();
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(statement) });
   });
   await page.goto('/reports');
   await page.getByLabel('Report account').fill('GAGENT');
   await page.getByLabel('Opening ledger').fill('10');
   await page.getByLabel('Closing ledger').fill('20');
+  await page.getByLabel('Attach opening and closing on-chain balance checkpoints').check();
+  await page.getByLabel('Opening snapshot JSON').fill('[{"account":"CCHANNEL","asset":"CUSDC","amount":"0"}]');
+  await page.getByLabel('Closing snapshot JSON').fill('[{"account":"CCHANNEL","asset":"CUSDC","amount":"10"}]');
   await page.getByRole('button', { name: 'Build preview' }).click();
 
   await expect(page.getByText(statement.statementId)).toBeVisible();
-  await expect(page.getByText('Exact')).toBeVisible();
+  await expect(page.getByText('Exact', { exact: true })).toBeVisible();
+  expect(reconciliationBody).toMatchObject({ fromLedger: 10, asOfLedger: 20 });
   await expect(page.getByRole('cell', { name: '8750000' })).toBeVisible();
 
   await page.getByLabel('Export format').selectOption('iif');

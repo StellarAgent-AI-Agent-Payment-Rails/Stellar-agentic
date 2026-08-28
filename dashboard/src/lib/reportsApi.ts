@@ -20,6 +20,20 @@ export interface StatementRequest {
   period: StatementPeriod;
 }
 
+export interface BalancePosition {
+  account: string;
+  asset: string;
+  amount: string;
+}
+
+export interface ReconciliationRequest {
+  fromLedger?: number;
+  asOfLedger: number;
+  openingPositions?: BalancePosition[];
+  onChainPositions: BalancePosition[];
+  accounts?: string[];
+}
+
 export interface StatementLine {
   lineId: string;
   entryId: string;
@@ -75,6 +89,7 @@ export interface Statement {
     lastLedger: number | null;
   };
   reconciliation: null | {
+    fromLedger: number;
     asOfLedger: number;
     reconciled: boolean;
     checkedEntries: number;
@@ -191,6 +206,20 @@ export class ReportsApi {
 
   async statement(input: StatementRequest): Promise<Statement> {
     return responseJson<Statement>(await this.request(endpoint(this.baseUrl, statementPath(input))));
+  }
+
+  async reconciledStatement(
+    input: StatementRequest,
+    reconciliation: ReconciliationRequest,
+  ): Promise<Statement> {
+    return responseJson<Statement>(await this.request(
+      endpoint(this.baseUrl, statementPath(input)),
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(reconciliation),
+      },
+    ));
   }
 
   exportUrl(input: StatementRequest, format: ReportFormat): string {

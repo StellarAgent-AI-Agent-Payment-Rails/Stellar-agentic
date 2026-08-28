@@ -384,6 +384,26 @@ export class EventStore {
     }));
   }
 
+  /**
+   * Iterate an arbitrarily large ledger query in stable pages. Unlike
+   * `ledgerEntries`, this has no total-row ceiling.
+   */
+  *iterateLedgerEntries(
+    query: Omit<LedgerQuery, "limit" | "offset"> = {},
+    batchSize = 10_000,
+  ): Generator<LedgerEntry> {
+    if (!Number.isSafeInteger(batchSize) || batchSize < 1 || batchSize > 100_000) {
+      throw new Error("ledger iteration batchSize must be between 1 and 100000");
+    }
+    let offset = 0;
+    while (true) {
+      const batch = this.ledgerEntries({ ...query, limit: batchSize, offset });
+      yield* batch;
+      if (batch.length < batchSize) return;
+      offset += batch.length;
+    }
+  }
+
   /** Return retained data-quality findings in canonical order. */
   ledgerIssues(): LedgerIssue[] {
     return (this.db.prepare("SELECT * FROM ledger_issues ORDER BY ledger, issue_id").all() as Array<Record<string, unknown>>)
@@ -400,14 +420,17 @@ export class EventStore {
   /** Reconcile stored activity to caller-supplied on-chain positions. */
   reconcile(request: ReconciliationRequest): ReconciliationResult {
     return reconcileLedger(
-      this.ledgerEntries({ throughLedger: request.asOfLedger, limit: 100_000 }),
+      [...this.iterateLedgerEntries({
+        ...(request.fromLedger === undefined ? {} : { fromLedger: request.fromLedger }),
+        throughLedger: request.asOfLedger,
+      })],
       request,
     );
   }
 
   /** Build an agent/owner statement from the complete normalized history. */
   statement(request: StatementRequest): Statement {
-    return buildStatement(this.ledgerEntries({ limit: 100_000 }), request);
+    return buildStatement([...this.iterateLedgerEntries()], request);
   }
 
   eventsForAgent(address: string): StoredEvent[] {

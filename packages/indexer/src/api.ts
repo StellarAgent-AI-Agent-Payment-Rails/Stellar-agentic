@@ -18,6 +18,7 @@ import {
   streamStatementExport,
   type StatementExportFormat,
 } from "./export.js";
+import type { ReconciliationRequest } from "./ledger.js";
 import type { StatementPeriod } from "./reporting.js";
 import type { EventStore } from "./store.js";
 
@@ -131,6 +132,14 @@ function schedulingStore(options: QueryServerOptions): ReportDeliveryStore {
   return options.deliveryStore;
 }
 
+function inputResult<T>(operation: () => T): T {
+  try {
+    return operation();
+  } catch (error) {
+    throw new HttpError(400, error instanceof Error ? error.message : String(error));
+  }
+}
+
 async function handleRequest(
   request: IncomingMessage,
   response: ServerResponse,
@@ -180,13 +189,61 @@ async function handleRequest(
     return;
   }
 
+  match = url.pathname.match(/^\/reports\/statements\/(agent|owner)\/([^/]+)$/);
+  if (request.method === "POST" && match) {
+    const input = await readJson(
+      request,
+      options.maxRequestBytes ?? 1024 * 1024,
+    ) as ReconciliationRequest;
+    const requestedPeriod = statementPeriod(url);
+    if (
+      requestedPeriod.fromLedger !== undefined &&
+      input.fromLedger !== undefined &&
+      requestedPeriod.fromLedger !== input.fromLedger
+    ) {
+      throw new HttpError(400, "statement and reconciliation opening ledgers must match");
+    }
+    if (
+      requestedPeriod.throughLedger !== undefined &&
+      requestedPeriod.throughLedger !== input.asOfLedger
+    ) {
+      throw new HttpError(400, "statement closing ledger must equal reconciliation asOfLedger");
+    }
+    const period: StatementPeriod = {
+      ...requestedPeriod,
+      ...(requestedPeriod.fromLedger === undefined && input.fromLedger !== undefined
+        ? { fromLedger: input.fromLedger }
+        : {}),
+      ...(requestedPeriod.throughLedger === undefined
+        ? { throughLedger: input.asOfLedger }
+        : {}),
+    };
+    const reconciliation = inputResult(() => store.reconcile({
+      ...input,
+      ...(input.fromLedger === undefined && period.fromLedger !== undefined
+        ? { fromLedger: period.fromLedger }
+        : {}),
+    }));
+    const result = store.statement({
+      subject: {
+        kind: match[1] as "agent" | "owner",
+        id: decodeURIComponent(match[2]),
+      },
+      period,
+      reconciliation,
+    });
+    sendJson(response, 200, result);
+    return;
+  }
+
   if (request.method === "GET" && url.pathname === "/reports/schedules") {
     sendJson(response, 200, schedulingStore(options).schedules().map(publicSchedule));
     return;
   }
   if (request.method === "POST" && url.pathname === "/reports/schedules") {
     const input = await readJson(request, options.maxRequestBytes ?? 1024 * 1024);
-    const schedule = schedulingStore(options).saveSchedule(input as ReportScheduleInput);
+    const schedule = inputResult(() =>
+      schedulingStore(options).saveSchedule(input as ReportScheduleInput));
     sendJson(response, 201, publicSchedule(schedule));
     return;
   }

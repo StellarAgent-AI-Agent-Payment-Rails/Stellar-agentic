@@ -506,6 +506,60 @@ export interface EmailSender {
   send(message: EmailMessage): Promise<void>;
 }
 
+export interface EmailGatewayFetch {
+  (url: string, init: {
+    method: "POST";
+    headers: Record<string, string>;
+    body: string;
+  }): Promise<{ ok: boolean; status: number; text(): Promise<string> }>;
+}
+
+/**
+ * Email-provider bridge using a small JSON gateway protocol. The stable
+ * messageId lets the gateway suppress duplicate provider sends.
+ */
+export class HttpEmailSender implements EmailSender {
+  private readonly url: string;
+
+  constructor(
+    url: string,
+    private readonly bearerToken?: string,
+    private readonly request: EmailGatewayFetch = fetch as EmailGatewayFetch,
+  ) {
+    const parsed = new URL(url);
+    if (!/^https?:$/.test(parsed.protocol)) {
+      throw new Error("email gateway URL must use HTTP or HTTPS");
+    }
+    this.url = parsed.toString();
+  }
+
+  async send(message: EmailMessage): Promise<void> {
+    const response = await this.request(this.url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(this.bearerToken
+          ? { authorization: `Bearer ${this.bearerToken}` }
+          : {}),
+        "idempotency-key": message.messageId,
+      },
+      body: JSON.stringify({
+        ...message,
+        attachment: {
+          ...message.attachment,
+          contentBase64: Buffer.from(message.attachment.content).toString("base64"),
+          content: undefined,
+        },
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(
+        `email gateway returned ${response.status}: ${(await response.text()).slice(0, 1_000)}`,
+      );
+    }
+  }
+}
+
 /** Provider-neutral email attachment transport with a stable message ID. */
 export class EmailReportTransport implements DeliveryTransport {
   constructor(private readonly sender: EmailSender) {}

@@ -19,6 +19,10 @@ Task 2 lands as six independently green branches:
 6. **Proof documentation and integration coverage.** Seeded history,
    large-range streams, delivery retries, and UI workflows run in CI.
 
+The production `tail` command composes the phases: separate event/report
+databases, preview/export/schedule/replay APIs, and a lease-aware worker with
+direct webhook and JSON email-gateway delivery.
+
 Later branches use the immediately preceding branch as their PR base. This keeps
 each schema/API transition reviewable without hiding cross-phase dependencies.
 
@@ -63,6 +67,11 @@ The result is reconciled only when every selected position is present and every
 difference is zero. This deliberately flags unrelated transfers, missing event
 history, incorrect opening boundaries, and asset metadata gaps rather than
 masking them.
+
+`fromLedger` and `asOfLedger` are inclusive. Opening positions are balances
+immediately before `fromLedger`, enabling an arbitrary retained period without
+double-counting pre-period activity. At least one closing observation is
+required so an empty comparison cannot appear exact.
 
 ## Evidence boundary
 

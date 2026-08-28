@@ -3,6 +3,7 @@ export { loadEnvironment, type EnvironmentConfig } from "./config.js";
 export { decodeEvent } from "./decoder.js";
 export {
   EmailReportTransport,
+  HttpEmailSender,
   ReportDeliveryStore,
   ScheduledReportService,
   WebhookReportTransport,
@@ -13,6 +14,7 @@ export {
   type DeliveryTransport,
   type EmailDestination,
   type EmailMessage,
+  type EmailGatewayFetch,
   type EmailSender,
   type GeneratedReportArtifact,
   type ReportArtifactBuilder,
