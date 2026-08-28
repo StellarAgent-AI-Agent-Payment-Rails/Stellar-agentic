@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto';
-
 /** In-process registry linking submitted tx hashes to SDK payment trace IDs. */
 export interface PaymentTraceRecord {
   paymentId: string;
@@ -15,7 +13,7 @@ const byPaymentId = new Map<string, PaymentTraceRecord>();
 const byTxHash = new Map<string, string>();
 
 export function createPaymentId(): string {
-  return randomUUID();
+  return globalThis.crypto.randomUUID();
 }
 
 export function registerPaymentTrace(record: PaymentTraceRecord): void {

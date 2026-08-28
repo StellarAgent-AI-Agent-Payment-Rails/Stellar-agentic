@@ -16,6 +16,7 @@ import {
   clearPaymentTraceRegistry,
   SemConv,
   SpanNames,
+  createPaymentId,
 } from '../index.js';
 import { TEST_PUBLIC, TEST_SECRET, DEPLOYED_CONTRACTS } from './fixtures.js';
 
@@ -61,6 +62,13 @@ afterEach(() => {
 });
 
 describe('trace correlation', () => {
+  it('creates unique standards-based UUID payment IDs', () => {
+    const ids = Array.from({ length: 100 }, () => createPaymentId());
+    expect(new Set(ids)).toHaveLength(100);
+    expect(ids.every((id) => /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)))
+      .toBe(true);
+  });
+
   it('registers payment_id on invoke and links to tx hash for indexer lookup', async () => {
     const tracer = new InMemoryTracer();
     const metrics = new InMemoryMetrics();

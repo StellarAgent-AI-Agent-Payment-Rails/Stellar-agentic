@@ -1,4 +1,4 @@
-export { createQueryServer } from "./api.js";
+export { createQueryServer, type QueryServerOptions } from "./api.js";
 export { loadEnvironment, type EnvironmentConfig } from "./config.js";
 export { decodeEvent } from "./decoder.js";
 export {

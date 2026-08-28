@@ -16,6 +16,8 @@ function positiveInteger(value: string | undefined, name: string, fallback?: num
 export interface EnvironmentConfig {
   rpcUrl: string;
   databasePath: string;
+  reportDatabasePath: string;
+  corsOrigin: string;
   contracts: ContractAddresses;
   startLedger: number;
   rollbackWindow: number;
@@ -43,9 +45,12 @@ export function loadEnvironment(env = process.env): EnvironmentConfig {
   }
   if (!env.SOROBAN_RPC_URL) throw new Error("missing SOROBAN_RPC_URL");
 
+  const databasePath = env.INDEXER_DATABASE ?? "stellaragent-events.sqlite";
   return {
     rpcUrl: env.SOROBAN_RPC_URL,
-    databasePath: env.INDEXER_DATABASE ?? "stellaragent-events.sqlite",
+    databasePath,
+    reportDatabasePath: env.REPORT_DATABASE ?? `${databasePath}.reports`,
+    corsOrigin: env.AUDIT_API_CORS_ORIGIN ?? "*",
     contracts: contracts as ContractAddresses,
     startLedger: positiveInteger(env.INDEXER_START_LEDGER, "INDEXER_START_LEDGER"),
     rollbackWindow: positiveInteger(env.INDEXER_ROLLBACK_WINDOW, "INDEXER_ROLLBACK_WINDOW", 12),

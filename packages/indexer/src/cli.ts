@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { createQueryServer } from "./api.js";
 import { loadEnvironment } from "./config.js";
+import { ReportDeliveryStore } from "./delivery.js";
 import { SorobanEventIndexer } from "./indexer.js";
 import { EventStore } from "./store.js";
 
@@ -41,7 +42,11 @@ async function main(): Promise<void> {
     return;
   }
 
-  const server = createQueryServer(store);
+  const deliveryStore = new ReportDeliveryStore(config.reportDatabasePath);
+  const server = createQueryServer(store, {
+    deliveryStore,
+    corsOrigin: config.corsOrigin,
+  });
   server.listen(config.port, () => {
     process.stdout.write(`Audit API listening on http://localhost:${config.port}\n`);
   });
@@ -49,7 +54,10 @@ async function main(): Promise<void> {
   const shutdown = (): void => {
     controller.abort();
     indexer.stop();
-    server.close(() => store.close());
+    server.close(() => {
+      deliveryStore.close();
+      store.close();
+    });
   };
   process.once("SIGINT", shutdown);
   process.once("SIGTERM", shutdown);
