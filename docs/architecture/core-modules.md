@@ -35,6 +35,10 @@ thing lives. The `StellarAgent` class and its supporting logic live under
 | `agent/queries.ts` | Every read-only operation: `getAgent`, `getBalance`, `getChannel`, `getJob`, `getRateLimitStatus`, `getSpendReport`, `getLedgerCloseEstimate`, `checkRateLimit`. |
 | `agent/mutations.ts` | Every operation that submits a transaction: `createAgentWallet`, `openChannel`, `closeChannel`, `payForAPI`, `requestWork`, `acceptJob`, `submitResult`, `releasePayment`, `setRateLimits`. |
 | `agent/config.ts` | Network client bootstrapping (`createNetworkClients`, `isLoopbackUrl`), the `UNCONFIGURED_RATE_LIMIT` sentinel, and friendbot funding. |
+| `fleet/channelPool.ts` | Exclusive transaction-source leasing, demand-driven account creation, explicit resizing/reclamation, and commit/rollback accounting. |
+| `fleet/feeStrategy.ts` | Fixed, multiplier, callback, and cached recent-network fee policies shared by invocation and sponsorship transactions. |
+| `fleet/sponsorship.ts` | Atomic sponsored account creation, revocation/merge lifecycle, and the sponsored channel-account factory. |
+| `fleet/submissionQueue.ts` | Bounded concurrency, backpressure, key-scoped ordering, retry classification, and queue telemetry. |
 
 The modules that were already split out before this — `signer.ts`,
 `contracts.ts`, `circuitBreaker.ts`, `ledgerTime.ts`, `errors.ts`,
@@ -70,6 +74,9 @@ that — everything else in `agent/*.ts` is a plain function with no `this`.
 - **A new contract struct to decode** → `agent/decoding.ts`.
 - **Something about how calls are built, signed, or retried** →
   `agent/invocation.ts`.
+- **Channel-account, fee, sponsorship, or submission scheduling policy** →
+  the matching module under `fleet/`; orchestration into an agent stays in
+  `agent/StellarAgent.ts`.
 - **A new public type** (a param object, a result shape) → `types/index.ts`,
   then re-exported from `index.ts`'s "Public type surface" block.
 - **Anything not about `StellarAgent` specifically** (rate limiting,
@@ -117,6 +124,10 @@ the way it does:
   wallet for the one required remote backend. See
   [`docs/signing.md`](../signing.md) (and `packages/core/src/signer.ts`'s
   module doc comment, which `docs/signing.md` is expanded from).
+- **Fleet throughput and zero-XLM operation** — why transaction-source and
+  authorization identities are separate, how fee replacement works, and how
+  to size channels/backpressure from measured rates. See
+  [`docs/fleet-tuning.md`](../fleet-tuning.md).
 - **The `wasm32v1-none` target** — `wasm32-unknown-unknown` compiles
   cleanly under Rust ≥ 1.82 but emits the post-MVP `reference-types`
   feature, which soroban-sdk 22's VM rejects at upload time; the build

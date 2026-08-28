@@ -9,6 +9,8 @@ start.
 - **Module structure and where new code belongs**:
   [`docs/architecture/core-modules.md`](../../docs/architecture/core-modules.md)
 - **Signing and key custody**: [`docs/signing.md`](../../docs/signing.md)
+- **Fleet throughput, sponsorship, fees, and queue tuning**:
+  [`docs/fleet-tuning.md`](../../docs/fleet-tuning.md)
 
 ## Development
 

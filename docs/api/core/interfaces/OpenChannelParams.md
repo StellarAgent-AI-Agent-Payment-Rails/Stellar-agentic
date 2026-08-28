@@ -6,7 +6,7 @@
 
 # Interface: OpenChannelParams
 
-Defined in: [types/index.ts:125](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L125)
+Defined in: [types/index.ts:181](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L181)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:125](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > `optional` **token?**: `string`
 
-Defined in: [types/index.ts:134](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L134)
+Defined in: [types/index.ts:190](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L190)
 
 Token to use for payments (defaults to XLM). This remains the
 channel's single funding/settlement asset — `limitPerPeriod` is always
@@ -29,7 +29,7 @@ channel itself multi-asset.
 
 > **deposit**: `string`
 
-Defined in: [types/index.ts:136](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L136)
+Defined in: [types/index.ts:192](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L192)
 
 Initial deposit amount (as string to avoid precision issues)
 
@@ -39,7 +39,7 @@ Initial deposit amount (as string to avoid precision issues)
 
 > **limitPerPeriod**: `string`
 
-Defined in: [types/index.ts:138](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L138)
+Defined in: [types/index.ts:194](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L194)
 
 Max spend per period, denominated in `token`
 
@@ -49,4 +49,4 @@ Max spend per period, denominated in `token`
 
 > **period**: [`SpendPeriod`](../type-aliases/SpendPeriod.md)
 
-Defined in: [types/index.ts:139](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L139)
+Defined in: [types/index.ts:195](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L195)

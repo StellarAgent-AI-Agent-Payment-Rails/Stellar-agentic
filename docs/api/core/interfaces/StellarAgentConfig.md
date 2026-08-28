@@ -194,3 +194,73 @@ Test-only injection — not for production use.
 #### metrics?
 
 > `optional` **metrics?**: [`Metrics`](Metrics.md)
+
+***
+
+### channelPool?
+
+> `optional` **channelPool?**: [`ChannelAccountPool`](../classes/ChannelAccountPool.md)
+
+Defined in: [types/index.ts:116](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L116)
+
+Fleet transaction source accounts. Each mutation exclusively leases one,
+removing sequence-number contention from the agent authorization account.
+`channelAccountPool` is retained as a descriptive alias.
+
+***
+
+### channelAccountPool?
+
+> `optional` **channelAccountPool?**: [`ChannelAccountPool`](../classes/ChannelAccountPool.md)
+
+Defined in: [types/index.ts:117](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L117)
+
+***
+
+### feeStrategy?
+
+> `optional` **feeStrategy?**: `string` \| `number` \| `bigint` \| [`FeeStrategy`](FeeStrategy.md) \| [`FeeCallback`](../type-aliases/FeeCallback.md)
+
+Defined in: [types/index.ts:119](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L119)
+
+Dynamic transaction fee policy. Recent p90 network fees are used by default.
+
+***
+
+### feeBump?
+
+> `optional` **feeBump?**: [`FeeBumpConfig`](FeeBumpConfig.md)
+
+Defined in: [types/index.ts:126](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L126)
+
+Fee-bump behavior for congestion and zero-XLM transaction sources.
+
+***
+
+### sponsorService?
+
+> `optional` **sponsorService?**: [`SponsorService`](../classes/SponsorService.md)
+
+Defined in: [types/index.ts:128](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L128)
+
+Creates the agent's account with a sponsored reserve in `createAgentWallet()`.
+
+***
+
+### submissionQueue?
+
+> `optional` **submissionQueue?**: [`SubmissionQueue`](../classes/SubmissionQueue.md)
+
+Defined in: [types/index.ts:130](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L130)
+
+An existing queue, useful when several agents share one fleet-wide bound.
+
+***
+
+### submission?
+
+> `optional` **submission?**: [`SubmissionPipelineConfig`](SubmissionPipelineConfig.md)
+
+Defined in: [types/index.ts:132](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L132)
+
+Build a queue owned by this agent. Omitted fields use fleet-safe defaults.

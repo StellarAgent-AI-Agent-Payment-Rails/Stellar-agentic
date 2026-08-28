@@ -6,7 +6,7 @@
 
 # Interface: ChannelInfo
 
-Defined in: [types/index.ts:177](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L177)
+Defined in: [types/index.ts:233](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L233)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:177](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **id**: `bigint`
 
-Defined in: [types/index.ts:178](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L178)
+Defined in: [types/index.ts:234](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L234)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:178](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **agent**: `string`
 
-Defined in: [types/index.ts:179](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L179)
+Defined in: [types/index.ts:235](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L235)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:179](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **owner**: `string`
 
-Defined in: [types/index.ts:180](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L180)
+Defined in: [types/index.ts:236](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L236)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:180](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **token**: `string`
 
-Defined in: [types/index.ts:181](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L181)
+Defined in: [types/index.ts:237](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L237)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types/index.ts:181](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **limitPerPeriod**: `bigint`
 
-Defined in: [types/index.ts:182](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L182)
+Defined in: [types/index.ts:238](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L238)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types/index.ts:182](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **spentThisPeriod**: `bigint`
 
-Defined in: [types/index.ts:183](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L183)
+Defined in: [types/index.ts:239](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L239)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [types/index.ts:183](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **totalSpent**: `bigint`
 
-Defined in: [types/index.ts:184](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L184)
+Defined in: [types/index.ts:240](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L240)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [types/index.ts:184](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **active**: `boolean`
 
-Defined in: [types/index.ts:185](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L185)
+Defined in: [types/index.ts:241](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L241)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [types/index.ts:185](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **period**: [`SpendPeriod`](../type-aliases/SpendPeriod.md)
 
-Defined in: [types/index.ts:187](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L187)
+Defined in: [types/index.ts:243](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L243)
 
 Reset cadence for `spentThisPeriod`, mirroring `Channel.period` on-chain.
 
@@ -88,7 +88,7 @@ Reset cadence for `spentThisPeriod`, mirroring `Channel.period` on-chain.
 
 > **periodStartLedger**: `number`
 
-Defined in: [types/index.ts:195](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L195)
+Defined in: [types/index.ts:251](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L251)
 
 Ledger sequence at which the current period started, mirroring
 `Channel.period_start_ledger`. `PaymentChannel.pay` resets

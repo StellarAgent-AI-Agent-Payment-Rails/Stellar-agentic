@@ -37,6 +37,7 @@ describe('StellarAgent', () => {
       'requestWork', 'acceptJob', 'submitResult', 'releasePayment', 'setRateLimits',
       'checkRateLimit', 'getBalance', 'getSpendReport', 'getChannel', 'getJob',
       'getRateLimitStatus', 'getLedgerCloseEstimate',
+      'getFleetStats', 'resizeChannelPool', 'shutdown',
     ] as const;
     for (const name of documentedMethods) {
       expect(typeof pkg.StellarAgent.prototype[name], name).toBe('function');

@@ -108,6 +108,62 @@ export interface StellarAgentConfig {
     tracer?: import('../telemetry/tracer.js').Tracer;
     metrics?: import('../telemetry/metrics.js').Metrics;
   };
+  /**
+   * Fleet transaction source accounts. Each mutation exclusively leases one,
+   * removing sequence-number contention from the agent authorization account.
+   * `channelAccountPool` is retained as a descriptive alias.
+   */
+  channelPool?: import('../fleet/channelPool.js').ChannelAccountPool;
+  channelAccountPool?: import('../fleet/channelPool.js').ChannelAccountPool;
+  /** Dynamic transaction fee policy. Recent p90 network fees are used by default. */
+  feeStrategy?:
+    | import('../fleet/feeStrategy.js').FeeStrategy
+    | import('../fleet/feeStrategy.js').FeeCallback
+    | string
+    | number
+    | bigint;
+  /** Fee-bump behavior for congestion and zero-XLM transaction sources. */
+  feeBump?: FeeBumpConfig;
+  /** Creates the agent's account with a sponsored reserve in `createAgentWallet()`. */
+  sponsorService?: import('../fleet/sponsorship.js').SponsorService;
+  /** An existing queue, useful when several agents share one fleet-wide bound. */
+  submissionQueue?: import('../fleet/submissionQueue.js').SubmissionQueue;
+  /** Build a queue owned by this agent. Omitted fields use fleet-safe defaults. */
+  submission?: SubmissionPipelineConfig;
+}
+
+export interface FeeBumpConfig {
+  /** @default true */
+  enabled?: boolean;
+  /** `always` is required when the inner source has zero XLM. @default on_expiry */
+  mode?: 'on_expiry' | 'always';
+  /** Outer fee source. Defaults to the sponsor, channel, or agent signer in that order. */
+  signer?: import('../signer.js').Signer;
+  /** A distinct policy for bumps. Defaults to 10x the initial fee or recent fees, whichever is higher. */
+  strategy?:
+    | import('../fleet/feeStrategy.js').FeeStrategy
+    | import('../fleet/feeStrategy.js').FeeCallback
+    | string
+    | number
+    | bigint;
+  /** Poll attempts before a pending inner transaction is bumped. @default 3 */
+  triggerAfterAttempts?: number;
+  /** Remaining transaction lifetime that triggers a bump. @default 10 */
+  expiryThresholdSeconds?: number;
+  /** Maximum replacement envelopes for one invocation. @default 1 */
+  maxBumps?: number;
+}
+
+export interface SubmissionPipelineConfig {
+  concurrency?: number;
+  maxQueueSize?: number;
+  maxAttempts?: number;
+  retryDelayMs?: number;
+  classifyError?: import('../fleet/submissionQueue.js').RetryClassifier;
+  /** Eager sponsored channel count when `sponsorService` creates the pool. @default 1 */
+  minChannels?: number;
+  /** Demand-driven sponsored channel limit. @default concurrency */
+  maxChannels?: number;
 }
 
 export interface AgentInfo {
@@ -309,4 +365,14 @@ export interface TxResult {
   success: boolean;
   /** Ledger number it was confirmed in */
   ledger?: number;
+  /** Fee charged by the confirmed transaction result, in stroops. */
+  feePaid?: string;
+  /** Whether confirmation came through a fee-bump envelope. */
+  feeBumped?: boolean;
+  /** Inner transaction source (the leased channel account when pooling is enabled). */
+  sourceAccount?: string;
+  /** Outer fee source when different from `sourceAccount`. */
+  feeSource?: string;
+  /** Number of envelopes accepted for this operation, including a replacement. */
+  submissionAttempts?: number;
 }

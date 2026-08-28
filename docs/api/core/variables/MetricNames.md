@@ -26,6 +26,22 @@ Metric names exported by the SDK and indexer.
 
 > `readonly` **paymentFeesStroops**: `"stellaragent.payment.fees_stroops"`
 
+### submissionQueueDepth
+
+> `readonly` **submissionQueueDepth**: `"stellaragent.submission.queue_depth"`
+
+### submissionLatencyMs
+
+> `readonly` **submissionLatencyMs**: `"stellaragent.submission.latency_ms"`
+
+### submissionExpiries
+
+> `readonly` **submissionExpiries**: `"stellaragent.submission.expiries"`
+
+### submissionRetries
+
+> `readonly` **submissionRetries**: `"stellaragent.submission.retries"`
+
 ### indexerLagLedgers
 
 > `readonly` **indexerLagLedgers**: `"stellaragent.indexer.lag_ledgers"`

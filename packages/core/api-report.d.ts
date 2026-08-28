@@ -5,7 +5,7 @@
 
 import BigNumber from 'bignumber.js';
 export { default as BigNumber } from 'bignumber.js';
-import { Keypair, SorobanRpc } from '@stellar/stellar-sdk';
+import { Keypair, Account, Transaction, FeeBumpTransaction, SorobanRpc } from '@stellar/stellar-sdk';
 
 /**
  * Deterministic fixed-point arithmetic for Stellar agent payment calculations.
@@ -383,6 +383,252 @@ declare function attestRankBids(bids: AgentBid[], weights: BidWeights | undefine
  */
 declare function verifyBidAttestation(bids: AgentBid[], result: ScoredBid[], attestation: BidAttestation, trustedKeys: ScorerKeyDirectory, options?: VerifyBidAttestationOptions): BidAttestationVerification;
 
+/**
+ * Signing abstraction.
+ *
+ * ## Why this module exists
+ *
+ * `StellarAgent` was built entirely around `Keypair.fromSecret(config.secretKey)`
+ * and exposed `get secretKey()` returning the raw secret string. For an agent
+ * running with real funds that is a serious risk: the secret sits in a
+ * long-lived Node.js process for its whole lifetime, reachable from a heap
+ * dump, a `process.env` leak, an error report that serialises the object
+ * graph, or any of the many transitive dependencies `@stellar/stellar-sdk`
+ * pulls in.
+ *
+ * This module separates *what to sign* from *what holds the key*. The agent
+ * gets a {@link Signer}; where the key actually lives is the Signer's
+ * problem.
+ *
+ * ## The interface shape
+ *
+ * `signTransaction` / `signAuthEntry` over base64 XDR is deliberately the
+ * same shape as SEP-43, the Stellar wallet-interface standard. That means an
+ * existing browser wallet, a hardware device, or a signing service can be
+ * adapted with a thin wrapper, and it keeps the boundary at "here are bytes,
+ * give me back signed bytes" — the narrowest interface that never requires
+ * key material to cross it.
+ *
+ * Soroban needs both halves: `signTransaction` covers the transaction
+ * envelope, and `signAuthEntry` covers `SorobanAuthorizationEntry` values,
+ * which are signed separately from the envelope that carries them.
+ *
+ * ## Why a remote-signing service rather than Ledger
+ *
+ * The issue asked for one remote backend — a Ledger integration or a
+ * remote-signing RPC protocol — and said to document the choice. This module
+ * implements {@link RemoteSigner}, an HTTP signing service.
+ *
+ * A Ledger requires a physical button press for every signature. That is a
+ * good property for a human treasury and a fatal one here: the entire premise
+ * of this SDK is an *autonomous* agent paying $0.001 per API call without a
+ * human in the loop. A hardware wallet cannot serve an unattended process
+ * making a payment per inference request — the first payment would block
+ * forever waiting for a press. Hardware signing is the right answer for the
+ * *admin* keys that deploy and configure contracts; it is the wrong answer
+ * for the agent's hot operational key, which is what `StellarAgent` holds.
+ *
+ * A remote signing service does fit: the key lives in an HSM/KMS behind a
+ * network boundary, the agent process holds only a URL and an auth token, and
+ * the service is where policy belongs — rate limits, spend ceilings, an audit
+ * log, revocation. Compromising the agent process then yields the ability to
+ * *request* signatures subject to that policy, not the key itself. Rotation
+ * means rotating a token, not redeploying every agent.
+ *
+ * {@link SignerAdapter} exists for anyone who does want Ledger or a browser
+ * wallet: both already speak the SEP-43 method shape.
+ *
+ * @module signer
+ */
+
+interface SignTransactionOptions {
+    /** Network passphrase the signature must be bound to. */
+    networkPassphrase: string;
+}
+interface SignAuthEntryOptions {
+    /** Network passphrase the signature must be bound to. */
+    networkPassphrase: string;
+    /** Ledger sequence after which the authorization is no longer valid. */
+    validUntilLedgerSeq: number;
+}
+/**
+ * Somewhere that can sign on behalf of one Stellar account.
+ *
+ * Implementations must never require the caller to hold key material. The
+ * only thing a `StellarAgent` ever learns from a Signer is a public address
+ * and some signed bytes.
+ */
+interface Signer {
+    /**
+     * The Stellar public address (`G...`) this signer signs for.
+     *
+     * Must be obtainable **without** the secret being present in the calling
+     * process — a remote signer derives it on the far side of the boundary and
+     * returns just the address.
+     */
+    getPublicKey(): Promise<string>;
+    /**
+     * Sign a transaction envelope.
+     *
+     * @param xdr - base64 transaction envelope XDR
+     * @returns base64 **signed** transaction envelope XDR
+     */
+    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
+    /**
+     * Sign a Soroban authorization entry.
+     *
+     * Soroban auth entries are signed separately from the envelope that carries
+     * them, so a signer that only implements `signTransaction` cannot authorize
+     * a contract invocation.
+     *
+     * @param authEntryXdr - base64 `SorobanAuthorizationEntry` XDR
+     * @returns base64 **signed** `SorobanAuthorizationEntry` XDR
+     */
+    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
+}
+/** Thrown when a signer cannot produce a signature. */
+declare class SigningError extends Error {
+    readonly cause?: unknown;
+    constructor(message: string, cause?: unknown);
+}
+/**
+ * The original behaviour, kept for backward compatibility: an in-memory
+ * `Keypair`.
+ *
+ * This is fine for testnet, for development, and for agents holding
+ * negligible value. It is explicitly *not* what you want for an agent with
+ * real funds — see {@link RemoteSigner}.
+ *
+ * The secret is held in a module-private closure rather than on the instance,
+ * so it does not appear when the signer (or an agent holding it) is logged,
+ * serialised by an error reporter, or walked by a heap inspector that only
+ * follows enumerable properties.
+ */
+declare class KeypairSigner implements Signer {
+    #private;
+    constructor(keypair: Keypair);
+    /** Build from a `S...` secret key string. */
+    static fromSecret(secretKey: string): KeypairSigner;
+    /** Generate a fresh random keypair. */
+    static random(): KeypairSigner;
+    getPublicKey(): Promise<string>;
+    /** Synchronous accessor — available because the key is local. */
+    publicKey(): string;
+    /**
+     * Reveal the raw secret.
+     *
+     * Deliberately a method with a blunt name rather than a `secretKey` getter:
+     * exporting key material should be a visible, greppable act, not something
+     * that happens by reading a property.
+     */
+    exportSecret(): string;
+    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
+    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
+}
+interface RemoteSignerOptions {
+    /** Base URL of the signing service, e.g. `https://signer.internal:8443`. */
+    url: string;
+    /**
+     * Bearer token presented on every request. This is the *only* credential
+     * the agent process holds — losing it costs a token rotation, not a key
+     * rotation and a migration of every funded account.
+     */
+    token?: string;
+    /**
+     * Public address this signer is expected to sign for. When set, it is
+     * checked against what the service reports and a mismatch is rejected, so
+     * a misconfigured or swapped-out service cannot quietly sign as a different
+     * account.
+     */
+    expectedPublicKey?: string;
+    /** Per-request timeout in milliseconds. @default 10000 */
+    timeoutMs?: number;
+    /** Extra headers (mTLS proxies, tracing, tenant routing). */
+    headers?: Record<string, string>;
+    /** Injectable `fetch`, for tests and for custom agents/proxies. */
+    fetch?: typeof globalThis.fetch;
+}
+/**
+ * A {@link Signer} backed by an HTTP signing service.
+ *
+ * ## Protocol
+ *
+ * Three endpoints, all JSON. The key never crosses the boundary.
+ *
+ * ### `GET {url}/v1/public-key`
+ * ```json
+ * → 200 { "publicKey": "G..." }
+ * ```
+ *
+ * ### `POST {url}/v1/sign/transaction`
+ * ```json
+ * ← { "xdr": "<base64 envelope>", "networkPassphrase": "..." }
+ * → 200 { "signedXdr": "<base64 signed envelope>" }
+ * ```
+ *
+ * ### `POST {url}/v1/sign/auth-entry`
+ * ```json
+ * ← { "authEntryXdr": "<base64>", "networkPassphrase": "...",
+ *     "validUntilLedgerSeq": 12345 }
+ * → 200 { "signedAuthEntryXdr": "<base64>" }
+ * ```
+ *
+ * Errors return a non-2xx status with `{ "error": "<message>" }`. A service
+ * that refuses on policy grounds — spend ceiling, rate limit, revoked token —
+ * should use `403` with a description; it surfaces here as a
+ * {@link SigningError} carrying that text.
+ *
+ * ## Why signed XDR rather than a raw signature
+ *
+ * Returning `signedXdr` means the service parses what it is signing and can
+ * therefore apply policy to it — reject payments over a ceiling, enforce a
+ * destination allow-list, log the operation. A service that only returned a
+ * signature over an opaque hash could not do any of that, which would waste
+ * the main advantage of moving the key behind a boundary in the first place.
+ */
+declare class RemoteSigner implements Signer {
+    #private;
+    constructor(options: RemoteSignerOptions);
+    getPublicKey(): Promise<string>;
+    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
+    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
+}
+/**
+ * Wrap anything already exposing SEP-43's method shape — Freighter and other
+ * browser wallets, `@ledgerhq`-backed signers, an in-house module — as a
+ * {@link Signer}.
+ *
+ * This is the extension point for a Ledger integration: hardware signing is
+ * the right choice for admin keys even though it is the wrong choice for an
+ * agent's hot key (see the module doc).
+ */
+interface Sep43Like {
+    getAddress(): Promise<{
+        address: string;
+    }> | Promise<string> | {
+        address: string;
+    } | string;
+    signTransaction(xdr: string, opts?: {
+        networkPassphrase?: string;
+    }): Promise<{
+        signedTxXdr: string;
+    } | string>;
+    signAuthEntry?(entryXdr: string, opts?: {
+        networkPassphrase?: string;
+    }): Promise<{
+        signedAuthEntry: string;
+    } | string>;
+}
+declare class SignerAdapter implements Signer {
+    #private;
+    constructor(wallet: Sep43Like);
+    getPublicKey(): Promise<string>;
+    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
+    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
+}
+/** Duck-typed check — `instanceof` fails across duplicated package copies. */
+declare function isSigner(value: unknown): value is Signer;
+
 interface HistogramRecord {
     name: string;
     value: number;
@@ -404,6 +650,316 @@ declare class InMemoryMetrics implements Metrics {
     readonly counters: CounterRecord[];
     recordHistogram(name: string, value: number, attributes?: Record<string, string | number | boolean>): void;
     incrementCounter(name: string, delta?: number, attributes?: Record<string, string | number | boolean>): void;
+}
+
+type RetryClassification = 'retryable' | 'expired' | 'permanent';
+type RetryClassifier = (error: unknown) => RetryClassification;
+interface SubmissionQueueOptions {
+    /** Maximum tasks executing at once. @default 4 */
+    concurrency?: number;
+    /** Pending-task limit; running tasks do not count. @default 1000 */
+    maxQueueSize?: number;
+    /** Total executions including the first attempt. @default 3 */
+    maxAttempts?: number;
+    /** Initial exponential-backoff delay. @default 100 */
+    retryDelayMs?: number;
+    classifyError?: RetryClassifier;
+    metrics?: Metrics;
+    now?: () => number;
+    sleep?: (milliseconds: number) => Promise<void>;
+}
+interface SubmitOptions {
+    /** Tasks with the same key never overlap; unrelated keys stay concurrent. */
+    orderingKey?: string;
+    signal?: AbortSignal;
+}
+interface SubmissionQueueStats {
+    depth: number;
+    running: number;
+    completed: number;
+    failed: number;
+    expired: number;
+    retries: number;
+}
+/** Machine-readable queue/backpressure failure. */
+declare class SubmissionQueueError extends Error {
+    readonly code: 'QUEUE_FULL' | 'QUEUE_CLOSED' | 'ABORTED';
+    constructor(code: 'QUEUE_FULL' | 'QUEUE_CLOSED' | 'ABORTED', message: string);
+}
+/** Default classification for Stellar/RPC/network failures. */
+declare function classifySubmissionError(error: unknown): RetryClassification;
+/**
+ * Bounded work queue with key-scoped ordering and retry classification.
+ * Backpressure is explicit: once the pending bound is reached, producers get
+ * `QUEUE_FULL` synchronously through the returned rejected promise.
+ */
+declare class SubmissionQueue {
+    #private;
+    constructor(options?: SubmissionQueueOptions);
+    get stats(): SubmissionQueueStats;
+    submit<T>(task: (attempt: number) => Promise<T>, options?: SubmitOptions): Promise<T>;
+    /** Resolve once both queued and running work have reached zero. */
+    drain(): Promise<void>;
+    /** Stop accepting work, then wait for accepted work to finish. */
+    close(): Promise<void>;
+}
+
+/** An account whose sequence number may be used as a transaction channel. */
+interface ChannelAccount {
+    /** Public Stellar address used as the transaction source. */
+    address: string;
+    /** Signs the transaction envelope. Contract authorization stays with the agent signer. */
+    signer: Signer;
+    /** Caller-owned data retained for the lifetime of the pool entry. */
+    metadata?: Readonly<Record<string, unknown>>;
+}
+/** Creates and reclaims accounts as a pool grows and shrinks. */
+interface ChannelAccountFactory {
+    create(): Promise<ChannelAccount>;
+    reclaim?(account: ChannelAccount): Promise<void>;
+}
+type ChannelLeaseOutcome = 'committed' | 'rolled_back';
+interface ChannelAccountPoolOptions {
+    /** Accounts available immediately. */
+    accounts?: readonly ChannelAccount[];
+    /** Lifecycle used when demand changes the pool size. */
+    factory?: ChannelAccountFactory;
+    /** Lowest size retained by idle reclamation. @default accounts.length */
+    minSize?: number;
+    /** Hard upper bound, including accounts being created. @default max(minSize, accounts.length) */
+    maxSize?: number;
+    /** Maximum time to wait for a lease. Zero disables the timeout. @default 30000 */
+    leaseTimeoutMs?: number;
+    /** Injectable clock for deterministic tests. */
+    now?: () => number;
+}
+interface LeaseOptions {
+    signal?: AbortSignal;
+    timeoutMs?: number;
+}
+interface ChannelPoolStats {
+    size: number;
+    maxSize: number;
+    available: number;
+    leased: number;
+    creating: number;
+    waiting: number;
+    targetSize: number;
+    committed: number;
+    rolledBack: number;
+}
+/** A single-use, exclusive claim on one channel account. */
+interface ChannelAccountLease {
+    readonly account: ChannelAccount;
+    readonly address: string;
+    readonly signer: Signer;
+    /**
+     * Release the account. A rollback means no transaction was accepted, so the
+     * next lease reloads the on-chain sequence instead of advancing a local cursor.
+     */
+    release(outcome?: ChannelLeaseOutcome): Promise<void>;
+    /** Run work and always release, committing only after the callback succeeds. */
+    use<T>(work: (account: ChannelAccount) => Promise<T>): Promise<T>;
+}
+/** Raised when a lease cannot enter the pool. */
+declare class ChannelPoolError extends Error {
+    readonly code: 'POOL_CLOSED' | 'LEASE_TIMEOUT' | 'LEASE_ABORTED' | 'FACTORY_FAILED';
+    readonly cause?: unknown | undefined;
+    constructor(code: 'POOL_CLOSED' | 'LEASE_TIMEOUT' | 'LEASE_ABORTED' | 'FACTORY_FAILED', message: string, cause?: unknown | undefined);
+}
+/**
+ * Exclusive channel-account leasing with demand-driven growth.
+ *
+ * A lease owns an account from sequence load through terminal submission. The
+ * pool deliberately does not cache or pre-allocate sequence numbers: the
+ * invocation pipeline reloads the account after every release. Consequently a
+ * failed build/sign/send rolls back without burning a local sequence or leaving
+ * a gap, while accepted transactions are never raced by another caller.
+ */
+declare class ChannelAccountPool {
+    #private;
+    constructor(options?: ChannelAccountPoolOptions);
+    /** Build a pool and eagerly satisfy `minSize`. */
+    static create(options?: ChannelAccountPoolOptions): Promise<ChannelAccountPool>;
+    get stats(): ChannelPoolStats;
+    /** Lease one account, growing by one when every existing account is busy. */
+    lease(options?: LeaseOptions): Promise<ChannelAccountLease>;
+    /** Convenience wrapper around `lease` + `ChannelAccountLease.use`. */
+    use<T>(work: (account: ChannelAccount) => Promise<T>, options?: LeaseOptions): Promise<T>;
+    /**
+     * Change the desired fleet size. Growth is awaited; shrink reclaims idle
+     * accounts immediately and marks busy accounts for reclamation on release.
+     */
+    resize(size: number): Promise<void>;
+    /** Reject waiters and reclaim all idle accounts; leased accounts retire on release. */
+    close(): Promise<void>;
+}
+
+type FeePhase = 'initial' | 'fee_bump' | 'sponsorship';
+type FeePercentile = 'min' | 'mode' | 'p10' | 'p20' | 'p30' | 'p40' | 'p50' | 'p60' | 'p70' | 'p80' | 'p90' | 'p95' | 'p99' | 'max';
+interface FeeDistribution {
+    min: string;
+    mode: string;
+    p10: string;
+    p20: string;
+    p30: string;
+    p40: string;
+    p50: string;
+    p60: string;
+    p70: string;
+    p80: string;
+    p90: string;
+    p95: string;
+    p99: string;
+    max: string;
+}
+interface FeeStats {
+    inclusionFee: FeeDistribution;
+    sorobanInclusionFee: FeeDistribution;
+    latestLedger?: number;
+}
+interface FeeContext {
+    phase: FeePhase;
+    operationCount: number;
+    /** Lower bound imposed by protocol or a previously submitted envelope. */
+    minimumFee?: string;
+    /** The fee rate on the inner transaction when building a fee bump. */
+    previousFee?: string;
+    /** Soroban invocations use the Soroban distribution by default. */
+    soroban?: boolean;
+    getFeeStats?: () => Promise<FeeStats>;
+}
+/** Resolves a base fee rate in stroops per operation. */
+interface FeeStrategy {
+    getFee(context: FeeContext): string | Promise<string>;
+}
+type FeeCallback = (context: FeeContext) => string | number | bigint | Promise<string | number | bigint>;
+interface RecentFeeStrategyOptions {
+    percentile?: FeePercentile;
+    multiplier?: number;
+    minimumFee?: string | number | bigint;
+    maximumFee?: string | number | bigint;
+    fallbackFee?: string | number | bigint;
+    /** Cache fee stats to avoid one RPC request per payment. @default 5000 */
+    cacheMs?: number;
+    now?: () => number;
+}
+/** Always bids the same fee rate. */
+declare class FixedFeeStrategy implements FeeStrategy {
+    #private;
+    constructor(fee?: string | number | bigint);
+    getFee(context: FeeContext): string;
+}
+/** Multiplies another strategy (recent-fee strategy by default). */
+declare class MultiplierFeeStrategy implements FeeStrategy {
+    #private;
+    constructor(multiplier: number, base?: FeeStrategy);
+    getFee(context: FeeContext): Promise<string>;
+}
+/** Delegates the decision to application code while retaining validation. */
+declare class CallbackFeeStrategy implements FeeStrategy {
+    readonly callback: FeeCallback;
+    constructor(callback: FeeCallback);
+    getFee(context: FeeContext): Promise<string>;
+}
+/**
+ * Uses recent RPC fee statistics and falls back to the protocol base fee when
+ * the endpoint is unavailable or has not observed relevant transactions.
+ */
+declare class RecentFeeStrategy implements FeeStrategy {
+    #private;
+    constructor(options?: RecentFeeStrategyOptions);
+    getFee(context: FeeContext): Promise<string>;
+}
+/** Accept the ergonomic config forms used by `StellarAgentConfig`. */
+declare function asFeeStrategy(strategy?: FeeStrategy | FeeCallback | string | number | bigint): FeeStrategy;
+
+/** Minimal RPC surface needed for classic sponsorship transactions. */
+interface SponsorRpc {
+    getAccount(address: string): Promise<Account>;
+    sendTransaction(transaction: Transaction | FeeBumpTransaction): Promise<{
+        status: string;
+        hash: string;
+        errorResult?: {
+            toXDR(format: 'base64'): string;
+        };
+    }>;
+    getTransaction(hash: string): Promise<{
+        status: string;
+        ledger?: number;
+        resultXdr?: {
+            feeCharged(): {
+                toString(): string;
+            };
+        };
+    }>;
+    getFeeStats?(): Promise<FeeStats>;
+}
+interface SponsorServiceOptions {
+    sponsorSigner: Signer;
+    rpc: SponsorRpc;
+    networkPassphrase: string;
+    feeStrategy?: FeeStrategy | string | number | bigint;
+    /** Transaction validity window. @default 60 */
+    timeoutSeconds?: number;
+    /** Confirmation polls before timing out. @default 30 */
+    confirmationAttempts?: number;
+    /** Delay between confirmation polls. @default 1000 */
+    pollIntervalMs?: number;
+    sleep?: (milliseconds: number) => Promise<void>;
+}
+interface SponsoredAccountOptions {
+    /** Valid under sponsorship; the sponsor supplies the reserve. @default "0" */
+    startingBalance?: string;
+}
+interface SponsorshipRecord {
+    account: string;
+    sponsor: string;
+    active: boolean;
+    createdByService: boolean;
+    transaction?: TxResult;
+}
+/** Sponsorship lifecycle failure with the rejected transaction hash when known. */
+declare class SponsorshipError extends Error {
+    readonly code: 'SUBMISSION_FAILED' | 'TRANSACTION_FAILED' | 'TRANSACTION_TIMEOUT';
+    readonly transactionHash?: string | undefined;
+    constructor(code: 'SUBMISSION_FAILED' | 'TRANSACTION_FAILED' | 'TRANSACTION_TIMEOUT', message: string, transactionHash?: string | undefined);
+}
+/**
+ * Creates zero-balance accounts by sponsoring their account-entry reserve.
+ * The creation envelope contains begin/create/end operations atomically and is
+ * signed by both sponsor and target. The sponsor is also the transaction source,
+ * so the new account never needs XLM for this lifecycle operation.
+ */
+declare class SponsorService {
+    #private;
+    constructor(options: SponsorServiceOptions);
+    /** Signer used as the outer fee source for sponsored account transactions. */
+    get feePayerSigner(): Signer;
+    getSponsorAddress(): Promise<string>;
+    getRecord(account: string): SponsorshipRecord | undefined;
+    list(): SponsorshipRecord[];
+    /** Return an existing account unchanged, or atomically create it sponsored. */
+    ensureSponsoredAccount(accountSigner: Signer, options?: SponsoredAccountOptions): Promise<SponsorshipRecord>;
+    /** Atomically sponsor the reserve and create a target account. */
+    createSponsoredAccount(accountSigner: Signer, options?: SponsoredAccountOptions): Promise<SponsorshipRecord>;
+    /**
+     * Revoke sponsorship of the account entry. The target must hold enough XLM
+     * for its own reserve before the network will accept this operation.
+     */
+    revokeAccountSponsorship(account: string): Promise<TxResult>;
+    /**
+     * Reclaim a disposable sponsored account by merging it into the sponsor.
+     * The target authorizes the merge while the sponsor pays the transaction fee.
+     */
+    closeSponsoredAccount(accountSigner: Signer, destination?: string): Promise<TxResult>;
+}
+/** Pool lifecycle backed by zero-balance sponsored accounts. */
+declare class SponsoredChannelAccountFactory implements ChannelAccountFactory {
+    readonly sponsor: SponsorService;
+    constructor(sponsor: SponsorService);
+    create(): Promise<ChannelAccount>;
+    reclaim(account: ChannelAccount): Promise<void>;
 }
 
 /**
@@ -473,6 +1029,10 @@ declare const MetricNames: {
     readonly paymentLatencyMs: "stellaragent.payment.latency_ms";
     readonly paymentFailures: "stellaragent.payment.failures";
     readonly paymentFeesStroops: "stellaragent.payment.fees_stroops";
+    readonly submissionQueueDepth: "stellaragent.submission.queue_depth";
+    readonly submissionLatencyMs: "stellaragent.submission.latency_ms";
+    readonly submissionExpiries: "stellaragent.submission.expiries";
+    readonly submissionRetries: "stellaragent.submission.retries";
     readonly indexerLagLedgers: "stellaragent.indexer.lag_ledgers";
     readonly indexerThroughputEvents: "stellaragent.indexer.throughput_events";
     readonly indexerDecodeFailures: "stellaragent.indexer.decode_failures";
@@ -589,6 +1149,50 @@ interface StellarAgentConfig {
         tracer?: Tracer;
         metrics?: Metrics;
     };
+    /**
+     * Fleet transaction source accounts. Each mutation exclusively leases one,
+     * removing sequence-number contention from the agent authorization account.
+     * `channelAccountPool` is retained as a descriptive alias.
+     */
+    channelPool?: ChannelAccountPool;
+    channelAccountPool?: ChannelAccountPool;
+    /** Dynamic transaction fee policy. Recent p90 network fees are used by default. */
+    feeStrategy?: FeeStrategy | FeeCallback | string | number | bigint;
+    /** Fee-bump behavior for congestion and zero-XLM transaction sources. */
+    feeBump?: FeeBumpConfig;
+    /** Creates the agent's account with a sponsored reserve in `createAgentWallet()`. */
+    sponsorService?: SponsorService;
+    /** An existing queue, useful when several agents share one fleet-wide bound. */
+    submissionQueue?: SubmissionQueue;
+    /** Build a queue owned by this agent. Omitted fields use fleet-safe defaults. */
+    submission?: SubmissionPipelineConfig;
+}
+interface FeeBumpConfig {
+    /** @default true */
+    enabled?: boolean;
+    /** `always` is required when the inner source has zero XLM. @default on_expiry */
+    mode?: 'on_expiry' | 'always';
+    /** Outer fee source. Defaults to the sponsor, channel, or agent signer in that order. */
+    signer?: Signer;
+    /** A distinct policy for bumps. Defaults to 10x the initial fee or recent fees, whichever is higher. */
+    strategy?: FeeStrategy | FeeCallback | string | number | bigint;
+    /** Poll attempts before a pending inner transaction is bumped. @default 3 */
+    triggerAfterAttempts?: number;
+    /** Remaining transaction lifetime that triggers a bump. @default 10 */
+    expiryThresholdSeconds?: number;
+    /** Maximum replacement envelopes for one invocation. @default 1 */
+    maxBumps?: number;
+}
+interface SubmissionPipelineConfig {
+    concurrency?: number;
+    maxQueueSize?: number;
+    maxAttempts?: number;
+    retryDelayMs?: number;
+    classifyError?: RetryClassifier;
+    /** Eager sponsored channel count when `sponsorService` creates the pool. @default 1 */
+    minChannels?: number;
+    /** Demand-driven sponsored channel limit. @default concurrency */
+    maxChannels?: number;
 }
 interface AgentInfo {
     id: bigint;
@@ -759,6 +1363,16 @@ interface TxResult {
     success: boolean;
     /** Ledger number it was confirmed in */
     ledger?: number;
+    /** Fee charged by the confirmed transaction result, in stroops. */
+    feePaid?: string;
+    /** Whether confirmation came through a fee-bump envelope. */
+    feeBumped?: boolean;
+    /** Inner transaction source (the leased channel account when pooling is enabled). */
+    sourceAccount?: string;
+    /** Outer fee source when different from `sourceAccount`. */
+    feeSource?: string;
+    /** Number of envelopes accepted for this operation, including a replacement. */
+    submissionAttempts?: number;
 }
 
 /**
@@ -1041,252 +1655,6 @@ declare class StellarAgentError extends Error {
         transactionHash?: string;
     });
 }
-
-/**
- * Signing abstraction.
- *
- * ## Why this module exists
- *
- * `StellarAgent` was built entirely around `Keypair.fromSecret(config.secretKey)`
- * and exposed `get secretKey()` returning the raw secret string. For an agent
- * running with real funds that is a serious risk: the secret sits in a
- * long-lived Node.js process for its whole lifetime, reachable from a heap
- * dump, a `process.env` leak, an error report that serialises the object
- * graph, or any of the many transitive dependencies `@stellar/stellar-sdk`
- * pulls in.
- *
- * This module separates *what to sign* from *what holds the key*. The agent
- * gets a {@link Signer}; where the key actually lives is the Signer's
- * problem.
- *
- * ## The interface shape
- *
- * `signTransaction` / `signAuthEntry` over base64 XDR is deliberately the
- * same shape as SEP-43, the Stellar wallet-interface standard. That means an
- * existing browser wallet, a hardware device, or a signing service can be
- * adapted with a thin wrapper, and it keeps the boundary at "here are bytes,
- * give me back signed bytes" — the narrowest interface that never requires
- * key material to cross it.
- *
- * Soroban needs both halves: `signTransaction` covers the transaction
- * envelope, and `signAuthEntry` covers `SorobanAuthorizationEntry` values,
- * which are signed separately from the envelope that carries them.
- *
- * ## Why a remote-signing service rather than Ledger
- *
- * The issue asked for one remote backend — a Ledger integration or a
- * remote-signing RPC protocol — and said to document the choice. This module
- * implements {@link RemoteSigner}, an HTTP signing service.
- *
- * A Ledger requires a physical button press for every signature. That is a
- * good property for a human treasury and a fatal one here: the entire premise
- * of this SDK is an *autonomous* agent paying $0.001 per API call without a
- * human in the loop. A hardware wallet cannot serve an unattended process
- * making a payment per inference request — the first payment would block
- * forever waiting for a press. Hardware signing is the right answer for the
- * *admin* keys that deploy and configure contracts; it is the wrong answer
- * for the agent's hot operational key, which is what `StellarAgent` holds.
- *
- * A remote signing service does fit: the key lives in an HSM/KMS behind a
- * network boundary, the agent process holds only a URL and an auth token, and
- * the service is where policy belongs — rate limits, spend ceilings, an audit
- * log, revocation. Compromising the agent process then yields the ability to
- * *request* signatures subject to that policy, not the key itself. Rotation
- * means rotating a token, not redeploying every agent.
- *
- * {@link SignerAdapter} exists for anyone who does want Ledger or a browser
- * wallet: both already speak the SEP-43 method shape.
- *
- * @module signer
- */
-
-interface SignTransactionOptions {
-    /** Network passphrase the signature must be bound to. */
-    networkPassphrase: string;
-}
-interface SignAuthEntryOptions {
-    /** Network passphrase the signature must be bound to. */
-    networkPassphrase: string;
-    /** Ledger sequence after which the authorization is no longer valid. */
-    validUntilLedgerSeq: number;
-}
-/**
- * Somewhere that can sign on behalf of one Stellar account.
- *
- * Implementations must never require the caller to hold key material. The
- * only thing a `StellarAgent` ever learns from a Signer is a public address
- * and some signed bytes.
- */
-interface Signer {
-    /**
-     * The Stellar public address (`G...`) this signer signs for.
-     *
-     * Must be obtainable **without** the secret being present in the calling
-     * process — a remote signer derives it on the far side of the boundary and
-     * returns just the address.
-     */
-    getPublicKey(): Promise<string>;
-    /**
-     * Sign a transaction envelope.
-     *
-     * @param xdr - base64 transaction envelope XDR
-     * @returns base64 **signed** transaction envelope XDR
-     */
-    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
-    /**
-     * Sign a Soroban authorization entry.
-     *
-     * Soroban auth entries are signed separately from the envelope that carries
-     * them, so a signer that only implements `signTransaction` cannot authorize
-     * a contract invocation.
-     *
-     * @param authEntryXdr - base64 `SorobanAuthorizationEntry` XDR
-     * @returns base64 **signed** `SorobanAuthorizationEntry` XDR
-     */
-    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
-}
-/** Thrown when a signer cannot produce a signature. */
-declare class SigningError extends Error {
-    readonly cause?: unknown;
-    constructor(message: string, cause?: unknown);
-}
-/**
- * The original behaviour, kept for backward compatibility: an in-memory
- * `Keypair`.
- *
- * This is fine for testnet, for development, and for agents holding
- * negligible value. It is explicitly *not* what you want for an agent with
- * real funds — see {@link RemoteSigner}.
- *
- * The secret is held in a module-private closure rather than on the instance,
- * so it does not appear when the signer (or an agent holding it) is logged,
- * serialised by an error reporter, or walked by a heap inspector that only
- * follows enumerable properties.
- */
-declare class KeypairSigner implements Signer {
-    #private;
-    constructor(keypair: Keypair);
-    /** Build from a `S...` secret key string. */
-    static fromSecret(secretKey: string): KeypairSigner;
-    /** Generate a fresh random keypair. */
-    static random(): KeypairSigner;
-    getPublicKey(): Promise<string>;
-    /** Synchronous accessor — available because the key is local. */
-    publicKey(): string;
-    /**
-     * Reveal the raw secret.
-     *
-     * Deliberately a method with a blunt name rather than a `secretKey` getter:
-     * exporting key material should be a visible, greppable act, not something
-     * that happens by reading a property.
-     */
-    exportSecret(): string;
-    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
-    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
-}
-interface RemoteSignerOptions {
-    /** Base URL of the signing service, e.g. `https://signer.internal:8443`. */
-    url: string;
-    /**
-     * Bearer token presented on every request. This is the *only* credential
-     * the agent process holds — losing it costs a token rotation, not a key
-     * rotation and a migration of every funded account.
-     */
-    token?: string;
-    /**
-     * Public address this signer is expected to sign for. When set, it is
-     * checked against what the service reports and a mismatch is rejected, so
-     * a misconfigured or swapped-out service cannot quietly sign as a different
-     * account.
-     */
-    expectedPublicKey?: string;
-    /** Per-request timeout in milliseconds. @default 10000 */
-    timeoutMs?: number;
-    /** Extra headers (mTLS proxies, tracing, tenant routing). */
-    headers?: Record<string, string>;
-    /** Injectable `fetch`, for tests and for custom agents/proxies. */
-    fetch?: typeof globalThis.fetch;
-}
-/**
- * A {@link Signer} backed by an HTTP signing service.
- *
- * ## Protocol
- *
- * Three endpoints, all JSON. The key never crosses the boundary.
- *
- * ### `GET {url}/v1/public-key`
- * ```json
- * → 200 { "publicKey": "G..." }
- * ```
- *
- * ### `POST {url}/v1/sign/transaction`
- * ```json
- * ← { "xdr": "<base64 envelope>", "networkPassphrase": "..." }
- * → 200 { "signedXdr": "<base64 signed envelope>" }
- * ```
- *
- * ### `POST {url}/v1/sign/auth-entry`
- * ```json
- * ← { "authEntryXdr": "<base64>", "networkPassphrase": "...",
- *     "validUntilLedgerSeq": 12345 }
- * → 200 { "signedAuthEntryXdr": "<base64>" }
- * ```
- *
- * Errors return a non-2xx status with `{ "error": "<message>" }`. A service
- * that refuses on policy grounds — spend ceiling, rate limit, revoked token —
- * should use `403` with a description; it surfaces here as a
- * {@link SigningError} carrying that text.
- *
- * ## Why signed XDR rather than a raw signature
- *
- * Returning `signedXdr` means the service parses what it is signing and can
- * therefore apply policy to it — reject payments over a ceiling, enforce a
- * destination allow-list, log the operation. A service that only returned a
- * signature over an opaque hash could not do any of that, which would waste
- * the main advantage of moving the key behind a boundary in the first place.
- */
-declare class RemoteSigner implements Signer {
-    #private;
-    constructor(options: RemoteSignerOptions);
-    getPublicKey(): Promise<string>;
-    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
-    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
-}
-/**
- * Wrap anything already exposing SEP-43's method shape — Freighter and other
- * browser wallets, `@ledgerhq`-backed signers, an in-house module — as a
- * {@link Signer}.
- *
- * This is the extension point for a Ledger integration: hardware signing is
- * the right choice for admin keys even though it is the wrong choice for an
- * agent's hot key (see the module doc).
- */
-interface Sep43Like {
-    getAddress(): Promise<{
-        address: string;
-    }> | Promise<string> | {
-        address: string;
-    } | string;
-    signTransaction(xdr: string, opts?: {
-        networkPassphrase?: string;
-    }): Promise<{
-        signedTxXdr: string;
-    } | string>;
-    signAuthEntry?(entryXdr: string, opts?: {
-        networkPassphrase?: string;
-    }): Promise<{
-        signedAuthEntry: string;
-    } | string>;
-}
-declare class SignerAdapter implements Signer {
-    #private;
-    constructor(wallet: Sep43Like);
-    getPublicKey(): Promise<string>;
-    signTransaction(xdr: string, options: SignTransactionOptions): Promise<string>;
-    signAuthEntry(authEntryXdr: string, options: SignAuthEntryOptions): Promise<string>;
-}
-/** Duck-typed check — `instanceof` fails across duplicated package copies. */
-declare function isSigner(value: unknown): value is Signer;
 
 /**
  * CircuitBreaker SDK wrapper for the Soroban multi‑sig pause contract.
@@ -1629,6 +1997,15 @@ declare class StellarAgent {
      * production deployment is not running with an in-memory secret.
      */
     get holdsSecretKey(): boolean;
+    /** Current channel utilization and queue/backpressure counters. */
+    getFleetStats(): {
+        channels?: ChannelPoolStats;
+        submissions: SubmissionQueueStats;
+    };
+    /** Grow or reclaim the configured channel-account fleet. */
+    resizeChannelPool(size: number): Promise<void>;
+    /** Drain accepted submissions and reclaim agent-owned channel accounts. */
+    shutdown(): Promise<void>;
     /** Register this wallet in the configured AgentWalletFactory contract. */
     createAgentWallet(name?: string): Promise<bigint>;
     /** Read and decode an agent registered in AgentWalletFactory. */
@@ -1747,4 +2124,4 @@ declare class StellarAgent {
     getLedgerCloseEstimate(): Promise<LedgerCloseEstimate>;
 }
 
-export { type AgentBid, type AgentEvent, type AgentInfo, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, type ChannelInfo, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, FALLBACK_LEDGER_CLOSE_SECONDS, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, type Network, type NetworkConfig, type OpenChannelParams, type OtelBridgeOptions, type PayForAPIParams, type PaymentPrediction, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, clamp, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, pct, predictPaymentOutcome, rankBids, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, selectBestBid, sub, sumStrings, toStr, toStroops, verifyBidAttestation };
+export { type AgentBid, type AgentEvent, type AgentInfo, type AttestRankBidsOptions, type AttestedRanking, BPS_SCALE, type BidAttestation, type BidAttestationVerification, type BidWeights, type BlockReason, CONTRACT_KEYS, CallbackFeeStrategy, type ChannelAccount, type ChannelAccountFactory, type ChannelAccountLease, ChannelAccountPool, type ChannelAccountPoolOptions, type ChannelInfo, type ChannelLeaseOutcome, ChannelPoolError, type ChannelPoolStats, type ChannelSpendState, CircuitBreaker, type CircuitBreakerOptions, type ContractAddresses, type ContractKey, ContractsNotDeployedError, DEFAULT_BID_WEIGHTS, FALLBACK_LEDGER_CLOSE_SECONDS, type FeeBumpConfig, type FeeCallback, type FeeContext, type FeeDistribution, type FeePercentile, type FeePhase, type FeeStats, type FeeStrategy, FixedFeeStrategy, InMemoryMetrics, InMemoryTracer, type JobInfo, type JobStatus, KeypairSigner, LEDGERS_PER_CHANNEL_PERIOD, type LeaseOptions, type LedgerCloseEstimate, type LedgerCloseSample, type Logger, MetricNames, type Metrics, MultiplierFeeStrategy, type Network, type NetworkConfig, type OpenChannelParams, type OtelBridgeOptions, type PayForAPIParams, type PaymentPrediction, type PaymentTraceRecord, type PredictPaymentOutcomeParams, type PublicAddress, RATE_LIMIT_LEDGERS_PER_DAY, RATE_LIMIT_LEDGERS_PER_HOUR, type RateLimitConfig, type RateLimitSpendState, type RateLimitStatus, RecentFeeStrategy, type RecentFeeStrategyOptions, type RecordedSpan, RedactingLogger, RemoteSigner, type RemoteSignerOptions, type RequestWorkParams, type RetryClassification, type RetryClassifier, SEMCONV_VERSION, STROOP_SCALE, type ScoredBid, type ScorerKeyDirectory, type ScorerKeyRecord, SemConv, type Sep43Like, type SignAuthEntryOptions, type SignTransactionOptions, type Signer, SignerAdapter, SigningError, SpanNames, type SpendLimit, type SpendPeriod, type SpendReport, type SponsorRpc, SponsorService, type SponsorServiceOptions, type SponsoredAccountOptions, SponsoredChannelAccountFactory, SponsorshipError, type SponsorshipRecord, StellarAgent, type StellarAgentConfig, StellarAgentError, type StellarAgentErrorCode, type SubmissionPipelineConfig, SubmissionQueue, SubmissionQueueError, type SubmissionQueueOptions, type SubmissionQueueStats, type SubmitOptions, type TelemetryConfig, type TelemetryContext, type Tracer, type TxResult, UNCONFIGURED_CONTRACTS, type VerifyBidAttestationOptions, activePaymentTraceCount, add, asFeeStrategy, asPublicAddress, assertDeployed, attachTransactionHash, attestRankBids, bn, clamp, classifySubmissionError, clearPaymentTraceRegistry, createOtelBridge, createPaymentId, createTelemetry, div, envVarNames, eq, estimateLedgerCloseSeconds, estimateSecondsRemaining, fetchLedgerCloseEstimate, fmt, fromStroops, getPaymentTrace, getTelemetry, gt, gte, initTelemetry, isDeployedAddress, isPositive, isSigner, isWindowExpired, isWithinSpendLimit, isZero, ledgersRemainingInWindow, lookupPaymentIdByTxHash, lt, lte, index as math, mul, noopLogger, noopMetrics, noopTracer, pct, predictPaymentOutcome, rankBids, redactForExport, registerPaymentTrace, remainingBudget, resolveContracts, scoreBid, selectBestBid, sub, sumStrings, toStr, toStroops, verifyBidAttestation };

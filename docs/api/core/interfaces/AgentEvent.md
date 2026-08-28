@@ -6,7 +6,7 @@
 
 # Interface: AgentEvent
 
-Defined in: [types/index.ts:296](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L296)
+Defined in: [types/index.ts:352](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L352)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:296](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **type**: `"payment"` \| `"job_created"` \| `"job_completed"` \| `"rate_limit_hit"` \| `"agent_killed"`
 
-Defined in: [types/index.ts:297](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L297)
+Defined in: [types/index.ts:353](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L353)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:297](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **agentId**: `bigint`
 
-Defined in: [types/index.ts:298](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L298)
+Defined in: [types/index.ts:354](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L354)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:298](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **timestamp**: `number`
 
-Defined in: [types/index.ts:299](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L299)
+Defined in: [types/index.ts:355](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L355)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [types/index.ts:299](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **data**: `Record`\<`string`, `unknown`\>
 
-Defined in: [types/index.ts:300](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L300)
+Defined in: [types/index.ts:356](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L356)
