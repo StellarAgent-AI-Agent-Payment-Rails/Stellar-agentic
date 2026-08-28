@@ -19,6 +19,21 @@ export {
   type TransactionFee,
 } from "./ledger.js";
 export {
+  buildStatement,
+  type Statement,
+  type StatementCategory,
+  type StatementCategoryDimension,
+  type StatementCategoryTotal,
+  type StatementDirection,
+  type StatementEvidence,
+  type StatementLine,
+  type StatementOpeningPosition,
+  type StatementPeriod,
+  type StatementPosition,
+  type StatementRequest,
+  type StatementSubject,
+} from "./reporting.js";
+export {
   SorobanEventIndexer,
   type IndexerOptions,
   type IndexResult,

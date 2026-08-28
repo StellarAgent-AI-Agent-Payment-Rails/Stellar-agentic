@@ -61,6 +61,28 @@ export function createQueryServer(store: EventStore): Server {
         });
       } else if (request.method === "GET" && url.pathname === "/ledger/issues") {
         result = store.ledgerIssues();
+      } else if (
+        request.method === "GET" &&
+        (match = url.pathname.match(/^\/reports\/statements\/(agent|owner)\/([^/]+)$/))
+      ) {
+        const fromLedger = url.searchParams.get("fromLedger");
+        const throughLedger = url.searchParams.get("throughLedger");
+        result = store.statement({
+          subject: {
+            kind: match[1] as "agent" | "owner",
+            id: decodeURIComponent(match[2]),
+          },
+          period: {
+            ...(fromLedger === null ? {} : { fromLedger: Number(fromLedger) }),
+            ...(throughLedger === null ? {} : { throughLedger: Number(throughLedger) }),
+            ...(url.searchParams.has("fromTimestamp")
+              ? { fromTimestamp: url.searchParams.get("fromTimestamp")! }
+              : {}),
+            ...(url.searchParams.has("throughTimestamp")
+              ? { throughTimestamp: url.searchParams.get("throughTimestamp")! }
+              : {}),
+          },
+        });
       } else if (request.method === "GET" && url.pathname === "/health") {
         result = {
           ok: true,

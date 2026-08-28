@@ -9,6 +9,11 @@ import {
   type ReconciliationResult,
   type TransactionFee,
 } from "./ledger.js";
+import {
+  buildStatement,
+  type Statement,
+  type StatementRequest,
+} from "./reporting.js";
 import type { DecodedEvent, StoredEvent } from "./types.js";
 
 export interface ChannelSpend {
@@ -398,6 +403,11 @@ export class EventStore {
       this.ledgerEntries({ throughLedger: request.asOfLedger, limit: 100_000 }),
       request,
     );
+  }
+
+  /** Build an agent/owner statement from the complete normalized history. */
+  statement(request: StatementRequest): Statement {
+    return buildStatement(this.ledgerEntries({ limit: 100_000 }), request);
   }
 
   eventsForAgent(address: string): StoredEvent[] {
