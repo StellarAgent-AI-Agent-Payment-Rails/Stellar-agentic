@@ -80,11 +80,10 @@ export async function closeChannel(
  * Pay for an API call. Deducts from the given payment channel, respecting
  * on-chain spend limits automatically.
  *
- * If `destAsset` differs from the channel's settlement asset, this settles
- * the recipient in `destAsset` instead — e.g. a channel funded in USDC
- * paying a provider that only accepts XLM — by invoking
- * `PaymentChannel.pay_with_conversion` rather than `pay`. The spend limit is
- * still enforced in the channel's settlement asset either way.
+ * A validated `routed` quote invokes the atomic multi-hop `pay_with_route`
+ * entrypoint and returns its selected route/cost metadata. Without it,
+ * `destAsset` retains the legacy single-AMM `pay_with_conversion` behavior.
+ * Spend limits stay denominated in the channel's settlement asset either way.
  */
 export async function payForAPI(
   invoke: InvokeFn,

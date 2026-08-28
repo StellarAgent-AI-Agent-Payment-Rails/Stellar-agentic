@@ -62,6 +62,14 @@ def test_rank_uses_complete_tie_break_order() -> None:
     ]
 
 
+def test_rank_uses_utf8_byte_order_for_non_bmp_ids() -> None:
+    private_use = _route(id="\ue000-route")
+    astral = _route(id="\U00010000-route")
+    assert [entry.id for entry in rank_routes([astral, private_use])] == [
+        "\ue000-route", "\U00010000-route"
+    ]
+
+
 def test_filter_and_empty_selection() -> None:
     unreliable = _route(reliabilityBps=0)
     slippery = _route(expectedSlippageBps=1001)

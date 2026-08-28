@@ -6,7 +6,7 @@
 
 # Interface: PaymentQuote
 
-Defined in: routing/planner.ts:27
+Defined in: [routing/planner.ts:27](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L27)
 
 Complete pre-commit artifact. Pass this object back to `payForAPI`.
 
@@ -16,7 +16,7 @@ Complete pre-commit artifact. Pass this object back to `payForAPI`.
 
 > **route**: [`ScoredRoute`](../@stellaragent/namespaces/math/interfaces/ScoredRoute.md)
 
-Defined in: routing/planner.ts:28
+Defined in: [routing/planner.ts:28](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L28)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: routing/planner.ts:28
 
 > **minimumDestinationAmount**: `string`
 
-Defined in: routing/planner.ts:29
+Defined in: [routing/planner.ts:29](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L29)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: routing/planner.ts:29
 
 > **quotedAtLedger**: `number`
 
-Defined in: routing/planner.ts:30
+Defined in: [routing/planner.ts:30](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L30)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: routing/planner.ts:30
 
 > **validUntilLedger**: `number`
 
-Defined in: routing/planner.ts:31
+Defined in: [routing/planner.ts:31](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L31)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: routing/planner.ts:31
 
 > **failures**: [`RouteDiscoveryFailure`](RouteDiscoveryFailure.md)[]
 
-Defined in: routing/planner.ts:32
+Defined in: [routing/planner.ts:32](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L32)

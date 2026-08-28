@@ -122,7 +122,7 @@ def rank_routes(
             -int(str(scored.route["expectedDestinationAmount"])),
             _field_int(scored.route, "expectedSlippageBps"),
             _field_int(scored.route, "hopCount"),
-            scored.id,
+            scored.id.encode("utf-8"),
         )
     )
     return admitted
@@ -185,4 +185,3 @@ def _field_int(route: Mapping[str, Any], name: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int):
         raise ValueError(f"{name} must be an integer")
     return value
-

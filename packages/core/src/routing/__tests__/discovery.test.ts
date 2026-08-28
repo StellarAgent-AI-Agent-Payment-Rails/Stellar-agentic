@@ -253,7 +253,7 @@ describe('route normalization guards', () => {
 
   it('creates an escaped stable canonical identifier', () => {
     const route = [{ ...validHop(), venueId: 'pool/one', path: ['A B'] }];
-    expect(canonicalRouteId(route)).toBe('XLM>amm:pool~2Fone(A B)>USDC');
+    expect(canonicalRouteId(route)).toBe('XLM>amm:pool~2Fone(A~20B)>USDC');
   });
 
   it('never reduces provider-declared slippage when applying oracle data', () => {

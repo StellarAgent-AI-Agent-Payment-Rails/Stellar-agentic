@@ -225,23 +225,23 @@ export interface PayForAPIParams {
   recipient?: string;
   /**
    * Asset the recipient should actually receive, if different from the
-   * channel's settlement asset (`asset`) — e.g. a channel funded in USDC
-   * paying a provider that only accepts XLM. When set, this routes through
-   * `PaymentChannel.pay_with_conversion` instead of `pay`, converting via
-   * the channel contract's configured price oracle + AMM. The spend limit
-   * is still enforced in the channel's settlement asset regardless of
-   * `destAsset`. Requires `minReceived` to also be set.
+   * channel's settlement asset (`asset`) — e.g. a channel funded in XLM
+   * paying a provider that only accepts USDC. With `StellarAgentConfig.routing`
+   * configured, the SDK discovers and deterministically selects an AMM,
+   * Stellar path-payment adapter, or bounded multi-hop route. Without routing
+   * configuration, the legacy single-AMM `pay_with_conversion` path remains
+   * available and requires `minReceived`. Spend limits always remain in the
+   * channel's settlement asset.
    */
   destAsset?: string;
   /** Recipient asset; `destAsset` remains a backwards-compatible alias. */
   recipientAsset?: string;
   /**
    * Minimum amount of `destAsset` the recipient must receive (slippage
-   * floor), as a string in `destAsset` units. Required when `destAsset` is
-   * set. The contract additionally enforces its own oracle-derived
-   * fairness bound on top of this — see
-   * `contracts/payment_channel/src/lib.rs`'s `pay_with_conversion` for the
-   * full slippage/price-oracle design.
+   * floor), as a decimal string in `destAsset` units. Automatic routing
+   * derives this from `slippageToleranceBps`; when both are supplied the
+   * stricter floor wins. It is required only for the legacy single-AMM path.
+   * The contract additionally enforces its oracle-derived end-to-end floor.
    */
   minReceived?: string;
   /**

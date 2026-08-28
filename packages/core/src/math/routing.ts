@@ -171,6 +171,11 @@ function validateRoute(route: RouteQuote): void {
 
 function binaryCompare(a: string, b: string): number {
   if (a === b) return 0;
-  return a < b ? -1 : 1;
+  const left = new TextEncoder().encode(a);
+  const right = new TextEncoder().encode(b);
+  const length = Math.min(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    if (left[index] !== right[index]) return left[index]! < right[index]! ? -1 : 1;
+  }
+  return left.length < right.length ? -1 : 1;
 }
-

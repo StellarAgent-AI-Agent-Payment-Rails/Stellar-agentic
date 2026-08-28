@@ -6,7 +6,7 @@
 
 # Class: RoutePlanner
 
-Defined in: routing/planner.ts:36
+Defined in: [routing/planner.ts:36](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L36)
 
 Discovery + deterministic selection + quote freshness in one reusable service.
 
@@ -16,7 +16,7 @@ Discovery + deterministic selection + quote freshness in one reusable service.
 
 > **new RoutePlanner**(`options`): `RoutePlanner`
 
-Defined in: routing/planner.ts:42
+Defined in: [routing/planner.ts:42](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L42)
 
 #### Parameters
 
@@ -34,7 +34,7 @@ Defined in: routing/planner.ts:42
 
 > **quote**(`request`): `Promise`\<[`PaymentQuote`](../interfaces/PaymentQuote.md)\>
 
-Defined in: routing/planner.ts:61
+Defined in: [routing/planner.ts:61](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L61)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: routing/planner.ts:61
 
 > **quoteOverride**(`request`, `override`): [`PaymentQuote`](../interfaces/PaymentQuote.md)
 
-Defined in: routing/planner.ts:83
+Defined in: [routing/planner.ts:83](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L83)
 
 Validate a caller-selected route under the same safety policy.
 
@@ -76,7 +76,7 @@ Validate a caller-selected route under the same safety policy.
 
 > **assertFresh**(`quote`, `currentLedger`): `void`
 
-Defined in: routing/planner.ts:115
+Defined in: [routing/planner.ts:115](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L115)
 
 #### Parameters
 

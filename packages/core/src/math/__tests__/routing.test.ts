@@ -114,6 +114,13 @@ describe('rankRoutes', () => {
     expect(rankRoutes([lower, upper]).map((entry) => entry.id)).toEqual(['Z-route', 'a-route']);
   });
 
+  it('uses UTF-8 byte order for non-BMP IDs exactly like Python', () => {
+    const privateUse = route({ id: '\uE000-route' });
+    const astral = route({ id: '\u{10000}-route' });
+    expect(rankRoutes([astral, privateUse]).map((entry) => entry.id))
+      .toEqual(['\uE000-route', '\u{10000}-route']);
+  });
+
   it('returns equal duplicate IDs without comparator instability', () => {
     const first = route({ id: 'same' });
     const second = route({ id: 'same' });

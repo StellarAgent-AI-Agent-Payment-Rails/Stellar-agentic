@@ -6,7 +6,7 @@
 
 # Interface: RoutePlannerOptions
 
-Defined in: routing/planner.ts:14
+Defined in: [routing/planner.ts:14](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L14)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: routing/planner.ts:14
 
 > `optional` **policy?**: [`RoutingPolicy`](../@stellaragent/namespaces/math/interfaces/RoutingPolicy.md)
 
-Defined in: routing/planner.ts:15
+Defined in: [routing/planner.ts:15](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L15)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: routing/planner.ts:15
 
 > `optional` **quoteValidityLedgers?**: `number`
 
-Defined in: routing/planner.ts:17
+Defined in: [routing/planner.ts:17](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L17)
 
 Maximum quote lifetime when venues provide no earlier expiry.
 
@@ -42,7 +42,7 @@ Maximum quote lifetime when venues provide no earlier expiry.
 
 > `optional` **defaultSlippageToleranceBps?**: `number`
 
-Defined in: routing/planner.ts:19
+Defined in: [routing/planner.ts:19](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L19)
 
 Caller slippage used to derive the final minimum.
 

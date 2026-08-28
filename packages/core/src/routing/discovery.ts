@@ -79,7 +79,7 @@ export async function discoverRoutes(
   const routes = [...unique.values()]
     .filter((route) => route.expiresAtLedger === undefined ||
       request.currentLedger === undefined || route.expiresAtLedger >= request.currentLedger)
-    .sort((a, b) => a.id.localeCompare(b.id))
+    .sort((a, b) => compareUtf8(a.id, b.id))
     .slice(0, maxCandidates);
 
   return { routes, failures, ...(oracleReference ? { oracleReference } : {}) };
@@ -89,7 +89,7 @@ export function canonicalRouteId(hops: readonly RouteHop[]): string {
   if (hops.length === 0) return 'empty';
   const first = hops[0]!;
   const segments = hops.map((hop) => {
-    const path = hop.path?.length ? `(${hop.path.join(',')})` : '';
+    const path = hop.path?.length ? `(${hop.path.map(escapeId).join(',')})` : '';
     return `${hop.venue}:${escapeId(hop.venueId)}${path}>${escapeId(hop.destinationAsset)}`;
   });
   return `${escapeId(first.sourceAsset)}>${segments.join('>')}`;
@@ -284,4 +284,15 @@ function compareQuoteQuality(a: RouteQuote, b: RouteQuote): number {
 
 function escapeId(value: string): string {
   return encodeURIComponent(value).replace(/%/g, '~');
+}
+
+function compareUtf8(a: string, b: string): number {
+  if (a === b) return 0;
+  const left = new TextEncoder().encode(a);
+  const right = new TextEncoder().encode(b);
+  const length = Math.min(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    if (left[index] !== right[index]) return left[index]! < right[index]! ? -1 : 1;
+  }
+  return left.length < right.length ? -1 : 1;
 }

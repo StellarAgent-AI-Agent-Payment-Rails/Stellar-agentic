@@ -50,7 +50,7 @@ export class AmmRouteProvider implements RouteProvider {
     this.id = options.id ?? `amm:${options.venueId}`;
     this.venueId = options.venueId;
     this.pairs = [...options.pairs].sort((a, b) =>
-      pairKey(a).localeCompare(pairKey(b)));
+      compareUtf8(pairKey(a), pairKey(b)));
     this.quoteHop = options.quote;
   }
 
@@ -185,3 +185,13 @@ function pairKey(pair: AmmPair): string {
   return `${pair.sourceAsset}\u0000${pair.destinationAsset}`;
 }
 
+function compareUtf8(a: string, b: string): number {
+  if (a === b) return 0;
+  const left = new TextEncoder().encode(a);
+  const right = new TextEncoder().encode(b);
+  const length = Math.min(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    if (left[index] !== right[index]) return left[index]! < right[index]! ? -1 : 1;
+  }
+  return left.length < right.length ? -1 : 1;
+}

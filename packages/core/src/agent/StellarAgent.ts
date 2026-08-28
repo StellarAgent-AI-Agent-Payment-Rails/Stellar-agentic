@@ -425,11 +425,12 @@ export class StellarAgent {
    * Pay for an API call. Deducts from the active payment channel.
    * Respects on-chain spend limits automatically.
    *
-   * If `destAsset` differs from the channel's settlement asset, this
-   * settles the recipient in `destAsset` instead — e.g. a channel funded
-   * in USDC paying a provider that only accepts XLM — by invoking
-   * `PaymentChannel.pay_with_conversion` rather than `pay`. The spend
-   * limit is still enforced in the channel's settlement asset either way.
+   * If `recipientAsset` differs from the channel's settlement asset and
+   * routing providers are configured, this discovers, scores, and executes
+   * one direct, AMM, path-payment-adapter, or bounded multi-hop route through
+   * `PaymentChannel.pay_with_route`. A quote returned by {@link quote} may be
+   * supplied as `route` so the reviewed route is exactly the one submitted.
+   * Spend limits remain denominated in the channel's settlement asset.
    *
    * @example
    * ```typescript
@@ -439,13 +440,19 @@ export class StellarAgent {
    *   asset: 'USDC',
    * });
    *
-   * // Channel funded in USDC, provider only accepts XLM:
+   * // Channel funded in XLM, provider only accepts USDC. The configured
+   * // routing providers choose the route and derive the output floor:
+   * const quote = await agent.quote({
+   *   sourceAsset: 'XLM',
+   *   destinationAsset: 'USDC',
+   *   amount: '0.001',
+   * });
    * await agent.payForAPI({
    *   endpoint: 'https://api.example.com/inference',
    *   amount: '0.001',
-   *   asset: 'USDC',
-   *   destAsset: 'XLM',
-   *   minReceived: '0.009', // slippage floor, in XLM
+   *   sourceAsset: 'XLM',
+   *   recipientAsset: 'USDC',
+   *   route: quote,
    * });
    * ```
    */

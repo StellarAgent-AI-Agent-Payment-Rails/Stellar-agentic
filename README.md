@@ -119,6 +119,13 @@ const job = await agent.requestWork({
 });
 ```
 
+Agents can also pay from the channel asset while the recipient receives a
+different asset. Configure AMM/path-payment providers, call `agent.quote()` to
+preview the deterministic route and cost, then pass that quote unchanged to
+`payForAPI()`. Multi-hop execution is atomic and the TypeScript/Python selector
+is verified against shared fixtures. See the
+[multi-asset routing guide](docs/payment-routing.md).
+
 Contract IDs must be configured through `contracts` or the
 `STELLARAGENT_<NETWORK>_*` environment variables described in the deployment
 guide. Friendly non-XLM asset codes also need an `assetContracts` mapping to

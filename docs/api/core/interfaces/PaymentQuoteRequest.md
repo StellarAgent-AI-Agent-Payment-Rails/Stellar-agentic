@@ -6,7 +6,7 @@
 
 # Interface: PaymentQuoteRequest
 
-Defined in: routing/planner.ts:22
+Defined in: [routing/planner.ts:22](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L22)
 
 ## Extends
 
@@ -18,7 +18,7 @@ Defined in: routing/planner.ts:22
 
 > `optional` **slippageToleranceBps?**: `number`
 
-Defined in: routing/planner.ts:23
+Defined in: [routing/planner.ts:23](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/routing/planner.ts#L23)
 
 ***
 
