@@ -65,6 +65,39 @@ export type {
   BlockReason,
 } from './math/predict.js';
 
+// ─── Multi-asset route discovery ────────────────────────────────────────────
+
+export {
+  discoverRoutes,
+  normalizeRoute,
+  canonicalRouteId,
+  applyOracleReference,
+  RouteUnavailableError,
+  DirectRouteProvider,
+  AmmRouteProvider,
+  StellarPathPaymentProvider,
+  CallbackRouteProvider,
+} from './routing/index.js';
+export type {
+  RouteVenue,
+  RouteUnavailableCode,
+  RouteHop,
+  RouteQuote,
+  RouteRequest,
+  RouteProviderContext,
+  RouteProvider,
+  RoutePriceOracle,
+  OracleReference,
+  RouteDiscoveryOptions,
+  RouteDiscoveryFailure,
+  RouteDiscoveryResult,
+  AmmPair,
+  AmmHopQuote,
+  AmmQuoteCallback,
+  PathPaymentCandidate,
+  PathPaymentQuoteCallback,
+} from './routing/index.js';
+
 // ─── Ledger-window wall-clock estimation ─────────────────────────────
 //
 // `RateLimiter`/`PaymentChannel` track their rolling windows in ledger
