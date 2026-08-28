@@ -6,7 +6,7 @@
 
 # Interface: ChannelAccountFactory
 
-Defined in: fleet/channelPool.ts:14
+Defined in: [fleet/channelPool.ts:14](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L14)
 
 Creates and reclaims accounts as a pool grows and shrinks.
 
@@ -16,7 +16,7 @@ Creates and reclaims accounts as a pool grows and shrinks.
 
 > **create**(): `Promise`\<[`ChannelAccount`](ChannelAccount.md)\>
 
-Defined in: fleet/channelPool.ts:15
+Defined in: [fleet/channelPool.ts:15](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L15)
 
 #### Returns
 
@@ -28,7 +28,7 @@ Defined in: fleet/channelPool.ts:15
 
 > `optional` **reclaim**(`account`): `Promise`\<`void`\>
 
-Defined in: fleet/channelPool.ts:16
+Defined in: [fleet/channelPool.ts:16](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L16)
 
 #### Parameters
 

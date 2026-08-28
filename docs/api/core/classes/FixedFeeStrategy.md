@@ -6,7 +6,7 @@
 
 # Class: FixedFeeStrategy
 
-Defined in: fleet/feeStrategy.ts:96
+Defined in: [fleet/feeStrategy.ts:96](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L96)
 
 Always bids the same fee rate.
 
@@ -20,7 +20,7 @@ Always bids the same fee rate.
 
 > **new FixedFeeStrategy**(`fee?`): `FixedFeeStrategy`
 
-Defined in: fleet/feeStrategy.ts:98
+Defined in: [fleet/feeStrategy.ts:98](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L98)
 
 #### Parameters
 
@@ -38,7 +38,7 @@ Defined in: fleet/feeStrategy.ts:98
 
 > **getFee**(`context`): `string`
 
-Defined in: fleet/feeStrategy.ts:101
+Defined in: [fleet/feeStrategy.ts:101](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L101)
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Interface: SubmissionQueueStats
 
-Defined in: fleet/submissionQueue.ts:28
+Defined in: [fleet/submissionQueue.ts:28](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L28)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/submissionQueue.ts:28
 
 > **depth**: `number`
 
-Defined in: fleet/submissionQueue.ts:29
+Defined in: [fleet/submissionQueue.ts:29](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L29)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: fleet/submissionQueue.ts:29
 
 > **running**: `number`
 
-Defined in: fleet/submissionQueue.ts:30
+Defined in: [fleet/submissionQueue.ts:30](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L30)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: fleet/submissionQueue.ts:30
 
 > **completed**: `number`
 
-Defined in: fleet/submissionQueue.ts:31
+Defined in: [fleet/submissionQueue.ts:31](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L31)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: fleet/submissionQueue.ts:31
 
 > **failed**: `number`
 
-Defined in: fleet/submissionQueue.ts:32
+Defined in: [fleet/submissionQueue.ts:32](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L32)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: fleet/submissionQueue.ts:32
 
 > **expired**: `number`
 
-Defined in: fleet/submissionQueue.ts:33
+Defined in: [fleet/submissionQueue.ts:33](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L33)
 
 ***
 
@@ -54,4 +54,4 @@ Defined in: fleet/submissionQueue.ts:33
 
 > **retries**: `number`
 
-Defined in: fleet/submissionQueue.ts:34
+Defined in: [fleet/submissionQueue.ts:34](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L34)

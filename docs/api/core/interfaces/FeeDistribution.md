@@ -6,7 +6,7 @@
 
 # Interface: FeeDistribution
 
-Defined in: fleet/feeStrategy.ts:7
+Defined in: [fleet/feeStrategy.ts:7](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L7)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/feeStrategy.ts:7
 
 > **min**: `string`
 
-Defined in: fleet/feeStrategy.ts:8
+Defined in: [fleet/feeStrategy.ts:8](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L8)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: fleet/feeStrategy.ts:8
 
 > **mode**: `string`
 
-Defined in: fleet/feeStrategy.ts:9
+Defined in: [fleet/feeStrategy.ts:9](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L9)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: fleet/feeStrategy.ts:9
 
 > **p10**: `string`
 
-Defined in: fleet/feeStrategy.ts:10
+Defined in: [fleet/feeStrategy.ts:10](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L10)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: fleet/feeStrategy.ts:10
 
 > **p20**: `string`
 
-Defined in: fleet/feeStrategy.ts:11
+Defined in: [fleet/feeStrategy.ts:11](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L11)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: fleet/feeStrategy.ts:11
 
 > **p30**: `string`
 
-Defined in: fleet/feeStrategy.ts:12
+Defined in: [fleet/feeStrategy.ts:12](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L12)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: fleet/feeStrategy.ts:12
 
 > **p40**: `string`
 
-Defined in: fleet/feeStrategy.ts:13
+Defined in: [fleet/feeStrategy.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L13)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: fleet/feeStrategy.ts:13
 
 > **p50**: `string`
 
-Defined in: fleet/feeStrategy.ts:14
+Defined in: [fleet/feeStrategy.ts:14](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L14)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: fleet/feeStrategy.ts:14
 
 > **p60**: `string`
 
-Defined in: fleet/feeStrategy.ts:15
+Defined in: [fleet/feeStrategy.ts:15](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L15)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: fleet/feeStrategy.ts:15
 
 > **p70**: `string`
 
-Defined in: fleet/feeStrategy.ts:16
+Defined in: [fleet/feeStrategy.ts:16](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L16)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: fleet/feeStrategy.ts:16
 
 > **p80**: `string`
 
-Defined in: fleet/feeStrategy.ts:17
+Defined in: [fleet/feeStrategy.ts:17](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L17)
 
 ***
 
@@ -94,7 +94,7 @@ Defined in: fleet/feeStrategy.ts:17
 
 > **p90**: `string`
 
-Defined in: fleet/feeStrategy.ts:18
+Defined in: [fleet/feeStrategy.ts:18](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L18)
 
 ***
 
@@ -102,7 +102,7 @@ Defined in: fleet/feeStrategy.ts:18
 
 > **p95**: `string`
 
-Defined in: fleet/feeStrategy.ts:19
+Defined in: [fleet/feeStrategy.ts:19](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L19)
 
 ***
 
@@ -110,7 +110,7 @@ Defined in: fleet/feeStrategy.ts:19
 
 > **p99**: `string`
 
-Defined in: fleet/feeStrategy.ts:20
+Defined in: [fleet/feeStrategy.ts:20](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L20)
 
 ***
 
@@ -118,4 +118,4 @@ Defined in: fleet/feeStrategy.ts:20
 
 > **max**: `string`
 
-Defined in: fleet/feeStrategy.ts:21
+Defined in: [fleet/feeStrategy.ts:21](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L21)

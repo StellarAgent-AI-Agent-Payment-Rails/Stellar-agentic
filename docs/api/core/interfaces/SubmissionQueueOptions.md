@@ -6,7 +6,7 @@
 
 # Interface: SubmissionQueueOptions
 
-Defined in: fleet/submissionQueue.ts:7
+Defined in: [fleet/submissionQueue.ts:7](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L7)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/submissionQueue.ts:7
 
 > `optional` **concurrency?**: `number`
 
-Defined in: fleet/submissionQueue.ts:9
+Defined in: [fleet/submissionQueue.ts:9](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L9)
 
 Maximum tasks executing at once.
 
@@ -30,7 +30,7 @@ Maximum tasks executing at once.
 
 > `optional` **maxQueueSize?**: `number`
 
-Defined in: fleet/submissionQueue.ts:11
+Defined in: [fleet/submissionQueue.ts:11](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L11)
 
 Pending-task limit; running tasks do not count.
 
@@ -46,7 +46,7 @@ Pending-task limit; running tasks do not count.
 
 > `optional` **maxAttempts?**: `number`
 
-Defined in: fleet/submissionQueue.ts:13
+Defined in: [fleet/submissionQueue.ts:13](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L13)
 
 Total executions including the first attempt.
 
@@ -62,7 +62,7 @@ Total executions including the first attempt.
 
 > `optional` **retryDelayMs?**: `number`
 
-Defined in: fleet/submissionQueue.ts:15
+Defined in: [fleet/submissionQueue.ts:15](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L15)
 
 Initial exponential-backoff delay.
 
@@ -78,7 +78,7 @@ Initial exponential-backoff delay.
 
 > `optional` **classifyError?**: [`RetryClassifier`](../type-aliases/RetryClassifier.md)
 
-Defined in: fleet/submissionQueue.ts:16
+Defined in: [fleet/submissionQueue.ts:16](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L16)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: fleet/submissionQueue.ts:16
 
 > `optional` **metrics?**: [`Metrics`](Metrics.md)
 
-Defined in: fleet/submissionQueue.ts:17
+Defined in: [fleet/submissionQueue.ts:17](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L17)
 
 ***
 
@@ -94,7 +94,7 @@ Defined in: fleet/submissionQueue.ts:17
 
 > `optional` **now?**: () => `number`
 
-Defined in: fleet/submissionQueue.ts:18
+Defined in: [fleet/submissionQueue.ts:18](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L18)
 
 #### Returns
 
@@ -106,7 +106,7 @@ Defined in: fleet/submissionQueue.ts:18
 
 > `optional` **sleep?**: (`milliseconds`) => `Promise`\<`void`\>
 
-Defined in: fleet/submissionQueue.ts:19
+Defined in: [fleet/submissionQueue.ts:19](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L19)
 
 #### Parameters
 

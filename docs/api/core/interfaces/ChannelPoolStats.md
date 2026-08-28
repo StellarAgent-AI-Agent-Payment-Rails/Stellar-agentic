@@ -6,7 +6,7 @@
 
 # Interface: ChannelPoolStats
 
-Defined in: fleet/channelPool.ts:41
+Defined in: [fleet/channelPool.ts:41](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L41)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/channelPool.ts:41
 
 > **size**: `number`
 
-Defined in: fleet/channelPool.ts:42
+Defined in: [fleet/channelPool.ts:42](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L42)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: fleet/channelPool.ts:42
 
 > **maxSize**: `number`
 
-Defined in: fleet/channelPool.ts:43
+Defined in: [fleet/channelPool.ts:43](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L43)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: fleet/channelPool.ts:43
 
 > **available**: `number`
 
-Defined in: fleet/channelPool.ts:44
+Defined in: [fleet/channelPool.ts:44](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L44)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: fleet/channelPool.ts:44
 
 > **leased**: `number`
 
-Defined in: fleet/channelPool.ts:45
+Defined in: [fleet/channelPool.ts:45](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L45)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: fleet/channelPool.ts:45
 
 > **creating**: `number`
 
-Defined in: fleet/channelPool.ts:46
+Defined in: [fleet/channelPool.ts:46](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L46)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: fleet/channelPool.ts:46
 
 > **waiting**: `number`
 
-Defined in: fleet/channelPool.ts:47
+Defined in: [fleet/channelPool.ts:47](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L47)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: fleet/channelPool.ts:47
 
 > **targetSize**: `number`
 
-Defined in: fleet/channelPool.ts:48
+Defined in: [fleet/channelPool.ts:48](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L48)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: fleet/channelPool.ts:48
 
 > **committed**: `number`
 
-Defined in: fleet/channelPool.ts:49
+Defined in: [fleet/channelPool.ts:49](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L49)
 
 ***
 
@@ -78,4 +78,4 @@ Defined in: fleet/channelPool.ts:49
 
 > **rolledBack**: `number`
 
-Defined in: fleet/channelPool.ts:50
+Defined in: [fleet/channelPool.ts:50](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L50)

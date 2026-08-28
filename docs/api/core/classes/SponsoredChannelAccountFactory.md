@@ -6,7 +6,7 @@
 
 # Class: SponsoredChannelAccountFactory
 
-Defined in: fleet/sponsorship.ts:346
+Defined in: [fleet/sponsorship.ts:346](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L346)
 
 Pool lifecycle backed by zero-balance sponsored accounts.
 
@@ -20,7 +20,7 @@ Pool lifecycle backed by zero-balance sponsored accounts.
 
 > **new SponsoredChannelAccountFactory**(`sponsor`): `SponsoredChannelAccountFactory`
 
-Defined in: fleet/sponsorship.ts:347
+Defined in: [fleet/sponsorship.ts:347](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L347)
 
 #### Parameters
 
@@ -38,7 +38,7 @@ Defined in: fleet/sponsorship.ts:347
 
 > `readonly` **sponsor**: [`SponsorService`](SponsorService.md)
 
-Defined in: fleet/sponsorship.ts:347
+Defined in: [fleet/sponsorship.ts:347](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L347)
 
 ## Methods
 
@@ -46,7 +46,7 @@ Defined in: fleet/sponsorship.ts:347
 
 > **create**(): `Promise`\<[`ChannelAccount`](../interfaces/ChannelAccount.md)\>
 
-Defined in: fleet/sponsorship.ts:349
+Defined in: [fleet/sponsorship.ts:349](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L349)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: fleet/sponsorship.ts:349
 
 > **reclaim**(`account`): `Promise`\<`void`\>
 
-Defined in: fleet/sponsorship.ts:359
+Defined in: [fleet/sponsorship.ts:359](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L359)
 
 #### Parameters
 

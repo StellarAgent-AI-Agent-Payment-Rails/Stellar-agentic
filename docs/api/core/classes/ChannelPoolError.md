@@ -6,7 +6,7 @@
 
 # Class: ChannelPoolError
 
-Defined in: fleet/channelPool.ts:83
+Defined in: [fleet/channelPool.ts:83](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L83)
 
 Raised when a lease cannot enter the pool.
 
@@ -20,7 +20,7 @@ Raised when a lease cannot enter the pool.
 
 > **new ChannelPoolError**(`code`, `message`, `cause?`): `ChannelPoolError`
 
-Defined in: fleet/channelPool.ts:84
+Defined in: [fleet/channelPool.ts:84](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L84)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: fleet/channelPool.ts:84
 
 > `readonly` **code**: `"POOL_CLOSED"` \| `"LEASE_TIMEOUT"` \| `"LEASE_ABORTED"` \| `"FACTORY_FAILED"`
 
-Defined in: fleet/channelPool.ts:85
+Defined in: [fleet/channelPool.ts:85](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L85)
 
 ***
 
@@ -58,4 +58,4 @@ Defined in: fleet/channelPool.ts:85
 
 > `readonly` `optional` **cause?**: `unknown`
 
-Defined in: fleet/channelPool.ts:87
+Defined in: [fleet/channelPool.ts:87](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L87)

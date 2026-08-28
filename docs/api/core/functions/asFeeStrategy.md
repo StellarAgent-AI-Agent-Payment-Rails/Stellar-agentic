@@ -8,7 +8,7 @@
 
 > **asFeeStrategy**(`strategy?`): [`FeeStrategy`](../interfaces/FeeStrategy.md)
 
-Defined in: fleet/feeStrategy.ts:211
+Defined in: [fleet/feeStrategy.ts:211](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L211)
 
 Accept the ergonomic config forms used by `StellarAgentConfig`.
 

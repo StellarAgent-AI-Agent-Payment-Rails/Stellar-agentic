@@ -6,7 +6,7 @@
 
 # Class: RecentFeeStrategy
 
-Defined in: fleet/feeStrategy.ts:137
+Defined in: [fleet/feeStrategy.ts:137](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L137)
 
 Uses recent RPC fee statistics and falls back to the protocol base fee when
 the endpoint is unavailable or has not observed relevant transactions.
@@ -21,7 +21,7 @@ the endpoint is unavailable or has not observed relevant transactions.
 
 > **new RecentFeeStrategy**(`options?`): `RecentFeeStrategy`
 
-Defined in: fleet/feeStrategy.ts:148
+Defined in: [fleet/feeStrategy.ts:148](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L148)
 
 #### Parameters
 
@@ -39,7 +39,7 @@ Defined in: fleet/feeStrategy.ts:148
 
 > **getFee**(`context`): `Promise`\<`string`\>
 
-Defined in: fleet/feeStrategy.ts:172
+Defined in: [fleet/feeStrategy.ts:172](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L172)
 
 #### Parameters
 

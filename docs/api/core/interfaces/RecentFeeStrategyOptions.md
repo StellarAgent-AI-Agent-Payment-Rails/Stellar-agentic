@@ -6,7 +6,7 @@
 
 # Interface: RecentFeeStrategyOptions
 
-Defined in: fleet/feeStrategy.ts:49
+Defined in: [fleet/feeStrategy.ts:49](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L49)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/feeStrategy.ts:49
 
 > `optional` **percentile?**: [`FeePercentile`](../type-aliases/FeePercentile.md)
 
-Defined in: fleet/feeStrategy.ts:50
+Defined in: [fleet/feeStrategy.ts:50](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L50)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: fleet/feeStrategy.ts:50
 
 > `optional` **multiplier?**: `number`
 
-Defined in: fleet/feeStrategy.ts:51
+Defined in: [fleet/feeStrategy.ts:51](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L51)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: fleet/feeStrategy.ts:51
 
 > `optional` **minimumFee?**: `string` \| `number` \| `bigint`
 
-Defined in: fleet/feeStrategy.ts:52
+Defined in: [fleet/feeStrategy.ts:52](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L52)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: fleet/feeStrategy.ts:52
 
 > `optional` **maximumFee?**: `string` \| `number` \| `bigint`
 
-Defined in: fleet/feeStrategy.ts:53
+Defined in: [fleet/feeStrategy.ts:53](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L53)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: fleet/feeStrategy.ts:53
 
 > `optional` **fallbackFee?**: `string` \| `number` \| `bigint`
 
-Defined in: fleet/feeStrategy.ts:54
+Defined in: [fleet/feeStrategy.ts:54](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L54)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: fleet/feeStrategy.ts:54
 
 > `optional` **cacheMs?**: `number`
 
-Defined in: fleet/feeStrategy.ts:56
+Defined in: [fleet/feeStrategy.ts:56](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L56)
 
 Cache fee stats to avoid one RPC request per payment.
 
@@ -70,7 +70,7 @@ Cache fee stats to avoid one RPC request per payment.
 
 > `optional` **now?**: () => `number`
 
-Defined in: fleet/feeStrategy.ts:57
+Defined in: [fleet/feeStrategy.ts:57](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L57)
 
 #### Returns
 

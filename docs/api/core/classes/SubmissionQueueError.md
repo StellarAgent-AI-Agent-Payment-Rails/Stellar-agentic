@@ -6,7 +6,7 @@
 
 # Class: SubmissionQueueError
 
-Defined in: fleet/submissionQueue.ts:47
+Defined in: [fleet/submissionQueue.ts:47](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L47)
 
 Machine-readable queue/backpressure failure.
 
@@ -20,7 +20,7 @@ Machine-readable queue/backpressure failure.
 
 > **new SubmissionQueueError**(`code`, `message`): `SubmissionQueueError`
 
-Defined in: fleet/submissionQueue.ts:48
+Defined in: [fleet/submissionQueue.ts:48](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L48)
 
 #### Parameters
 
@@ -46,4 +46,4 @@ Defined in: fleet/submissionQueue.ts:48
 
 > `readonly` **code**: `"QUEUE_FULL"` \| `"QUEUE_CLOSED"` \| `"ABORTED"`
 
-Defined in: fleet/submissionQueue.ts:49
+Defined in: [fleet/submissionQueue.ts:49](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L49)

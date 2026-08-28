@@ -6,7 +6,7 @@
 
 # Interface: LeaseOptions
 
-Defined in: fleet/channelPool.ts:36
+Defined in: [fleet/channelPool.ts:36](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L36)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/channelPool.ts:36
 
 > `optional` **signal?**: `AbortSignal`
 
-Defined in: fleet/channelPool.ts:37
+Defined in: [fleet/channelPool.ts:37](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L37)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: fleet/channelPool.ts:37
 
 > `optional` **timeoutMs?**: `number`
 
-Defined in: fleet/channelPool.ts:38
+Defined in: [fleet/channelPool.ts:38](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L38)

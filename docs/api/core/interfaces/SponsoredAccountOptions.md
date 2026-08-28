@@ -6,7 +6,7 @@
 
 # Interface: SponsoredAccountOptions
 
-Defined in: fleet/sponsorship.ts:46
+Defined in: [fleet/sponsorship.ts:46](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L46)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/sponsorship.ts:46
 
 > `optional` **startingBalance?**: `string`
 
-Defined in: fleet/sponsorship.ts:48
+Defined in: [fleet/sponsorship.ts:48](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L48)
 
 Valid under sponsorship; the sponsor supplies the reserve.
 

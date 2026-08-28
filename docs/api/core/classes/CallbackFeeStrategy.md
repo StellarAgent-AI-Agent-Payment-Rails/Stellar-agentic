@@ -6,7 +6,7 @@
 
 # Class: CallbackFeeStrategy
 
-Defined in: fleet/feeStrategy.ts:124
+Defined in: [fleet/feeStrategy.ts:124](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L124)
 
 Delegates the decision to application code while retaining validation.
 
@@ -20,7 +20,7 @@ Delegates the decision to application code while retaining validation.
 
 > **new CallbackFeeStrategy**(`callback`): `CallbackFeeStrategy`
 
-Defined in: fleet/feeStrategy.ts:125
+Defined in: [fleet/feeStrategy.ts:125](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L125)
 
 #### Parameters
 
@@ -38,7 +38,7 @@ Defined in: fleet/feeStrategy.ts:125
 
 > `readonly` **callback**: [`FeeCallback`](../type-aliases/FeeCallback.md)
 
-Defined in: fleet/feeStrategy.ts:125
+Defined in: [fleet/feeStrategy.ts:125](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L125)
 
 ## Methods
 
@@ -46,7 +46,7 @@ Defined in: fleet/feeStrategy.ts:125
 
 > **getFee**(`context`): `Promise`\<`string`\>
 
-Defined in: fleet/feeStrategy.ts:128
+Defined in: [fleet/feeStrategy.ts:128](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L128)
 
 #### Parameters
 

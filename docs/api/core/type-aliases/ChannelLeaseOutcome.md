@@ -8,4 +8,4 @@
 
 > **ChannelLeaseOutcome** = `"committed"` \| `"rolled_back"`
 
-Defined in: fleet/channelPool.ts:19
+Defined in: [fleet/channelPool.ts:19](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L19)

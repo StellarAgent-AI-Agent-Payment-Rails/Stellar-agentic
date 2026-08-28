@@ -6,7 +6,7 @@
 
 # Class: SubmissionQueue
 
-Defined in: fleet/submissionQueue.ts:78
+Defined in: [fleet/submissionQueue.ts:78](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L78)
 
 Bounded work queue with key-scoped ordering and retry classification.
 Backpressure is explicit: once the pending bound is reached, producers get
@@ -18,7 +18,7 @@ Backpressure is explicit: once the pending bound is reached, producers get
 
 > **new SubmissionQueue**(`options?`): `SubmissionQueue`
 
-Defined in: fleet/submissionQueue.ts:97
+Defined in: [fleet/submissionQueue.ts:97](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L97)
 
 #### Parameters
 
@@ -38,7 +38,7 @@ Defined in: fleet/submissionQueue.ts:97
 
 > **get** **stats**(): [`SubmissionQueueStats`](../interfaces/SubmissionQueueStats.md)
 
-Defined in: fleet/submissionQueue.ts:120
+Defined in: [fleet/submissionQueue.ts:120](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L120)
 
 ##### Returns
 
@@ -50,7 +50,7 @@ Defined in: fleet/submissionQueue.ts:120
 
 > **submit**\<`T`\>(`task`, `options?`): `Promise`\<`T`\>
 
-Defined in: fleet/submissionQueue.ts:131
+Defined in: [fleet/submissionQueue.ts:131](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L131)
 
 #### Type Parameters
 
@@ -78,7 +78,7 @@ Defined in: fleet/submissionQueue.ts:131
 
 > **drain**(): `Promise`\<`void`\>
 
-Defined in: fleet/submissionQueue.ts:173
+Defined in: [fleet/submissionQueue.ts:173](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L173)
 
 Resolve once both queued and running work have reached zero.
 
@@ -92,7 +92,7 @@ Resolve once both queued and running work have reached zero.
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: fleet/submissionQueue.ts:179
+Defined in: [fleet/submissionQueue.ts:179](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/submissionQueue.ts#L179)
 
 Stop accepting work, then wait for accepted work to finish.
 

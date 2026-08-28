@@ -6,7 +6,7 @@
 
 # Interface: ChannelAccountPoolOptions
 
-Defined in: fleet/channelPool.ts:21
+Defined in: [fleet/channelPool.ts:21](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L21)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/channelPool.ts:21
 
 > `optional` **accounts?**: readonly [`ChannelAccount`](ChannelAccount.md)[]
 
-Defined in: fleet/channelPool.ts:23
+Defined in: [fleet/channelPool.ts:23](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L23)
 
 Accounts available immediately.
 
@@ -24,7 +24,7 @@ Accounts available immediately.
 
 > `optional` **factory?**: [`ChannelAccountFactory`](ChannelAccountFactory.md)
 
-Defined in: fleet/channelPool.ts:25
+Defined in: [fleet/channelPool.ts:25](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L25)
 
 Lifecycle used when demand changes the pool size.
 
@@ -34,7 +34,7 @@ Lifecycle used when demand changes the pool size.
 
 > `optional` **minSize?**: `number`
 
-Defined in: fleet/channelPool.ts:27
+Defined in: [fleet/channelPool.ts:27](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L27)
 
 Lowest size retained by idle reclamation.
 
@@ -50,7 +50,7 @@ accounts.length
 
 > `optional` **maxSize?**: `number`
 
-Defined in: fleet/channelPool.ts:29
+Defined in: [fleet/channelPool.ts:29](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L29)
 
 Hard upper bound, including accounts being created.
 
@@ -66,7 +66,7 @@ max(minSize, accounts.length)
 
 > `optional` **leaseTimeoutMs?**: `number`
 
-Defined in: fleet/channelPool.ts:31
+Defined in: [fleet/channelPool.ts:31](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L31)
 
 Maximum time to wait for a lease. Zero disables the timeout.
 
@@ -82,7 +82,7 @@ Maximum time to wait for a lease. Zero disables the timeout.
 
 > `optional` **now?**: () => `number`
 
-Defined in: fleet/channelPool.ts:33
+Defined in: [fleet/channelPool.ts:33](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L33)
 
 Injectable clock for deterministic tests.
 

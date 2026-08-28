@@ -6,7 +6,7 @@
 
 # Interface: ChannelAccountLease
 
-Defined in: fleet/channelPool.ts:54
+Defined in: [fleet/channelPool.ts:54](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L54)
 
 A single-use, exclusive claim on one channel account.
 
@@ -16,7 +16,7 @@ A single-use, exclusive claim on one channel account.
 
 > `readonly` **account**: [`ChannelAccount`](ChannelAccount.md)
 
-Defined in: fleet/channelPool.ts:55
+Defined in: [fleet/channelPool.ts:55](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L55)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: fleet/channelPool.ts:55
 
 > `readonly` **address**: `string`
 
-Defined in: fleet/channelPool.ts:56
+Defined in: [fleet/channelPool.ts:56](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L56)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: fleet/channelPool.ts:56
 
 > `readonly` **signer**: [`Signer`](Signer.md)
 
-Defined in: fleet/channelPool.ts:57
+Defined in: [fleet/channelPool.ts:57](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L57)
 
 ## Methods
 
@@ -40,7 +40,7 @@ Defined in: fleet/channelPool.ts:57
 
 > **release**(`outcome?`): `Promise`\<`void`\>
 
-Defined in: fleet/channelPool.ts:62
+Defined in: [fleet/channelPool.ts:62](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L62)
 
 Release the account. A rollback means no transaction was accepted, so the
 next lease reloads the on-chain sequence instead of advancing a local cursor.
@@ -61,7 +61,7 @@ next lease reloads the on-chain sequence instead of advancing a local cursor.
 
 > **use**\<`T`\>(`work`): `Promise`\<`T`\>
 
-Defined in: fleet/channelPool.ts:64
+Defined in: [fleet/channelPool.ts:64](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L64)
 
 Run work and always release, committing only after the callback succeeds.
 

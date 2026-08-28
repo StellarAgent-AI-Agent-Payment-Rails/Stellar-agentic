@@ -6,7 +6,7 @@
 
 # Interface: SponsorRpc
 
-Defined in: fleet/sponsorship.ts:17
+Defined in: [fleet/sponsorship.ts:17](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L17)
 
 Minimal RPC surface needed for classic sponsorship transactions.
 
@@ -16,7 +16,7 @@ Minimal RPC surface needed for classic sponsorship transactions.
 
 > **getAccount**(`address`): `Promise`\<`Account`\>
 
-Defined in: fleet/sponsorship.ts:18
+Defined in: [fleet/sponsorship.ts:18](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L18)
 
 #### Parameters
 
@@ -34,7 +34,7 @@ Defined in: fleet/sponsorship.ts:18
 
 > **sendTransaction**(`transaction`): `Promise`\<\{ `status`: `string`; `hash`: `string`; `errorResult?`: \{ `toXDR`: `string`; \}; \}\>
 
-Defined in: fleet/sponsorship.ts:19
+Defined in: [fleet/sponsorship.ts:19](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L19)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: fleet/sponsorship.ts:19
 
 > **getTransaction**(`hash`): `Promise`\<\{ `status`: `string`; `ledger?`: `number`; `resultXdr?`: \{ `feeCharged`: \{ `toString`: `string`; \}; \}; \}\>
 
-Defined in: fleet/sponsorship.ts:24
+Defined in: [fleet/sponsorship.ts:24](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L24)
 
 #### Parameters
 
@@ -70,7 +70,7 @@ Defined in: fleet/sponsorship.ts:24
 
 > `optional` **getFeeStats**(): `Promise`\<[`FeeStats`](FeeStats.md)\>
 
-Defined in: fleet/sponsorship.ts:29
+Defined in: [fleet/sponsorship.ts:29](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L29)
 
 #### Returns
 

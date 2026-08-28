@@ -6,7 +6,7 @@
 
 # Class: SponsorshipError
 
-Defined in: fleet/sponsorship.ts:60
+Defined in: [fleet/sponsorship.ts:60](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L60)
 
 Sponsorship lifecycle failure with the rejected transaction hash when known.
 
@@ -20,7 +20,7 @@ Sponsorship lifecycle failure with the rejected transaction hash when known.
 
 > **new SponsorshipError**(`code`, `message`, `transactionHash?`): `SponsorshipError`
 
-Defined in: fleet/sponsorship.ts:61
+Defined in: [fleet/sponsorship.ts:61](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L61)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: fleet/sponsorship.ts:61
 
 > `readonly` **code**: `"SUBMISSION_FAILED"` \| `"TRANSACTION_FAILED"` \| `"TRANSACTION_TIMEOUT"`
 
-Defined in: fleet/sponsorship.ts:62
+Defined in: [fleet/sponsorship.ts:62](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L62)
 
 ***
 
@@ -58,4 +58,4 @@ Defined in: fleet/sponsorship.ts:62
 
 > `readonly` `optional` **transactionHash?**: `string`
 
-Defined in: fleet/sponsorship.ts:64
+Defined in: [fleet/sponsorship.ts:64](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L64)

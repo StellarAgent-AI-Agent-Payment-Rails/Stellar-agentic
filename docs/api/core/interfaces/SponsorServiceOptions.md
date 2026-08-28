@@ -6,7 +6,7 @@
 
 # Interface: SponsorServiceOptions
 
-Defined in: fleet/sponsorship.ts:32
+Defined in: [fleet/sponsorship.ts:32](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L32)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/sponsorship.ts:32
 
 > **sponsorSigner**: [`Signer`](Signer.md)
 
-Defined in: fleet/sponsorship.ts:33
+Defined in: [fleet/sponsorship.ts:33](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L33)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: fleet/sponsorship.ts:33
 
 > **rpc**: [`SponsorRpc`](SponsorRpc.md)
 
-Defined in: fleet/sponsorship.ts:34
+Defined in: [fleet/sponsorship.ts:34](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L34)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: fleet/sponsorship.ts:34
 
 > **networkPassphrase**: `string`
 
-Defined in: fleet/sponsorship.ts:35
+Defined in: [fleet/sponsorship.ts:35](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L35)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: fleet/sponsorship.ts:35
 
 > `optional` **feeStrategy?**: `string` \| `number` \| `bigint` \| [`FeeStrategy`](FeeStrategy.md)
 
-Defined in: fleet/sponsorship.ts:36
+Defined in: [fleet/sponsorship.ts:36](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L36)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: fleet/sponsorship.ts:36
 
 > `optional` **timeoutSeconds?**: `number`
 
-Defined in: fleet/sponsorship.ts:38
+Defined in: [fleet/sponsorship.ts:38](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L38)
 
 Transaction validity window.
 
@@ -62,7 +62,7 @@ Transaction validity window.
 
 > `optional` **confirmationAttempts?**: `number`
 
-Defined in: fleet/sponsorship.ts:40
+Defined in: [fleet/sponsorship.ts:40](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L40)
 
 Confirmation polls before timing out.
 
@@ -78,7 +78,7 @@ Confirmation polls before timing out.
 
 > `optional` **pollIntervalMs?**: `number`
 
-Defined in: fleet/sponsorship.ts:42
+Defined in: [fleet/sponsorship.ts:42](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L42)
 
 Delay between confirmation polls.
 
@@ -94,7 +94,7 @@ Delay between confirmation polls.
 
 > `optional` **sleep?**: (`milliseconds`) => `Promise`\<`void`\>
 
-Defined in: fleet/sponsorship.ts:43
+Defined in: [fleet/sponsorship.ts:43](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/sponsorship.ts#L43)
 
 #### Parameters
 

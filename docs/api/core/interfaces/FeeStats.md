@@ -6,7 +6,7 @@
 
 # Interface: FeeStats
 
-Defined in: fleet/feeStrategy.ts:24
+Defined in: [fleet/feeStrategy.ts:24](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L24)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: fleet/feeStrategy.ts:24
 
 > **inclusionFee**: [`FeeDistribution`](FeeDistribution.md)
 
-Defined in: fleet/feeStrategy.ts:25
+Defined in: [fleet/feeStrategy.ts:25](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L25)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: fleet/feeStrategy.ts:25
 
 > **sorobanInclusionFee**: [`FeeDistribution`](FeeDistribution.md)
 
-Defined in: fleet/feeStrategy.ts:26
+Defined in: [fleet/feeStrategy.ts:26](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L26)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: fleet/feeStrategy.ts:26
 
 > `optional` **latestLedger?**: `number`
 
-Defined in: fleet/feeStrategy.ts:27
+Defined in: [fleet/feeStrategy.ts:27](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/feeStrategy.ts#L27)

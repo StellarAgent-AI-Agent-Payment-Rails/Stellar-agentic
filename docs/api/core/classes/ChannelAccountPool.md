@@ -6,7 +6,7 @@
 
 # Class: ChannelAccountPool
 
-Defined in: fleet/channelPool.ts:103
+Defined in: [fleet/channelPool.ts:103](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L103)
 
 Exclusive channel-account leasing with demand-driven growth.
 
@@ -22,7 +22,7 @@ a gap, while accepted transactions are never raced by another caller.
 
 > **new ChannelAccountPool**(`options?`): `ChannelAccountPool`
 
-Defined in: fleet/channelPool.ts:116
+Defined in: [fleet/channelPool.ts:116](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L116)
 
 #### Parameters
 
@@ -42,7 +42,7 @@ Defined in: fleet/channelPool.ts:116
 
 > **get** **stats**(): [`ChannelPoolStats`](../interfaces/ChannelPoolStats.md)
 
-Defined in: fleet/channelPool.ts:155
+Defined in: [fleet/channelPool.ts:155](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L155)
 
 ##### Returns
 
@@ -54,7 +54,7 @@ Defined in: fleet/channelPool.ts:155
 
 > `static` **create**(`options?`): `Promise`\<`ChannelAccountPool`\>
 
-Defined in: fleet/channelPool.ts:144
+Defined in: [fleet/channelPool.ts:144](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L144)
 
 Build a pool and eagerly satisfy `minSize`.
 
@@ -74,7 +74,7 @@ Build a pool and eagerly satisfy `minSize`.
 
 > **lease**(`options?`): `Promise`\<[`ChannelAccountLease`](../interfaces/ChannelAccountLease.md)\>
 
-Defined in: fleet/channelPool.ts:172
+Defined in: [fleet/channelPool.ts:172](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L172)
 
 Lease one account, growing by one when every existing account is busy.
 
@@ -94,7 +94,7 @@ Lease one account, growing by one when every existing account is busy.
 
 > **use**\<`T`\>(`work`, `options?`): `Promise`\<`T`\>
 
-Defined in: fleet/channelPool.ts:211
+Defined in: [fleet/channelPool.ts:211](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L211)
 
 Convenience wrapper around `lease` + `ChannelAccountLease.use`.
 
@@ -124,7 +124,7 @@ Convenience wrapper around `lease` + `ChannelAccountLease.use`.
 
 > **resize**(`size`): `Promise`\<`void`\>
 
-Defined in: fleet/channelPool.ts:219
+Defined in: [fleet/channelPool.ts:219](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L219)
 
 Change the desired fleet size. Growth is awaited; shrink reclaims idle
 accounts immediately and marks busy accounts for reclamation on release.
@@ -145,7 +145,7 @@ accounts immediately and marks busy accounts for reclamation on release.
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: fleet/channelPool.ts:248
+Defined in: [fleet/channelPool.ts:248](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/fleet/channelPool.ts#L248)
 
 Reject waiters and reclaim all idle accounts; leased accounts retire on release.
 
