@@ -1,8 +1,20 @@
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, XCircle, Clock, Route, ShieldCheck } from 'lucide-react';
+import type { PaymentQuote } from '@stellaragent/core';
 import { Badge, AddressChip, SectionHeader, Card } from '../components/ui/index.js';
 import { MOCK_PAYMENTS } from '../lib/mockData.js';
 import { sumAmounts, fmt } from '../lib/deterministic-math.js';
+import {
+  buildPaymentPreview,
+  dashboardRouteCandidates,
+  displayBaseUnits,
+  displayBasisPoints,
+  formatRoutePath,
+} from '../lib/routingPreview.js';
+
+const inputClass = 'w-full bg-sa-bg border border-sa-border rounded-lg px-3 py-2 text-sm text-sa-text focus:outline-none focus:border-sa-accent/60';
+const fieldLabel = 'label block mb-1.5';
 
 function statusIcon(status: string) {
   if (status === 'success') return <CheckCircle2 size={14} className="text-sa-green" />;
@@ -17,6 +29,12 @@ function statusBadge(status: string) {
 }
 
 export function PaymentsPage() {
+  const [sourceAsset, setSourceAsset] = useState('XLM');
+  const [destinationAsset, setDestinationAsset] = useState('USDC');
+  const [amount, setAmount] = useState('25.0000000');
+  const [preview, setPreview] = useState<PaymentQuote | null>(null);
+  const [previewError, setPreviewError] = useState('');
+  const [confirmed, setConfirmed] = useState(false);
   const totalSuccess = MOCK_PAYMENTS.filter((p) => p.status === 'success').length;
   const totalFailed = MOCK_PAYMENTS.filter((p) => p.status === 'failed').length;
   // Deterministic sum: use bignumber.js to avoid float drift between ARM and x86
@@ -24,6 +42,27 @@ export function PaymentsPage() {
     sumAmounts(MOCK_PAYMENTS.filter((p) => p.status === 'success').map((p) => p.amount)),
     4,
   );
+
+  function invalidatePreview(): void {
+    setPreview(null);
+    setPreviewError('');
+    setConfirmed(false);
+  }
+
+  function submitPreview(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    setPreviewError('');
+    setConfirmed(false);
+    try {
+      const candidates = dashboardRouteCandidates(sourceAsset, destinationAsset, amount);
+      const next = buildPaymentPreview(candidates);
+      setPreview(next);
+      if (!next) setPreviewError('No route has enough liquidity for this payment.');
+    } catch (error) {
+      setPreview(null);
+      setPreviewError(error instanceof Error ? error.message : String(error));
+    }
+  }
 
   return (
     <div className="flex-1 overflow-auto">
@@ -33,13 +72,109 @@ export function PaymentsPage() {
       </div>
 
       <div className="p-8 space-y-6">
+        <Card>
+          <SectionHeader
+            title="Route a payment"
+            subtitle="Compare normalized venue quotes and review the exact route before confirming"
+          />
+          <form className="grid gap-4 lg:grid-cols-[1fr_1fr_1.25fr_auto] lg:items-end" onSubmit={submitPreview}>
+            <label>
+              <span className={fieldLabel}>Agent pays with</span>
+              <select
+                aria-label="Source asset"
+                className={inputClass}
+                value={sourceAsset}
+                onChange={(event) => { setSourceAsset(event.target.value); invalidatePreview(); }}
+              >
+                <option value="XLM">XLM</option>
+                <option value="USDC">USDC</option>
+                <option value="AQUA">AQUA</option>
+              </select>
+            </label>
+            <label>
+              <span className={fieldLabel}>Recipient wants</span>
+              <select
+                aria-label="Destination asset"
+                className={inputClass}
+                value={destinationAsset}
+                onChange={(event) => { setDestinationAsset(event.target.value); invalidatePreview(); }}
+              >
+                <option value="USDC">USDC</option>
+                <option value="XLM">XLM</option>
+                <option value="AQUA">AQUA</option>
+              </select>
+            </label>
+            <label>
+              <span className={fieldLabel}>Source amount</span>
+              <input
+                aria-label="Source amount"
+                className={`${inputClass} font-mono`}
+                inputMode="decimal"
+                value={amount}
+                onChange={(event) => { setAmount(event.target.value); invalidatePreview(); }}
+              />
+            </label>
+            <button type="submit" className="btn-primary flex items-center justify-center gap-2 whitespace-nowrap">
+              <Route size={15} /> Preview route
+            </button>
+          </form>
+
+          {previewError && (
+            <p role="alert" className="mt-4 rounded-lg border border-sa-red/30 bg-sa-red/5 px-4 py-3 text-sm text-sa-red">
+              {previewError}
+            </p>
+          )}
+
+          {preview && (
+            <div data-testid="route-preview" className="mt-5 border-t border-sa-border pt-5">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={17} className="text-sa-green" />
+                  <h3 className="font-display font-semibold text-sa-text">Selected route</h3>
+                  <Badge variant="success">Deterministic</Badge>
+                </div>
+                <p className="font-mono text-xs text-sa-text-dim">score {preview.route.score}</p>
+              </div>
+              <p className="rounded-lg border border-sa-accent/20 bg-sa-accent/5 px-4 py-3 font-mono text-sm text-sa-accent">
+                {formatRoutePath(preview.route)}
+              </p>
+              <dl className="grid grid-cols-2 gap-x-6 gap-y-4 mt-5 md:grid-cols-3">
+                <PreviewValue label="You pay" value={`${displayBaseUnits(preview.route.sourceAmount)} ${preview.route.sourceAsset}`} />
+                <PreviewValue label="Recipient receives" value={`${displayBaseUnits(preview.route.expectedDestinationAmount)} ${preview.route.destinationAsset}`} />
+                <PreviewValue label="Minimum received" value={`${displayBaseUnits(preview.minimumDestinationAmount)} ${preview.route.destinationAsset}`} />
+                <PreviewValue label="Estimated fees" value={`${preview.route.totalFeeBps} bps (${displayBasisPoints(preview.route.totalFeeBps)})`} />
+                <PreviewValue label="Expected slippage" value={`${preview.route.expectedSlippageBps} bps (${displayBasisPoints(preview.route.expectedSlippageBps)})`} />
+                <PreviewValue label="Quote expiry" value={`Ledger ${preview.validUntilLedger}`} />
+                <PreviewValue label="Reliability" value={displayBasisPoints(preview.route.reliabilityBps)} />
+                <PreviewValue label="Route depth" value={`${preview.route.hopCount} economic hop${preview.route.hopCount === 1 ? '' : 's'}`} />
+              </dl>
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  className="btn-primary flex items-center gap-2"
+                  onClick={() => setConfirmed(true)}
+                  disabled={confirmed}
+                >
+                  <CheckCircle2 size={15} /> Confirm routed payment
+                </button>
+                <p className="text-xs text-sa-text-dim">The quote remains unchanged between preview and submission.</p>
+              </div>
+              {confirmed && (
+                <p role="status" className="mt-4 text-sm text-sa-green">
+                  Route confirmed. The selected quote is ready for atomic submission.
+                </p>
+              )}
+            </div>
+          )}
+        </Card>
+
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'Successful', value: totalSuccess.toString(), variant: 'success' as const },
-            { label: 'Failed', value: totalFailed.toString(), variant: 'danger' as const },
-            { label: 'Volume (USDC)', value: `$${totalVolume}`, variant: 'info' as const },
-          ].map(({ label, value, variant }) => (
+            { label: 'Successful', value: totalSuccess.toString() },
+            { label: 'Failed', value: totalFailed.toString() },
+            { label: 'Volume (USDC)', value: `$${totalVolume}` },
+          ].map(({ label, value }) => (
             <Card key={label}>
               <p className="label mb-2">{label}</p>
               <p className="font-display text-2xl font-semibold text-sa-text">{value}</p>
@@ -113,6 +248,15 @@ export function PaymentsPage() {
           </div>
         </Card>
       </div>
+    </div>
+  );
+}
+
+function PreviewValue({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="label mb-1">{label}</dt>
+      <dd className="font-mono text-sm text-sa-text">{value}</dd>
     </div>
   );
 }
