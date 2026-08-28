@@ -6,7 +6,7 @@
 
 # Interface: TxResult
 
-Defined in: [types/index.ts:305](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L305)
+Defined in: [types/index.ts:361](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L361)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:305](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **hash**: `string`
 
-Defined in: [types/index.ts:307](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L307)
+Defined in: [types/index.ts:363](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L363)
 
 Transaction hash
 
@@ -24,7 +24,7 @@ Transaction hash
 
 > **success**: `boolean`
 
-Defined in: [types/index.ts:309](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L309)
+Defined in: [types/index.ts:365](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L365)
 
 Whether the transaction succeeded
 
@@ -34,6 +34,56 @@ Whether the transaction succeeded
 
 > `optional` **ledger?**: `number`
 
-Defined in: [types/index.ts:311](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L311)
+Defined in: [types/index.ts:367](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L367)
 
 Ledger number it was confirmed in
+
+***
+
+### feePaid?
+
+> `optional` **feePaid?**: `string`
+
+Defined in: [types/index.ts:369](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L369)
+
+Fee charged by the confirmed transaction result, in stroops.
+
+***
+
+### feeBumped?
+
+> `optional` **feeBumped?**: `boolean`
+
+Defined in: [types/index.ts:371](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L371)
+
+Whether confirmation came through a fee-bump envelope.
+
+***
+
+### sourceAccount?
+
+> `optional` **sourceAccount?**: `string`
+
+Defined in: [types/index.ts:373](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L373)
+
+Inner transaction source (the leased channel account when pooling is enabled).
+
+***
+
+### feeSource?
+
+> `optional` **feeSource?**: `string`
+
+Defined in: [types/index.ts:375](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L375)
+
+Outer fee source when different from `sourceAccount`.
+
+***
+
+### submissionAttempts?
+
+> `optional` **submissionAttempts?**: `number`
+
+Defined in: [types/index.ts:377](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L377)
+
+Number of envelopes accepted for this operation, including a replacement.

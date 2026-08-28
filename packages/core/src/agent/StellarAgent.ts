@@ -24,6 +24,15 @@ import type { Signer } from '../signer.js';
 import type { LedgerCloseEstimate } from '../ledgerTime.js';
 import { initTelemetry } from '../telemetry/index.js';
 import type { TelemetryContext } from '../telemetry/index.js';
+import { asFeeStrategy, RecentFeeStrategy } from '../fleet/feeStrategy.js';
+import type { FeeStrategy } from '../fleet/feeStrategy.js';
+import { ChannelAccountPool } from '../fleet/channelPool.js';
+import { SubmissionQueue } from '../fleet/submissionQueue.js';
+import type { SponsorService } from '../fleet/sponsorship.js';
+import { SponsoredChannelAccountFactory } from '../fleet/sponsorship.js';
+import type { ChannelPoolStats } from '../fleet/channelPool.js';
+import type { SubmissionQueueStats } from '../fleet/submissionQueue.js';
+import type { InvocationFeeBumpConfig } from './invocation.js';
 
 import { createNetworkClients, fundFromFriendbot } from './config.js';
 import { getLatestLedger, runInvocation } from './invocation.js';
@@ -65,6 +74,12 @@ export class StellarAgent {
   private rpc: SorobanRpc.Server;
   private activeChannelId?: bigint;
   private telemetry: TelemetryContext;
+  private channelPool?: ChannelAccountPool;
+  private feeStrategy: FeeStrategy;
+  private feeBump: InvocationFeeBumpConfig;
+  private sponsorService?: SponsorService;
+  private submissionQueue: SubmissionQueue;
+  private ownsSubmissionQueue: boolean;
 
   private constructor(
     signer: Signer,
@@ -73,6 +88,12 @@ export class StellarAgent {
     contracts: ContractAddresses,
     assetContracts: Record<string, string>,
     telemetry: TelemetryContext,
+    channelPool: ChannelAccountPool | undefined,
+    feeStrategy: FeeStrategy,
+    feeBump: InvocationFeeBumpConfig,
+    sponsorService: SponsorService | undefined,
+    submissionQueue: SubmissionQueue,
+    ownsSubmissionQueue: boolean,
   ) {
     this.signer = signer;
     this.publicKey = publicKey;
@@ -80,6 +101,12 @@ export class StellarAgent {
     this.contracts = contracts;
     this.assetContracts = assetContracts;
     this.telemetry = telemetry;
+    this.channelPool = channelPool;
+    this.feeStrategy = feeStrategy;
+    this.feeBump = feeBump;
+    this.sponsorService = sponsorService;
+    this.submissionQueue = submissionQueue;
+    this.ownsSubmissionQueue = ownsSubmissionQueue;
     const { horizon, rpc } = createNetworkClients(networkConfig);
     this.horizon = horizon;
     this.rpc = rpc;
@@ -151,6 +178,63 @@ export class StellarAgent {
       agentAddress: publicKey,
     });
 
+    const feeStrategy = asFeeStrategy(config.feeStrategy);
+    const defaultBumpStrategy = new RecentFeeStrategy({ multiplier: 1.25 });
+    const triggerAfterAttempts = config.feeBump?.triggerAfterAttempts ?? 3;
+    const expiryThresholdSeconds = config.feeBump?.expiryThresholdSeconds ?? 10;
+    const maxBumps = config.feeBump?.maxBumps ?? 1;
+    if (!Number.isInteger(triggerAfterAttempts) || triggerAfterAttempts < 1) {
+      throw new RangeError('feeBump.triggerAfterAttempts must be a positive integer');
+    }
+    if (!Number.isFinite(expiryThresholdSeconds) || expiryThresholdSeconds < 0) {
+      throw new RangeError('feeBump.expiryThresholdSeconds must be non-negative');
+    }
+    if (!Number.isInteger(maxBumps) || maxBumps < 0) {
+      throw new RangeError('feeBump.maxBumps must be a non-negative integer');
+    }
+    const bumpMode = config.feeBump?.mode ?? (config.sponsorService ? 'always' : 'on_expiry');
+    if ((config.feeBump?.enabled ?? true) && bumpMode === 'always' && maxBumps < 1) {
+      throw new RangeError('feeBump.maxBumps must be at least 1 in always mode');
+    }
+    const feeBump: InvocationFeeBumpConfig = {
+      enabled: config.feeBump?.enabled ?? true,
+      mode: bumpMode,
+      signer: config.feeBump?.signer ?? config.sponsorService?.feePayerSigner,
+      strategy: config.feeBump?.strategy
+        ? asFeeStrategy(config.feeBump.strategy)
+        : defaultBumpStrategy,
+      triggerAfterAttempts,
+      expiryThresholdSeconds,
+      maxBumps,
+    };
+
+    if (config.channelPool && config.channelAccountPool &&
+      config.channelPool !== config.channelAccountPool) {
+      throw new Error('StellarAgent.create: channelPool and channelAccountPool refer to different pools');
+    }
+    let channelPool = config.channelPool ?? config.channelAccountPool;
+    if (!channelPool && config.sponsorService) {
+      const concurrency = config.submission?.concurrency ?? 4;
+      const minSize = config.submission?.minChannels ?? 1;
+      const maxSize = config.submission?.maxChannels ?? concurrency;
+      channelPool = await ChannelAccountPool.create({
+        factory: new SponsoredChannelAccountFactory(config.sponsorService),
+        minSize,
+        maxSize,
+      });
+    }
+    const submissionQueue = config.submissionQueue ?? new SubmissionQueue({
+      concurrency: config.submission?.concurrency ?? (channelPool ? 4 : 1),
+      maxQueueSize: config.submission?.maxQueueSize,
+      // Retrying an entire already-simulated contract call can duplicate side
+      // effects. The generic queue supports retries, but the agent defaults to
+      // one attempt; applications opt in after choosing a domain classifier.
+      maxAttempts: config.submission?.maxAttempts ?? 1,
+      retryDelayMs: config.submission?.retryDelayMs,
+      classifyError: config.submission?.classifyError,
+      metrics: telemetry.metrics,
+    });
+
     const agent = new StellarAgent(
       signer,
       publicKey,
@@ -158,11 +242,17 @@ export class StellarAgent {
       contracts,
       config.assetContracts ?? {},
       telemetry,
+      channelPool,
+      feeStrategy,
+      feeBump,
+      config.sponsorService,
+      submissionQueue,
+      !config.submissionQueue,
     );
 
     // Only a freshly generated keypair gets friendbot funding — a supplied
     // secret or an external signer is assumed to already have an account.
-    if (config.network === 'testnet' && generatedKeypair) {
+    if (config.network === 'testnet' && generatedKeypair && !config.sponsorService) {
       await fundFromFriendbot(agent.address);
     }
 
@@ -231,8 +321,40 @@ export class StellarAgent {
     return this.signer instanceof KeypairSigner;
   }
 
+  /** Current channel utilization and queue/backpressure counters. */
+  getFleetStats(): {
+    channels?: ChannelPoolStats;
+    submissions: SubmissionQueueStats;
+  } {
+    return {
+      channels: this.channelPool?.stats,
+      submissions: this.submissionQueue.stats,
+    };
+  }
+
+  /** Grow or reclaim the configured channel-account fleet. */
+  async resizeChannelPool(size: number): Promise<void> {
+    if (!this.channelPool) {
+      throw new StellarAgentError(
+        'INVALID_ARGUMENT',
+        'No channel account pool is configured for this agent',
+      );
+    }
+    await this.channelPool.resize(size);
+  }
+
+  /** Drain accepted submissions and reclaim agent-owned channel accounts. */
+  async shutdown(): Promise<void> {
+    if (this.ownsSubmissionQueue) await this.submissionQueue.close();
+    else await this.submissionQueue.drain();
+    await this.channelPool?.close();
+  }
+
   /** Register this wallet in the configured AgentWalletFactory contract. */
   async createAgentWallet(name = 'StellarAgent'): Promise<bigint> {
+    if (this.sponsorService) {
+      await this.sponsorService.ensureSponsoredAccount(this.signer);
+    }
     return mutations.createAgentWallet(
       this.invokeContract.bind(this),
       this.contracts.agentWalletFactory,
@@ -479,19 +601,24 @@ export class StellarAgent {
     args: xdr.ScVal[],
     readOnly = false,
   ): Promise<{ value: unknown; tx: TxResult }> {
-    return runInvocation(
-      {
-        signer: this.signer,
-        rpc: this.rpc,
-        networkConfig: this.networkConfig,
-        address: this.address,
-        telemetry: this.telemetry,
-      },
-      contractId,
-      method,
-      args,
-      readOnly,
-    );
+    const invoke = () => runInvocation(
+        {
+          signer: this.signer,
+          rpc: this.rpc,
+          networkConfig: this.networkConfig,
+          address: this.address,
+          telemetry: this.telemetry,
+          channelPool: this.channelPool,
+          feeStrategy: this.feeStrategy,
+          feeBump: this.feeBump,
+        },
+        contractId,
+        method,
+        args,
+        readOnly,
+      );
+    // Reads never consume a sequence and should not wait behind writes.
+    return readOnly ? invoke() : this.submissionQueue.submit(invoke);
   }
 
   private async getLatestLedger(): Promise<number> {

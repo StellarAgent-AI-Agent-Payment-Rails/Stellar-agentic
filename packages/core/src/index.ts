@@ -101,6 +101,8 @@ export type {
   ContractAddresses,
   AgentEvent,
   TxResult,
+  FeeBumpConfig,
+  SubmissionPipelineConfig,
 } from './types/index.js';
 
 export { StellarAgentError } from './errors.js';
@@ -149,6 +151,62 @@ export type {
   RemoteSignerOptions,
   Sep43Like,
 } from './signer.js';
+
+// ─── Fleet throughput ───────────────────────────────────────────────────────
+
+export {
+  ChannelAccountPool,
+  ChannelPoolError,
+} from './fleet/channelPool.js';
+export type {
+  ChannelAccount,
+  ChannelAccountFactory,
+  ChannelAccountLease,
+  ChannelAccountPoolOptions,
+  ChannelLeaseOutcome,
+  ChannelPoolStats,
+  LeaseOptions,
+} from './fleet/channelPool.js';
+export {
+  FixedFeeStrategy,
+  MultiplierFeeStrategy,
+  CallbackFeeStrategy,
+  RecentFeeStrategy,
+  asFeeStrategy,
+} from './fleet/feeStrategy.js';
+export type {
+  FeeStrategy,
+  FeeCallback,
+  FeeContext,
+  FeePhase,
+  FeePercentile,
+  FeeStats,
+  FeeDistribution,
+  RecentFeeStrategyOptions,
+} from './fleet/feeStrategy.js';
+export {
+  SubmissionQueue,
+  SubmissionQueueError,
+  classifySubmissionError,
+} from './fleet/submissionQueue.js';
+export type {
+  SubmissionQueueOptions,
+  SubmissionQueueStats,
+  SubmitOptions,
+  RetryClassification,
+  RetryClassifier,
+} from './fleet/submissionQueue.js';
+export {
+  SponsorService,
+  SponsorshipError,
+  SponsoredChannelAccountFactory,
+} from './fleet/sponsorship.js';
+export type {
+  SponsorServiceOptions,
+  SponsorRpc,
+  SponsoredAccountOptions,
+  SponsorshipRecord,
+} from './fleet/sponsorship.js';
 
 // ─── Telemetry (tracing, metrics, logging) ───────────────────────────────────
 //

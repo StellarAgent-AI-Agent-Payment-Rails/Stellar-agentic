@@ -1,8 +1,10 @@
 /**
- * The shared Soroban contract-invocation pipeline: build, simulate, sign,
- * submit, and poll a single contract call — instrumented throughout with
- * tracing, metrics, and payment-trace correlation. Every query and mutation
- * in `./queries.ts` / `./mutations.ts` goes through this.
+ * Shared Soroban build/simulate/sign/submit pipeline.
+ *
+ * Agent authorization and transaction sequencing are intentionally separate:
+ * authorization entries are signed by `ctx.signer`, while an exclusive channel
+ * lease supplies the envelope source/signature. This lets one logical agent use
+ * many independent sequence streams without changing on-chain authorization.
  */
 import {
   Contract,
@@ -12,12 +14,16 @@ import {
   SorobanRpc,
   scValToNative,
   xdr,
+  type Transaction,
+  type FeeBumpTransaction,
 } from '@stellar/stellar-sdk';
 import { StellarAgentError } from '../errors.js';
 import type { StellarAgentErrorCode } from '../errors.js';
 import { SigningError } from '../signer.js';
 import type { Signer } from '../signer.js';
 import type { NetworkConfig, TxResult } from '../types/index.js';
+import type { ChannelAccountLease, ChannelAccountPool } from '../fleet/channelPool.js';
+import type { FeeStats, FeeStrategy } from '../fleet/feeStrategy.js';
 import {
   baseAttributes,
   SpanNames,
@@ -29,20 +35,32 @@ import {
 } from '../telemetry/index.js';
 import type { TelemetryContext } from '../telemetry/index.js';
 
+export interface InvocationFeeBumpConfig {
+  enabled: boolean;
+  mode: 'on_expiry' | 'always';
+  signer?: Signer;
+  strategy: FeeStrategy;
+  triggerAfterAttempts: number;
+  expiryThresholdSeconds: number;
+  maxBumps: number;
+}
+
 /** What {@link runInvocation} needs to build, sign, and submit a Soroban call. */
 export interface InvocationContext {
+  /** Agent identity used for Soroban authorization entries. */
   signer: Signer;
   rpc: SorobanRpc.Server;
   networkConfig: NetworkConfig;
   address: string;
   telemetry: TelemetryContext;
+  channelPool?: ChannelAccountPool;
+  feeStrategy: FeeStrategy;
+  feeBump: InvocationFeeBumpConfig;
 }
 
 /**
  * A bound reference to `StellarAgent`'s private `invokeContract` method —
- * what every query/mutation helper calls through. Routing calls through the
- * instance method (rather than {@link runInvocation} directly) means a test
- * spying on the instance still intercepts everything issued on its behalf.
+ * what every query/mutation helper calls through.
  */
 export type InvokeFn = (
   contractId: string,
@@ -73,6 +91,8 @@ export async function runInvocation(
   };
 
   return ctx.telemetry.tracer.startActiveSpan(SpanNames.contractInvoke, attrs, async (parent) => {
+    let lease: ChannelAccountLease | undefined;
+    let acceptedSequence = false;
     try {
       if (paymentId) {
         registerPaymentTrace({
@@ -82,10 +102,23 @@ export async function runInvocation(
           submittedAt: Date.now(),
         });
       }
-      const account = await ctx.rpc.getAccount(ctx.address);
+
+      // Queries remain simulation-only. Mutations exclusively own a channel
+      // from account load until terminal status, preventing sequence races.
+      lease = !readOnly && ctx.channelPool ? await ctx.channelPool.lease() : undefined;
+      const sourceAddress = lease?.address ?? ctx.address;
+      const sourceSigner = lease?.signer ?? ctx.signer;
+      const account = await ctx.rpc.getAccount(sourceAddress);
       const operation = new Contract(contractId).call(method, ...args);
+      const initialFee = await ctx.feeStrategy.getFee({
+        phase: 'initial',
+        operationCount: 1,
+        minimumFee: BASE_FEE,
+        soroban: true,
+        getFeeStats: feeStatsLoader(ctx.rpc),
+      });
       const transaction = new TransactionBuilder(account, {
-        fee: BASE_FEE,
+        fee: initialFee,
         networkPassphrase: ctx.networkConfig.networkPassphrase,
       })
         .addOperation(operation)
@@ -120,7 +153,7 @@ export async function runInvocation(
           ctx.telemetry.metrics.recordHistogram(
             MetricNames.paymentFeesStroops,
             feeStroops,
-            attrs,
+            { ...attrs, component: 'resource_minimum' },
           );
         }
       }
@@ -158,55 +191,85 @@ export async function runInvocation(
         authorizedTransaction,
         simulation,
       ).build();
-      const signedXdr = await ctx.signer.signTransaction(assembled.toXDR(), {
+      const signedXdr = await sourceSigner.signTransaction(assembled.toXDR(), {
         networkPassphrase: ctx.networkConfig.networkPassphrase,
       });
       const signed = TransactionBuilder.fromXDR(
         signedXdr,
         ctx.networkConfig.networkPassphrase,
       );
+      if (!isInnerTransaction(signed)) {
+        throw new StellarAgentError('SUBMISSION_FAILED', 'Signer returned an unexpected fee-bump envelope');
+      }
+
+      let currentEnvelope: Transaction | FeeBumpTransaction = signed;
+      let feeBumped = false;
+      let feeSource: string | undefined;
+      let bumps = 0;
+      let previousBumpRate: string | undefined;
+      let submissionAttempts = 0;
+
+      if (ctx.feeBump.enabled && ctx.feeBump.mode === 'always') {
+        const bumped = await buildAndSignFeeBump(ctx, signed, sourceSigner, false);
+        currentEnvelope = bumped.envelope;
+        feeSource = bumped.feeSource;
+        feeBumped = true;
+        bumps = 1;
+        previousBumpRate = bumped.feeRate;
+      }
 
       const submitted = await ctx.telemetry.tracer.startActiveSpan(
         SpanNames.submit,
         attrs,
         async (submitSpan) => {
-          const result = await ctx.rpc.sendTransaction(signed);
-          if (result.status !== 'PENDING' && result.status !== 'DUPLICATE') {
-            const diagnostics = diagnosticText(result.diagnosticEvents);
-            submitSpan.recordException(new Error(result.status));
-            throw contractError(
-              'SUBMISSION_FAILED',
-              `${method} submission failed (${result.status}): ${
-                diagnostics || result.errorResult?.toXDR('base64') || 'unknown error'
-              }`,
-            );
-          }
+          const result = await sendEnvelope(ctx, currentEnvelope, method);
+          acceptedSequence = true;
+          submissionAttempts += 1;
           submitSpan.setAttribute(SemConv.transaction.hash, result.hash);
           if (paymentId) attachTransactionHash(paymentId, result.hash);
           return result;
         },
       );
+      let currentHash = submitted.hash;
 
-      for (let attempt = 0; attempt < 30; attempt++) {
-        const confirmed = await ctx.rpc.getTransaction(submitted.hash);
+      for (let attempt = 0; attempt < 30; attempt += 1) {
+        const confirmed = await ctx.rpc.getTransaction(currentHash);
         if (confirmed.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
           await ctx.telemetry.tracer.startActiveSpan(SpanNames.confirm, {
             ...attrs,
-            [SemConv.transaction.hash]: submitted.hash,
+            [SemConv.transaction.hash]: currentHash,
             [SemConv.transaction.ledger]: confirmed.ledger,
           }, (confirmSpan) => {
             confirmSpan.end();
           });
           const latencyMs = Date.now() - startMs;
+          const feePaid = confirmedFee(confirmed, currentEnvelope);
           ctx.telemetry.metrics.recordHistogram(MetricNames.paymentLatencyMs, latencyMs, attrs);
+          ctx.telemetry.metrics.recordHistogram(
+            MetricNames.paymentFeesStroops,
+            Number(feePaid),
+            { ...attrs, component: 'charged' },
+          );
           ctx.telemetry.logger.debug(`${method} confirmed`, {
-            hash: submitted.hash,
+            hash: currentHash,
             ledger: confirmed.ledger,
             latencyMs,
+            feePaid,
+            feeBumped,
+            sourceAccount: sourceAddress,
           });
           return {
             value: confirmed.returnValue ? scValToNative(confirmed.returnValue) : undefined,
-            tx: { hash: submitted.hash, success: true, ledger: confirmed.ledger },
+            tx: {
+              hash: currentHash,
+              success: true,
+              ledger: confirmed.ledger,
+              feePaid,
+              feeBumped,
+              sourceAccount: sourceAddress,
+              feeSource,
+              submissionAttempts,
+            },
           };
         }
         if (confirmed.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
@@ -214,15 +277,42 @@ export async function runInvocation(
           throw contractError(
             'TRANSACTION_FAILED',
             `${method} transaction failed${diagnostics ? `: ${diagnostics}` : ''}`,
-            submitted.hash,
+            currentHash,
           );
+        }
+
+        const shouldBump = ctx.feeBump.enabled &&
+          ctx.feeBump.mode === 'on_expiry' &&
+          bumps < ctx.feeBump.maxBumps &&
+          (attempt + 1 >= ctx.feeBump.triggerAfterAttempts ||
+            secondsUntilExpiry(signed) <= ctx.feeBump.expiryThresholdSeconds);
+        if (shouldBump) {
+          const bumped = await buildAndSignFeeBump(
+            ctx,
+            signed,
+            sourceSigner,
+            true,
+            previousBumpRate,
+          );
+          const replacement = await sendEnvelope(ctx, bumped.envelope, method);
+          acceptedSequence = true;
+          submissionAttempts += 1;
+          currentEnvelope = bumped.envelope;
+          currentHash = replacement.hash;
+          feeSource = bumped.feeSource;
+          feeBumped = true;
+          bumps += 1;
+          previousBumpRate = bumped.feeRate;
+          if (paymentId) attachTransactionHash(paymentId, replacement.hash);
+          continue;
         }
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
+      ctx.telemetry.metrics.incrementCounter(MetricNames.submissionExpiries, 1, attrs);
       throw new StellarAgentError(
         'TRANSACTION_TIMEOUT',
         `${method} transaction did not complete in time`,
-        { transactionHash: submitted.hash },
+        { transactionHash: currentHash },
       );
     } catch (error) {
       if (error instanceof StellarAgentError) {
@@ -241,8 +331,125 @@ export async function runInvocation(
       );
       parent.recordException(wrapped);
       throw wrapped;
+    } finally {
+      await lease?.release(acceptedSequence ? 'committed' : 'rolled_back');
     }
   });
+}
+
+async function sendEnvelope(
+  ctx: InvocationContext,
+  envelope: Transaction | FeeBumpTransaction,
+  method: string,
+): Promise<{ hash: string }> {
+  const localHash = envelope.hash().toString('hex');
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const result = await ctx.rpc.sendTransaction(envelope);
+      if (result.status === 'PENDING' || result.status === 'DUPLICATE') return result;
+      if (result.status !== 'TRY_AGAIN_LATER') {
+        const diagnostics = diagnosticText(result.diagnosticEvents);
+        throw contractError(
+          'SUBMISSION_FAILED',
+          `${method} submission failed (${result.status}): ${
+            diagnostics || result.errorResult?.toXDR('base64') || 'unknown error'
+          }`,
+        );
+      }
+    } catch (error) {
+      if (error instanceof StellarAgentError) throw error;
+      // A transport can fail after the RPC accepted the bytes. Check the
+      // deterministic envelope hash before retrying the exact same sequence.
+      try {
+        const known = await ctx.rpc.getTransaction(localHash);
+        if (known.status !== SorobanRpc.Api.GetTransactionStatus.NOT_FOUND) {
+          return { hash: localHash };
+        }
+      } catch {
+        // The retry below is still the same signed envelope and sequence.
+      }
+      if (attempt === 3) throw error;
+    }
+    if (attempt < 3) {
+      ctx.telemetry.metrics.incrementCounter(MetricNames.submissionRetries, 1);
+      await new Promise((resolve) => setTimeout(resolve, 100 * 2 ** (attempt - 1)));
+    }
+  }
+  throw new StellarAgentError('SUBMISSION_FAILED', `${method} submission exhausted retries`);
+}
+
+async function buildAndSignFeeBump(
+  ctx: InvocationContext,
+  inner: Transaction,
+  fallbackSigner: Signer,
+  replacement: boolean,
+  previousBumpRate?: string,
+): Promise<{ envelope: FeeBumpTransaction; feeSource: string; feeRate: string }> {
+  const signer = ctx.feeBump.signer ?? fallbackSigner;
+  const feeSource = await signer.getPublicKey();
+  const operationCount = Math.max(1, inner.operations.length);
+  const innerRate = (BigInt(inner.fee) + BigInt(operationCount) - 1n) / BigInt(operationCount);
+  // Stellar replacement-by-fee requires a materially higher bid. An always-
+  // bumped sponsored transaction has not been submitted yet, so matching the
+  // assembled inner rate is sufficient; replacements use the documented 10x.
+  const replacementBase = previousBumpRate === undefined
+    ? innerRate
+    : BigInt(previousBumpRate);
+  const minimum = replacement ? replacementBase * 10n : innerRate;
+  const fee = await ctx.feeBump.strategy.getFee({
+    phase: 'fee_bump',
+    operationCount: operationCount + 1,
+    minimumFee: minimum.toString(),
+    previousFee: innerRate.toString(),
+    soroban: true,
+    getFeeStats: feeStatsLoader(ctx.rpc),
+  });
+  const bump = TransactionBuilder.buildFeeBumpTransaction(
+    feeSource,
+    fee,
+    inner,
+    ctx.networkConfig.networkPassphrase,
+  );
+  const signedXdr = await signer.signTransaction(bump.toXDR(), {
+    networkPassphrase: ctx.networkConfig.networkPassphrase,
+  });
+  const signed = TransactionBuilder.fromXDR(signedXdr, ctx.networkConfig.networkPassphrase);
+  if (isInnerTransaction(signed)) {
+    throw new StellarAgentError('SUBMISSION_FAILED', 'Fee payer returned a non-fee-bump envelope');
+  }
+  return { envelope: signed, feeSource, feeRate: fee };
+}
+
+function isInnerTransaction(
+  transaction: Transaction | FeeBumpTransaction,
+): transaction is Transaction {
+  return 'sequence' in transaction && Array.isArray(transaction.operations);
+}
+
+function secondsUntilExpiry(transaction: Transaction): number {
+  const maxTime = transaction.timeBounds?.maxTime;
+  if (!maxTime || maxTime === '0') return Number.POSITIVE_INFINITY;
+  return Number(BigInt(maxTime) - BigInt(Math.floor(Date.now() / 1000)));
+}
+
+function feeStatsLoader(rpc: SorobanRpc.Server): (() => Promise<FeeStats>) | undefined {
+  const candidate = rpc as unknown as { getFeeStats?: () => Promise<FeeStats> };
+  return typeof candidate.getFeeStats === 'function'
+    ? () => candidate.getFeeStats!()
+    : undefined;
+}
+
+function confirmedFee(
+  confirmed: SorobanRpc.Api.GetSuccessfulTransactionResponse,
+  envelope: Transaction | FeeBumpTransaction,
+): string {
+  try {
+    return confirmed.resultXdr.feeCharged().toString();
+  } catch {
+    // Lightweight RPC fakes often omit resultXdr. The envelope fee is the
+    // maximum charge and keeps TxResult useful in those deterministic tests.
+    return envelope.fee;
+  }
 }
 
 /** Maps a raw contract-panic or RPC failure message to a stable machine-readable code. */

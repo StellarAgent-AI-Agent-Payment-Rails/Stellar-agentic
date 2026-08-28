@@ -6,7 +6,7 @@
 
 # Interface: RateLimitStatus
 
-Defined in: [types/index.ts:253](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L253)
+Defined in: [types/index.ts:309](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L309)
 
 Current rate-limit usage alongside the configured limits, for `RateLimiter`.
 
@@ -20,7 +20,7 @@ Current rate-limit usage alongside the configured limits, for `RateLimiter`.
 
 > **maxPerTx**: `string`
 
-Defined in: [types/index.ts:246](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L246)
+Defined in: [types/index.ts:302](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L302)
 
 #### Inherited from
 
@@ -32,7 +32,7 @@ Defined in: [types/index.ts:246](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **maxPerHour**: `string`
 
-Defined in: [types/index.ts:247](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L247)
+Defined in: [types/index.ts:303](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L303)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [types/index.ts:247](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **maxPerDay**: `string`
 
-Defined in: [types/index.ts:248](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L248)
+Defined in: [types/index.ts:304](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L304)
 
 #### Inherited from
 
@@ -56,7 +56,7 @@ Defined in: [types/index.ts:248](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **maxTxsPerHour**: `number`
 
-Defined in: [types/index.ts:249](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L249)
+Defined in: [types/index.ts:305](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L305)
 
 #### Inherited from
 
@@ -68,7 +68,7 @@ Defined in: [types/index.ts:249](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **spentThisHour**: `string`
 
-Defined in: [types/index.ts:255](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L255)
+Defined in: [types/index.ts:311](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L311)
 
 Amount spent in the current rolling hour
 
@@ -78,7 +78,7 @@ Amount spent in the current rolling hour
 
 > **spentToday**: `string`
 
-Defined in: [types/index.ts:257](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L257)
+Defined in: [types/index.ts:313](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L313)
 
 Amount spent in the current rolling day
 
@@ -88,7 +88,7 @@ Amount spent in the current rolling day
 
 > **txsThisHour**: `number`
 
-Defined in: [types/index.ts:259](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L259)
+Defined in: [types/index.ts:315](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L315)
 
 Transaction count in the current rolling hour
 
@@ -98,7 +98,7 @@ Transaction count in the current rolling hour
 
 > **configured**: `boolean`
 
-Defined in: [types/index.ts:269](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L269)
+Defined in: [types/index.ts:325](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L325)
 
 Whether `RateLimiter.set_limits` has ever been called for this agent
 (mirrors the contract's internal `has_limit` check). When `false`,
@@ -114,7 +114,7 @@ an agent can be `configured: true, active: false` (killed).
 
 > **active**: `boolean`
 
-Defined in: [types/index.ts:277](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L277)
+Defined in: [types/index.ts:333](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L333)
 
 Mirrors the contract's `RateLimit.active` flag (set by `kill_agent`).
 Note this does **not** by itself change what `RateLimiter.check`
@@ -128,7 +128,7 @@ blocking signal on its own.
 
 > **hourWindowStartLedger**: `number`
 
-Defined in: [types/index.ts:279](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L279)
+Defined in: [types/index.ts:335](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L335)
 
 Ledger sequence at which the current hourly window started.
 
@@ -138,6 +138,6 @@ Ledger sequence at which the current hourly window started.
 
 > **dayWindowStartLedger**: `number`
 
-Defined in: [types/index.ts:281](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L281)
+Defined in: [types/index.ts:337](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L337)
 
 Ledger sequence at which the current daily window started.

@@ -6,7 +6,7 @@
 
 # Interface: ContractAddresses
 
-Defined in: [types/index.ts:286](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L286)
+Defined in: [types/index.ts:342](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L342)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types/index.ts:286](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **agentWalletFactory**: `string`
 
-Defined in: [types/index.ts:287](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L287)
+Defined in: [types/index.ts:343](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L343)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types/index.ts:287](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **paymentChannel**: `string`
 
-Defined in: [types/index.ts:288](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L288)
+Defined in: [types/index.ts:344](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L344)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types/index.ts:288](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **escrow**: `string`
 
-Defined in: [types/index.ts:289](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L289)
+Defined in: [types/index.ts:345](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L345)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types/index.ts:289](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **rateLimiter**: `string`
 
-Defined in: [types/index.ts:290](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L290)
+Defined in: [types/index.ts:346](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L346)
 
 ***
 
@@ -46,4 +46,4 @@ Defined in: [types/index.ts:290](https://github.com/StellarAgent-AI-Agent-Paymen
 
 > **circuitBreaker**: `string`
 
-Defined in: [types/index.ts:291](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L291)
+Defined in: [types/index.ts:347](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/types/index.ts#L347)
