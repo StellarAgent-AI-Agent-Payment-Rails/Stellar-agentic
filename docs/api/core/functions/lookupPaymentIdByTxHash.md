@@ -8,7 +8,7 @@
 
 > **lookupPaymentIdByTxHash**(`txHash`): `string` \| `undefined`
 
-Defined in: [telemetry/context.ts:35](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L35)
+Defined in: [telemetry/context.ts:33](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/blob/main/packages/core/src/telemetry/context.ts#L33)
 
 ## Parameters
 
