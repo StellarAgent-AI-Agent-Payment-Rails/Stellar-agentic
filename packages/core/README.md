@@ -11,6 +11,8 @@ start.
 - **Signing and key custody**: [`docs/signing.md`](../../docs/signing.md)
 - **Fleet throughput, sponsorship, fees, and queue tuning**:
   [`docs/fleet-tuning.md`](../../docs/fleet-tuning.md)
+- **Multi-asset discovery, deterministic selection, and atomic routes**:
+  [`docs/payment-routing.md`](../../docs/payment-routing.md)
 
 ## Development
 

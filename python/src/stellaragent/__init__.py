@@ -59,6 +59,18 @@ from .fixed_point import (
     to_str,
     to_stroops,
 )
+from .routing import (
+    DEFAULT_ROUTING_POLICY,
+    ROUTING_WEIGHT_SCALE,
+    RouteScoreBreakdown,
+    RoutingPolicy,
+    ScoredRoute,
+    is_route_eligible,
+    rank_routes,
+    score_route,
+    select_route,
+    validate_routing_policy,
+)
 from .types import (
     NETWORK_CONFIGS,
     ChannelInfo,
@@ -139,4 +151,15 @@ __all__ = [
     "SpendLimit",
     "SpendReport",
     "TxResult",
+    # deterministic routing
+    "ROUTING_WEIGHT_SCALE",
+    "DEFAULT_ROUTING_POLICY",
+    "RoutingPolicy",
+    "RouteScoreBreakdown",
+    "ScoredRoute",
+    "score_route",
+    "is_route_eligible",
+    "rank_routes",
+    "select_route",
+    "validate_routing_policy",
 ]

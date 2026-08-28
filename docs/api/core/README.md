@@ -25,6 +25,12 @@
 - [SponsoredChannelAccountFactory](classes/SponsoredChannelAccountFactory.md)
 - [SubmissionQueueError](classes/SubmissionQueueError.md)
 - [SubmissionQueue](classes/SubmissionQueue.md)
+- [RouteUnavailableError](classes/RouteUnavailableError.md)
+- [RoutePlanner](classes/RoutePlanner.md)
+- [DirectRouteProvider](classes/DirectRouteProvider.md)
+- [AmmRouteProvider](classes/AmmRouteProvider.md)
+- [StellarPathPaymentProvider](classes/StellarPathPaymentProvider.md)
+- [CallbackRouteProvider](classes/CallbackRouteProvider.md)
 - [SigningError](classes/SigningError.md)
 - [KeypairSigner](classes/KeypairSigner.md)
 - [RemoteSigner](classes/RemoteSigner.md)
@@ -56,6 +62,22 @@
 - [SubmissionQueueStats](interfaces/SubmissionQueueStats.md)
 - [LedgerCloseSample](interfaces/LedgerCloseSample.md)
 - [LedgerCloseEstimate](interfaces/LedgerCloseEstimate.md)
+- [RoutePlannerOptions](interfaces/RoutePlannerOptions.md)
+- [PaymentQuoteRequest](interfaces/PaymentQuoteRequest.md)
+- [PaymentQuote](interfaces/PaymentQuote.md)
+- [RouteHop](interfaces/RouteHop.md)
+- [RouteQuote](interfaces/RouteQuote.md)
+- [RouteRequest](interfaces/RouteRequest.md)
+- [RouteProviderContext](interfaces/RouteProviderContext.md)
+- [RouteProvider](interfaces/RouteProvider.md)
+- [RoutePriceOracle](interfaces/RoutePriceOracle.md)
+- [OracleReference](interfaces/OracleReference.md)
+- [RouteDiscoveryOptions](interfaces/RouteDiscoveryOptions.md)
+- [RouteDiscoveryFailure](interfaces/RouteDiscoveryFailure.md)
+- [RouteDiscoveryResult](interfaces/RouteDiscoveryResult.md)
+- [AmmPair](interfaces/AmmPair.md)
+- [AmmHopQuote](interfaces/AmmHopQuote.md)
+- [PathPaymentCandidate](interfaces/PathPaymentCandidate.md)
 - [SignTransactionOptions](interfaces/SignTransactionOptions.md)
 - [SignAuthEntryOptions](interfaces/SignAuthEntryOptions.md)
 - [Signer](interfaces/Signer.md)
@@ -72,6 +94,7 @@
 - [NetworkConfig](interfaces/NetworkConfig.md)
 - [SpendLimit](interfaces/SpendLimit.md)
 - [StellarAgentConfig](interfaces/StellarAgentConfig.md)
+- [QuoteParams](interfaces/QuoteParams.md)
 - [FeeBumpConfig](interfaces/FeeBumpConfig.md)
 - [SubmissionPipelineConfig](interfaces/SubmissionPipelineConfig.md)
 - [AgentInfo](interfaces/AgentInfo.md)
@@ -98,6 +121,10 @@
 - [FeeCallback](type-aliases/FeeCallback.md)
 - [RetryClassification](type-aliases/RetryClassification.md)
 - [RetryClassifier](type-aliases/RetryClassifier.md)
+- [RouteVenue](type-aliases/RouteVenue.md)
+- [RouteUnavailableCode](type-aliases/RouteUnavailableCode.md)
+- [AmmQuoteCallback](type-aliases/AmmQuoteCallback.md)
+- [PathPaymentQuoteCallback](type-aliases/PathPaymentQuoteCallback.md)
 - [Network](type-aliases/Network.md)
 - [SpendPeriod](type-aliases/SpendPeriod.md)
 - [JobStatus](type-aliases/JobStatus.md)
@@ -127,6 +154,10 @@
 - [estimateLedgerCloseSeconds](functions/estimateLedgerCloseSeconds.md)
 - [estimateSecondsRemaining](functions/estimateSecondsRemaining.md)
 - [fetchLedgerCloseEstimate](functions/fetchLedgerCloseEstimate.md)
+- [discoverRoutes](functions/discoverRoutes.md)
+- [canonicalRouteId](functions/canonicalRouteId.md)
+- [normalizeRoute](functions/normalizeRoute.md)
+- [applyOracleReference](functions/applyOracleReference.md)
 - [isSigner](functions/isSigner.md)
 - [createPaymentId](functions/createPaymentId.md)
 - [registerPaymentTrace](functions/registerPaymentTrace.md)
@@ -353,6 +384,48 @@ Re-exports [RATE_LIMIT_LEDGERS_PER_DAY](@stellaragent/namespaces/math/variables/
 
 ***
 
+### ROUTING\_WEIGHT\_SCALE
+
+Re-exports [ROUTING_WEIGHT_SCALE](@stellaragent/namespaces/math/variables/ROUTING_WEIGHT_SCALE.md)
+
+***
+
+### DEFAULT\_ROUTING\_POLICY
+
+Re-exports [DEFAULT_ROUTING_POLICY](@stellaragent/namespaces/math/variables/DEFAULT_ROUTING_POLICY.md)
+
+***
+
+### scoreRoute
+
+Re-exports [scoreRoute](@stellaragent/namespaces/math/functions/scoreRoute.md)
+
+***
+
+### isRouteEligible
+
+Re-exports [isRouteEligible](@stellaragent/namespaces/math/functions/isRouteEligible.md)
+
+***
+
+### rankRoutes
+
+Re-exports [rankRoutes](@stellaragent/namespaces/math/functions/rankRoutes.md)
+
+***
+
+### selectRoute
+
+Re-exports [selectRoute](@stellaragent/namespaces/math/functions/selectRoute.md)
+
+***
+
+### validateRoutingPolicy
+
+Re-exports [validateRoutingPolicy](@stellaragent/namespaces/math/functions/validateRoutingPolicy.md)
+
+***
+
 ### AgentBid
 
 Re-exports [AgentBid](@stellaragent/namespaces/math/interfaces/AgentBid.md)
@@ -440,3 +513,21 @@ Re-exports [PaymentPrediction](@stellaragent/namespaces/math/interfaces/PaymentP
 ### BlockReason
 
 Re-exports [BlockReason](@stellaragent/namespaces/math/type-aliases/BlockReason.md)
+
+***
+
+### RoutingPolicy
+
+Re-exports [RoutingPolicy](@stellaragent/namespaces/math/interfaces/RoutingPolicy.md)
+
+***
+
+### RouteScoreBreakdown
+
+Re-exports [RouteScoreBreakdown](@stellaragent/namespaces/math/interfaces/RouteScoreBreakdown.md)
+
+***
+
+### ScoredRoute
+
+Re-exports [ScoredRoute](@stellaragent/namespaces/math/interfaces/ScoredRoute.md)

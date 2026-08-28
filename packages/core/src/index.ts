@@ -42,6 +42,14 @@ export {
   LEDGERS_PER_CHANNEL_PERIOD,
   RATE_LIMIT_LEDGERS_PER_HOUR,
   RATE_LIMIT_LEDGERS_PER_DAY,
+  // deterministic routing
+  ROUTING_WEIGHT_SCALE,
+  DEFAULT_ROUTING_POLICY,
+  scoreRoute,
+  isRouteEligible,
+  rankRoutes,
+  selectRoute,
+  validateRoutingPolicy,
 } from './math/index.js';
 export type {
   AgentBid,
@@ -64,6 +72,48 @@ export type {
   PaymentPrediction,
   BlockReason,
 } from './math/predict.js';
+export type {
+  RoutingPolicy,
+  RouteScoreBreakdown,
+  ScoredRoute,
+} from './math/routing.js';
+
+// ─── Multi-asset route discovery ────────────────────────────────────────────
+
+export {
+  discoverRoutes,
+  normalizeRoute,
+  canonicalRouteId,
+  applyOracleReference,
+  RouteUnavailableError,
+  DirectRouteProvider,
+  AmmRouteProvider,
+  StellarPathPaymentProvider,
+  CallbackRouteProvider,
+  RoutePlanner,
+} from './routing/index.js';
+export type {
+  RouteVenue,
+  RouteUnavailableCode,
+  RouteHop,
+  RouteQuote,
+  RouteRequest,
+  RouteProviderContext,
+  RouteProvider,
+  RoutePriceOracle,
+  OracleReference,
+  RouteDiscoveryOptions,
+  RouteDiscoveryFailure,
+  RouteDiscoveryResult,
+  AmmPair,
+  AmmHopQuote,
+  AmmQuoteCallback,
+  PathPaymentCandidate,
+  PathPaymentQuoteCallback,
+  RoutePlannerOptions,
+  PaymentQuoteRequest,
+  PaymentQuote,
+} from './routing/index.js';
 
 // ─── Ledger-window wall-clock estimation ─────────────────────────────
 //
@@ -103,6 +153,7 @@ export type {
   TxResult,
   FeeBumpConfig,
   SubmissionPipelineConfig,
+  QuoteParams,
 } from './types/index.js';
 
 export { StellarAgentError } from './errors.js';

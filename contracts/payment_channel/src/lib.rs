@@ -30,6 +30,11 @@ pub const PRICE_SCALE: i128 = 10_000_000;
 pub const MAX_SLIPPAGE_BPS: i128 = 500;
 const BPS_DENOMINATOR: i128 = 10_000;
 
+/// Maximum number of executable conversion hops accepted on-chain. Keeping
+/// this small bounds invocation depth, footprint size, and route-validation
+/// cost even when a caller supplies a hostile route object.
+pub const MAX_ROUTE_HOPS: u32 = 4;
+
 // ─── Voucher settlement constants ────────────────────────────────────────────
 
 /// Default challenge window for a unilateral close: ~24 hours at 5s ledgers.
@@ -162,6 +167,21 @@ pub struct PaymentRecord {
     pub token: Address,
     pub ledger: u32,
     pub memo: soroban_sdk::Bytes,
+}
+
+/// One contract-backed swap in an explicit conversion route.
+///
+/// `venue` implements the same `execute_swap(from_token, from_amount,
+/// to_token, min_out, to)` interface as `AmmSwap`. A Stellar path-payment
+/// bridge can therefore participate without the payment channel confusing a
+/// reference oracle with executable liquidity.
+#[contracttype]
+#[derive(Clone, Debug, PartialEq)]
+pub struct SwapHop {
+    pub venue: Address,
+    pub from_token: Address,
+    pub to_token: Address,
+    pub min_out: i128,
 }
 
 /// A Groth16 verifying key for the solvency circuit (see
@@ -524,6 +544,127 @@ impl PaymentChannel {
             ),
             (
                 channel_id, agent, recipient, amount, dest_token, received, memo,
+            ),
+        );
+        env.events().publish(
+            (
+                soroban_sdk::symbol_short!("state"),
+                soroban_sdk::symbol_short!("channel"),
+            ),
+            (channel_id, channel),
+        );
+
+        received
+    }
+
+    /// Execute an explicit direct or multi-hop route atomically.
+    ///
+    /// Every venue call occurs within this one Soroban invocation. A panic at
+    /// any hop, a malformed route, expiry, or a final amount below
+    /// `min_received` reverts all token transfers and channel accounting.
+    /// The independent oracle bound applies source-to-destination, not once
+    /// per hop, so individually plausible hops cannot compose into an
+    /// unacceptable final payment.
+    ///
+    /// `amount` and spend accounting remain denominated in the channel token.
+    /// An empty route is valid only for a same-asset payment. Cross-asset
+    /// routes contain at most [`MAX_ROUTE_HOPS`] continuous, acyclic hops.
+    pub fn pay_with_route(
+        env: Env,
+        agent: Address,
+        channel_id: u64,
+        recipient: Address,
+        amount: i128,
+        dest_token: Address,
+        route: Vec<SwapHop>,
+        min_received: i128,
+        valid_until_ledger: u32,
+        memo: soroban_sdk::Bytes,
+    ) -> i128 {
+        Self::require_not_paused(&env);
+        agent.require_auth();
+
+        if amount <= 0 {
+            panic!("amount must be positive");
+        }
+        if min_received < 0 {
+            panic!("min_received cannot be negative");
+        }
+        if env.ledger().sequence() > valid_until_ledger {
+            panic!("route quote expired");
+        }
+
+        let mut channels: Map<u64, Channel> = env
+            .storage()
+            .instance()
+            .get(&soroban_sdk::symbol_short!("channels"))
+            .unwrap();
+        let mut channel = channels.get(channel_id).expect("channel not found");
+
+        if !channel.active {
+            panic!("channel is closed");
+        }
+        if channel.agent != agent {
+            panic!("not the authorized agent");
+        }
+
+        let current_ledger = env.ledger().sequence();
+        let ledgers_per_period = Self::ledgers_per_period(&channel.period);
+        if current_ledger >= channel.period_start_ledger + ledgers_per_period {
+            channel.spent_this_period = 0;
+            channel.period_start_ledger = current_ledger;
+        }
+        if channel.spent_this_period + amount > channel.limit_per_period {
+            panic!("spend limit exceeded for this period");
+        }
+        if amount > channel.collateral - channel.allocated {
+            panic!("insufficient channel collateral");
+        }
+
+        let received = if dest_token == channel.token {
+            if !route.is_empty() {
+                panic!("same-asset payment route must be empty");
+            }
+            if min_received > amount {
+                panic!("min_received cannot exceed amount for a same-asset payment");
+            }
+            let token_client = token::Client::new(&env, &channel.token);
+            token_client.transfer(&env.current_contract_address(), &recipient, &amount);
+            amount
+        } else {
+            Self::execute_route(
+                &env,
+                &channel.token,
+                amount,
+                &dest_token,
+                &route,
+                min_received,
+                &recipient,
+            )
+        };
+
+        channel.spent_this_period += amount;
+        channel.total_spent += amount;
+        channel.collateral -= amount;
+        channels.set(channel_id, channel.clone());
+        env.storage()
+            .instance()
+            .set(&soroban_sdk::symbol_short!("channels"), &channels);
+
+        env.events().publish(
+            (
+                soroban_sdk::symbol_short!("channel"),
+                soroban_sdk::symbol_short!("routepay"),
+            ),
+            (
+                channel_id,
+                agent,
+                recipient,
+                amount,
+                dest_token,
+                received,
+                route.len(),
+                memo,
             ),
         );
         env.events().publish(
@@ -1241,37 +1382,13 @@ impl PaymentChannel {
         min_received: i128,
         recipient: &Address,
     ) -> i128 {
-        let price_oracle: Address = env
-            .storage()
-            .instance()
-            .get(&symbol_short!("po"))
-            .expect("price oracle not configured");
         let amm: Address = env
             .storage()
             .instance()
             .get(&symbol_short!("amm"))
             .expect("amm not configured");
 
-        // Independent, trusted reference price. Fails safe: if the oracle
-        // has no quote for this pair, this panics and the whole payment
-        // reverts rather than proceeding unpriced.
-        let price: i128 = env.invoke_contract(
-            &price_oracle,
-            &Symbol::new(env, "get_price"),
-            Vec::from_array(env, [send_token.into_val(env), dest_token.into_val(env)]),
-        );
-        if price <= 0 {
-            panic!("invalid price from oracle");
-        }
-
-        let expected_dest = send_amount
-            .checked_mul(price)
-            .expect("overflow computing expected output")
-            / PRICE_SCALE;
-        let floor = expected_dest * (BPS_DENOMINATOR - MAX_SLIPPAGE_BPS) / BPS_DENOMINATOR;
-        if min_received < floor {
-            panic!("slippage tolerance exceeds maximum allowed deviation from oracle price");
-        }
+        Self::require_oracle_floor(env, send_token, send_amount, dest_token, min_received);
 
         // Push funds to the AMM (self-authorized: this contract is the
         // direct caller/source, same pattern `pay()` uses to pay
@@ -1297,6 +1414,128 @@ impl PaymentChannel {
                 ],
             ),
         )
+    }
+
+    /// Validate and execute a bounded route. Soroban nested calls and token
+    /// transfers share the parent transaction's atomic rollback boundary.
+    fn execute_route(
+        env: &Env,
+        send_token: &Address,
+        send_amount: i128,
+        dest_token: &Address,
+        route: &Vec<SwapHop>,
+        min_received: i128,
+        recipient: &Address,
+    ) -> i128 {
+        if route.is_empty() {
+            panic!("cross-asset route must contain at least one hop");
+        }
+        if route.len() > MAX_ROUTE_HOPS {
+            panic!("route exceeds maximum hop count");
+        }
+
+        let mut current_token = send_token.clone();
+        let mut seen: Vec<Address> = Vec::new(env);
+        seen.push_back(send_token.clone());
+        for index in 0..route.len() {
+            let hop = route.get(index).unwrap();
+            if hop.from_token != current_token {
+                panic!("route asset discontinuity");
+            }
+            if hop.from_token == hop.to_token {
+                panic!("route hop must change assets");
+            }
+            if hop.min_out < 0 {
+                panic!("route min_out cannot be negative");
+            }
+            if hop.venue == env.current_contract_address() {
+                panic!("route venue cannot be the payment channel");
+            }
+            for seen_index in 0..seen.len() {
+                if seen.get(seen_index).unwrap() == hop.to_token {
+                    panic!("route contains an asset cycle");
+                }
+            }
+            seen.push_back(hop.to_token.clone());
+            current_token = hop.to_token;
+        }
+        if current_token != *dest_token {
+            panic!("route does not reach destination token");
+        }
+
+        Self::require_oracle_floor(env, send_token, send_amount, dest_token, min_received);
+
+        let mut current_amount = send_amount;
+        for index in 0..route.len() {
+            let hop = route.get(index).unwrap();
+            let is_final = index + 1 == route.len();
+            let receiver = if is_final {
+                recipient.clone()
+            } else {
+                env.current_contract_address()
+            };
+            let execution_floor = if is_final && min_received > hop.min_out {
+                min_received
+            } else {
+                hop.min_out
+            };
+
+            let source_client = token::Client::new(env, &hop.from_token);
+            source_client.transfer(&env.current_contract_address(), &hop.venue, &current_amount);
+            let output: i128 = env.invoke_contract(
+                &hop.venue,
+                &Symbol::new(env, "execute_swap"),
+                Vec::from_array(
+                    env,
+                    [
+                        hop.from_token.into_val(env),
+                        current_amount.into_val(env),
+                        hop.to_token.into_val(env),
+                        execution_floor.into_val(env),
+                        receiver.into_val(env),
+                    ],
+                ),
+            );
+            if output <= 0 || output < execution_floor {
+                panic!("route venue returned output below floor");
+            }
+            current_amount = output;
+        }
+
+        if current_amount < min_received {
+            panic!("route output below end-to-end minimum");
+        }
+        current_amount
+    }
+
+    fn require_oracle_floor(
+        env: &Env,
+        send_token: &Address,
+        send_amount: i128,
+        dest_token: &Address,
+        min_received: i128,
+    ) {
+        let price_oracle: Address = env
+            .storage()
+            .instance()
+            .get(&symbol_short!("po"))
+            .expect("price oracle not configured");
+        let price: i128 = env.invoke_contract(
+            &price_oracle,
+            &Symbol::new(env, "get_price"),
+            Vec::from_array(env, [send_token.into_val(env), dest_token.into_val(env)]),
+        );
+        if price <= 0 {
+            panic!("invalid price from oracle");
+        }
+        let expected_dest = send_amount
+            .checked_mul(price)
+            .expect("overflow computing expected output")
+            / PRICE_SCALE;
+        let floor = expected_dest * (BPS_DENOMINATOR - MAX_SLIPPAGE_BPS) / BPS_DENOMINATOR;
+        if min_received < floor {
+            panic!("slippage tolerance exceeds maximum allowed deviation from oracle price");
+        }
     }
 
     fn load_channels(env: &Env) -> Map<u64, Channel> {

@@ -71,6 +71,25 @@ impl AmmSwap {
         Self::save_rates_for(&env, &from_token, &by_from);
     }
 
+    /// Whether this venue can currently quote a pair, without panicking.
+    pub fn has_rate(env: Env, from_token: Address, to_token: Address) -> bool {
+        Self::rates_for(&env, &from_token).contains_key(to_token)
+    }
+
+    /// Read-only deterministic quote for route discovery.
+    pub fn quote(env: Env, from_token: Address, from_amount: i128, to_token: Address) -> i128 {
+        if from_amount <= 0 {
+            panic!("from_amount must be positive");
+        }
+        let rate = Self::rates_for(&env, &from_token)
+            .get(to_token)
+            .expect("no rate configured for this pair");
+        from_amount
+            .checked_mul(rate)
+            .expect("overflow computing swap output")
+            / RATE_SCALE
+    }
+
     /// Executes a swap, assuming `from_amount` of `from_token` has already
     /// been transferred to this contract by the caller. Pays out `to_token`
     /// from this contract's own reserves directly to `to`. Panics (and so
@@ -91,14 +110,12 @@ impl AmmSwap {
             panic!("from_amount must be positive");
         }
 
-        let rate = Self::rates_for(&env, &from_token)
-            .get(to_token.clone())
-            .expect("no rate configured for this pair");
-
-        let out = from_amount
-            .checked_mul(rate)
-            .expect("overflow computing swap output")
-            / RATE_SCALE;
+        let out = Self::quote(
+            env.clone(),
+            from_token.clone(),
+            from_amount,
+            to_token.clone(),
+        );
 
         if out < min_out {
             panic!("swap output below min_out");

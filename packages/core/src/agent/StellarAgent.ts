@@ -15,6 +15,7 @@ import type {
   SpendReport,
   TxResult,
   ContractAddresses,
+  QuoteParams,
 } from '../types/index.js';
 import { NETWORK_CONFIGS } from '../types/index.js';
 import { StellarAgentError } from '../errors.js';
@@ -33,6 +34,10 @@ import { SponsoredChannelAccountFactory } from '../fleet/sponsorship.js';
 import type { ChannelPoolStats } from '../fleet/channelPool.js';
 import type { SubmissionQueueStats } from '../fleet/submissionQueue.js';
 import type { InvocationFeeBumpConfig } from './invocation.js';
+import { RoutePlanner } from '../routing/planner.js';
+import type { PaymentQuote } from '../routing/planner.js';
+import type { RouteQuote } from '../routing/types.js';
+import { toStroops } from '../math/fixed-point.js';
 
 import { createNetworkClients, fundFromFriendbot } from './config.js';
 import { getLatestLedger, runInvocation } from './invocation.js';
@@ -80,6 +85,7 @@ export class StellarAgent {
   private sponsorService?: SponsorService;
   private submissionQueue: SubmissionQueue;
   private ownsSubmissionQueue: boolean;
+  private routePlanner?: RoutePlanner;
 
   private constructor(
     signer: Signer,
@@ -94,6 +100,7 @@ export class StellarAgent {
     sponsorService: SponsorService | undefined,
     submissionQueue: SubmissionQueue,
     ownsSubmissionQueue: boolean,
+    routePlanner: RoutePlanner | undefined,
   ) {
     this.signer = signer;
     this.publicKey = publicKey;
@@ -107,6 +114,7 @@ export class StellarAgent {
     this.sponsorService = sponsorService;
     this.submissionQueue = submissionQueue;
     this.ownsSubmissionQueue = ownsSubmissionQueue;
+    this.routePlanner = routePlanner;
     const { horizon, rpc } = createNetworkClients(networkConfig);
     this.horizon = horizon;
     this.rpc = rpc;
@@ -234,6 +242,7 @@ export class StellarAgent {
       classifyError: config.submission?.classifyError,
       metrics: telemetry.metrics,
     });
+    const routePlanner = config.routing ? new RoutePlanner(config.routing) : undefined;
 
     const agent = new StellarAgent(
       signer,
@@ -248,6 +257,7 @@ export class StellarAgent {
       config.sponsorService,
       submissionQueue,
       !config.submissionQueue,
+      routePlanner,
     );
 
     // Only a freshly generated keypair gets friendbot funding — a supplied
@@ -415,11 +425,12 @@ export class StellarAgent {
    * Pay for an API call. Deducts from the active payment channel.
    * Respects on-chain spend limits automatically.
    *
-   * If `destAsset` differs from the channel's settlement asset, this
-   * settles the recipient in `destAsset` instead — e.g. a channel funded
-   * in USDC paying a provider that only accepts XLM — by invoking
-   * `PaymentChannel.pay_with_conversion` rather than `pay`. The spend
-   * limit is still enforced in the channel's settlement asset either way.
+   * If `recipientAsset` differs from the channel's settlement asset and
+   * routing providers are configured, this discovers, scores, and executes
+   * one direct, AMM, path-payment-adapter, or bounded multi-hop route through
+   * `PaymentChannel.pay_with_route`. A quote returned by {@link quote} may be
+   * supplied as `route` so the reviewed route is exactly the one submitted.
+   * Spend limits remain denominated in the channel's settlement asset.
    *
    * @example
    * ```typescript
@@ -429,13 +440,19 @@ export class StellarAgent {
    *   asset: 'USDC',
    * });
    *
-   * // Channel funded in USDC, provider only accepts XLM:
+   * // Channel funded in XLM, provider only accepts USDC. The configured
+   * // routing providers choose the route and derive the output floor:
+   * const quote = await agent.quote({
+   *   sourceAsset: 'XLM',
+   *   destinationAsset: 'USDC',
+   *   amount: '0.001',
+   * });
    * await agent.payForAPI({
    *   endpoint: 'https://api.example.com/inference',
    *   amount: '0.001',
-   *   asset: 'USDC',
-   *   destAsset: 'XLM',
-   *   minReceived: '0.009', // slippage floor, in XLM
+   *   sourceAsset: 'XLM',
+   *   recipientAsset: 'USDC',
+   *   route: quote,
    * });
    * ```
    */
@@ -447,6 +464,61 @@ export class StellarAgent {
         'No active payment channel. Call openChannel() first.',
       );
     }
+    const sourceAsset = coalesceAssetAlias(
+      params.sourceAsset,
+      params.asset,
+      'sourceAsset',
+      'asset',
+    ) ?? 'XLM';
+    const destinationAsset = coalesceAssetAlias(
+      params.recipientAsset,
+      params.destAsset,
+      'recipientAsset',
+      'destAsset',
+    );
+    let routed: mutations.RoutedPaymentExecution | undefined;
+    if (destinationAsset && (params.route || this.routePlanner)) {
+      const currentLedger = await this.getLatestLedger();
+      const planner = this.routePlanner ?? new RoutePlanner({ providers: [] });
+      const request = {
+        sourceAsset,
+        destinationAsset,
+        sourceAmount: toStroops(params.amount).toString(),
+        currentLedger,
+        ...(params.allowedIntermediates
+          ? { allowedIntermediates: params.allowedIntermediates }
+          : {}),
+        ...(params.slippageToleranceBps !== undefined
+          ? { slippageToleranceBps: params.slippageToleranceBps }
+          : {}),
+      };
+
+      let quote: PaymentQuote;
+      if (params.route && isPaymentQuote(params.route)) {
+        const validated = planner.quoteOverride(request, params.route.route);
+        planner.assertFresh(params.route, currentLedger);
+        if (BigInt(params.route.minimumDestinationAmount) <
+          BigInt(validated.minimumDestinationAmount)) {
+          throw new StellarAgentError(
+            'INVALID_ROUTE_OVERRIDE',
+            'Payment quote minimum is below the configured slippage floor',
+          );
+        }
+        quote = params.route;
+      } else if (params.route) {
+        quote = planner.quoteOverride(request, params.route);
+      } else {
+        quote = await planner.quote(request);
+      }
+      if (params.minReceived !== undefined) {
+        const callerMinimum = toStroops(params.minReceived).toString();
+        if (BigInt(callerMinimum) > BigInt(quote.minimumDestinationAmount)) {
+          quote = { ...quote, minimumDestinationAmount: callerMinimum };
+        }
+      }
+      routed = { quote };
+    }
+
     return mutations.payForAPI(
       this.invokeContract.bind(this),
       this.contracts.paymentChannel,
@@ -454,8 +526,32 @@ export class StellarAgent {
       this.assetContracts,
       this.networkConfig.networkPassphrase,
       channelId,
-      params,
+      { ...params, sourceAsset, ...(destinationAsset ? { recipientAsset: destinationAsset } : {}) },
+      routed,
     );
+  }
+
+  /** Discover, score, and return the exact payment route before committing. */
+  async quote(params: QuoteParams): Promise<PaymentQuote> {
+    if (!this.routePlanner) {
+      throw new StellarAgentError(
+        'NO_ROUTE',
+        'No routing providers are configured for this agent',
+      );
+    }
+    const currentLedger = await this.getLatestLedger();
+    return this.routePlanner.quote({
+      sourceAsset: params.sourceAsset,
+      destinationAsset: params.destinationAsset,
+      sourceAmount: toStroops(params.amount).toString(),
+      currentLedger,
+      ...(params.allowedIntermediates
+        ? { allowedIntermediates: params.allowedIntermediates }
+        : {}),
+      ...(params.slippageToleranceBps !== undefined
+        ? { slippageToleranceBps: params.slippageToleranceBps }
+        : {}),
+    });
   }
 
   // ── Agent-to-Agent Escrow ────────────────────────────────────────────────
@@ -624,4 +720,23 @@ export class StellarAgent {
   private async getLatestLedger(): Promise<number> {
     return getLatestLedger(this.rpc);
   }
+}
+
+function isPaymentQuote(value: PaymentQuote | RouteQuote): value is PaymentQuote {
+  return 'route' in value && 'minimumDestinationAmount' in value && 'validUntilLedger' in value;
+}
+
+function coalesceAssetAlias(
+  preferred: string | undefined,
+  legacy: string | undefined,
+  preferredName: string,
+  legacyName: string,
+): string | undefined {
+  if (preferred && legacy && preferred !== legacy) {
+    throw new StellarAgentError(
+      'INVALID_ARGUMENT',
+      `${preferredName} and ${legacyName} must refer to the same asset`,
+    );
+  }
+  return preferred ?? legacy;
 }
