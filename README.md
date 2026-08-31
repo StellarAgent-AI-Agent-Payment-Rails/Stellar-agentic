@@ -39,11 +39,13 @@ stellaragent/
 ├── packages/
 │   ├── core/         # @stellaragent/core — the TypeScript SDK
 │   ├── react/        # @stellaragent/react — hooks
-│   ├── cli/          # @stellaragent/cli
-│   └── indexer/      # @stellaragent/indexer — Soroban event indexer
+│   ├── indexer/      # Audit ledger, reports, exports, delivery
+│   └── cli/          # @stellaragent/cli
 ├── python/           # stellaragent — the Python SDK
+├── services/
+│   └── signer/       # stellaragent-signer — the remote signing service
 ├── dashboard/        # React + Tailwind business dashboard
-├── fixtures/         # Shared TS ↔ Python determinism fixtures
+├── fixtures/         # Shared TS ↔ Python ↔ Rust determinism fixtures
 ├── scripts/          # Deployment and fixture tooling
 ├── zk/               # Solvency-proof circuits (Rust)
 └── docs/             # Documentation
@@ -131,6 +133,13 @@ const job = await agent.requestWork({
 });
 ```
 
+Agents can also pay from the channel asset while the recipient receives a
+different asset. Configure AMM/path-payment providers, call `agent.quote()` to
+preview the deterministic route and cost, then pass that quote unchanged to
+`payForAPI()`. Multi-hop execution is atomic and the TypeScript/Python selector
+is verified against shared fixtures. See the
+[multi-asset routing guide](docs/payment-routing.md).
+
 Contract IDs must be configured through `contracts` or the
 `STELLARAGENT_<NETWORK>_*` environment variables described in the deployment
 guide. Friendly non-XLM asset codes also need an `assetContracts` mapping to
@@ -159,6 +168,11 @@ agent.holdsSecretKey; // false
 
 See [docs/signing.md](docs/signing.md) for the protocol, the hardware-wallet
 adapter, and why a signing service rather than Ledger.
+
+Full API reference (generated from the SDKs' own TSDoc comments, `pnpm
+docs:api`): [docs/api](docs/api/README.md). For how `@stellaragent/core` is
+put together and where new code belongs, see
+[docs/architecture/core-modules.md](docs/architecture/core-modules.md).
 
 ### SDK (Python)
 
@@ -189,6 +203,32 @@ TypeScript one — both are verified byte-identical against
 mixed TS/Python agent fleet cannot disagree about a bid score. See
 [python/README.md](python/README.md).
 
+### Signing service
+
+An agent with real funds should not hold a raw secret. `services/signer` is the
+server side of the `RemoteSigner` protocol the SDKs already speak — KMS-backed,
+policy-enforcing, and audited:
+
+```bash
+cd services/signer
+cargo run -- issue-token                       # a credential
+cargo run -- check --config config.toml        # validate before binding a port
+cargo run -- serve --config config.toml
+```
+
+```typescript
+const agent = await StellarAgent.create({
+  network: 'testnet',
+  signer: new RemoteSigner({ url: 'https://signer.internal', token: process.env.SIGNER_TOKEN }),
+});
+agent.holdsSecretKey;  // false
+```
+
+It decodes every envelope before signing it, refuses anything it cannot fully
+understand, enforces per-key spend caps and allowlists, and writes a
+hash-chained audit record for every request — granted or refused. Runbook and
+threat model: [docs/signer-deployment.md](docs/signer-deployment.md).
+
 ### Contracts (Rust/Soroban)
 
 There are seven contracts, and four of them need initializing in a specific
@@ -211,6 +251,12 @@ npm install
 npm run dev
 ```
 
+The **Reports** view builds agent/owner statements, attaches exact on-chain
+balance reconciliation, streams CSV/JSON Lines/IIF, drills to transaction
+proof, and administers schedules/dead letters. See the explicit proof limits,
+deployment, verification, and recovery guide in
+[docs/audit-trail.md](docs/audit-trail.md).
+
 ---
 
 ## Roadmap
@@ -222,6 +268,7 @@ npm run dev
 - [ ] `RateLimiter` Soroban contract
 - [ ] TypeScript SDK core
 - [ ] Python SDK
+- [ ] Rust SDK
 - [ ] Business dashboard (React + Tailwind)
 - [ ] Stellar Community Fund grant application
 - [ ] Mainnet deployment
