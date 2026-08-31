@@ -16,11 +16,19 @@
     "lint": "turbo run lint",
     "deploy:contracts": "tsx scripts/deploy.ts",
     "fixtures:generate": "tsx scripts/generate-fixtures.ts",
-    "fixtures:check": "tsx scripts/generate-fixtures.ts --check"
+    "fixtures:check": "tsx scripts/generate-fixtures.ts --check",
+    "contracts:specs:generate": "cd contracts && ./generate-specs.sh",
+    "contracts:specs:check": "cd contracts && ./generate-specs.sh --check",
+    "contract-types:generate": "tsx scripts/generate-contract-types.ts",
+    "contract-types:check": "tsx scripts/generate-contract-types.ts --check",
+    "docs:api": "tsx scripts/check-public-api.ts && tsx scripts/generate-api-docs.ts",
+    "docs:api:check": "tsx scripts/check-public-api.ts --check && tsx scripts/generate-api-docs.ts --check"
   },
   "devDependencies": {
     "tsx": "^4.19.0",
-    "turbo": "^2.0.0"
+    "turbo": "^2.0.0",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.13.0"
   },
   "engines": {
     "node": ">=18"

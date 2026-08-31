@@ -63,6 +63,20 @@ fn swap_pays_out_at_configured_rate() {
 }
 
 #[test]
+fn route_discovery_can_probe_and_quote_without_mutation() {
+    let h = setup();
+    assert!(!h.amm.has_rate(&h.from_token, &h.to_token));
+    h.amm
+        .set_rate(&h.admin, &h.from_token, &h.to_token, &(5 * RATE_SCALE));
+    assert!(h.amm.has_rate(&h.from_token, &h.to_token));
+    assert_eq!(h.amm.quote(&h.from_token, &1_234, &h.to_token), 6_170);
+    assert_eq!(
+        token::Client::new(&h.env, &h.to_token).balance(&h.amm.address),
+        1_000_000_000
+    );
+}
+
+#[test]
 #[should_panic(expected = "swap output below min_out")]
 fn swap_reverts_when_below_min_out() {
     let h = setup();
