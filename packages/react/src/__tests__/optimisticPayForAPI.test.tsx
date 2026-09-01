@@ -138,3 +138,72 @@ describe('optimistic usePayForAPI + useSpendReport', () => {
     });
   });
 });
+  it('retries a failed payment without double-counting the optimistic entry', async () => {
+    let currentReport = baseline;
+    const getSpendReport = async () => currentReport;
+    let attempt = 0;
+    const payDeferred = createDeferred<TxResult>();
+    const retryDeferred = createDeferred<TxResult>();
+
+    const mockAgent = createMockAgent({
+      getSpendReport,
+      payForAPI: () => {
+        attempt++;
+        return attempt === 1 ? payDeferred.promise : retryDeferred.promise;
+      },
+    });
+
+    const { result } = renderHook(() => useCombined(), {
+      wrapper: ({ children }) => (
+        <StellarAgentProvider config={{ network: 'local' }} agent={mockAgent}>
+          {children}
+        </StellarAgentProvider>
+      ),
+    });
+
+    await waitFor(() => expect(result.current.spend.status).toBe('ready'));
+
+    let payPromise!: Promise<TxResult>;
+    act(() => {
+      payPromise = result.current.pay.payForAPI({ endpoint: '/infer', amount: '1.0' });
+    });
+    payPromise.catch(() => {
+      // Expected — asserted below.
+    });
+
+    expect(result.current.spend.hasPendingPayments).toBe(true);
+    expect(result.current.spend.data?.spentThisPeriod).toBe('3.5000000');
+
+    await act(async () => {
+      payDeferred.reject(new Error('insufficient funds'));
+      await payPromise.catch(() => {});
+    });
+
+    await waitFor(() => expect(result.current.pay.status).toBe('error'));
+    expect(result.current.spend.hasPendingPayments).toBe(false);
+
+    let retryPromise!: Promise<TxResult>;
+    act(() => {
+      retryPromise = result.current.pay.retry();
+    });
+
+    // Retry creates a fresh pending entry, not a duplicated one.
+    expect(result.current.pay.status).toBe('pending');
+    expect(result.current.spend.hasPendingPayments).toBe(true);
+    expect(result.current.spend.data?.spentThisPeriod).toBe('3.5000000');
+
+    currentReport = {
+      spentThisPeriod: '3.5',
+      remainingThisPeriod: '6.5',
+      totalLifetime: '3.5',
+    };
+    await act(async () => {
+      retryDeferred.resolve({ hash: '0xdef', success: true });
+      await retryPromise;
+    });
+
+    await waitFor(() => expect(result.current.pay.status).toBe('success'));
+    await waitFor(() => expect(result.current.spend.hasPendingPayments).toBe(false));
+    expect(result.current.spend.data?.spentThisPeriod).toBe('3.5000000');
+    expect(attempt).toBe(2);
+  });
