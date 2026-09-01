@@ -16,6 +16,7 @@ export {
   type RateLimitWindowEstimate,
 } from './hooks/useRateLimitStatus.js';
 export { useSpendReport, type UseSpendReportResult } from './hooks/useSpendReport.js';
+export { useBalance, type UseBalanceResult } from './hooks/useBalance.js';
 export {
   usePayForAPI,
   type UsePayForAPIResult,
