@@ -8,10 +8,12 @@ import type {
   RateLimitStatus,
   SpendReport,
   TxResult,
+  AgentInfo,
 } from '@stellaragent/core';
 
 export interface MockAgentOverrides {
   getBalance?: () => Promise<string>;
+  getAgent?: (agentId: bigint) => Promise<AgentInfo>;
   getSpendReport?: () => Promise<SpendReport>;
   getChannel?: (channelId: bigint) => Promise<ChannelInfo>;
   getJob?: (jobId: bigint) => Promise<JobInfo>;
@@ -34,6 +36,7 @@ export function createMockAgent(overrides: MockAgentOverrides = {}): StellarAgen
   const mock = {
     address: 'GMOCKAGENTADDRESSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     getBalance: vi.fn(overrides.getBalance ?? unmocked('getBalance')),
+    getAgent: vi.fn(overrides.getAgent ?? unmocked('getAgent')),
     getSpendReport: vi.fn(overrides.getSpendReport ?? unmocked('getSpendReport')),
     getChannel: vi.fn(overrides.getChannel ?? unmocked('getChannel')),
     getJob: vi.fn(overrides.getJob ?? unmocked('getJob')),
