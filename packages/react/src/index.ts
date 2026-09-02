@@ -29,3 +29,5 @@ export {
   type UsePollingOptions,
   type UsePollingResult,
 } from './internal/usePolling.js';
+
+export { useAgent } from './hooks/useAgent.js';
