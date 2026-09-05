@@ -52,7 +52,7 @@ commands from the repo root, not from inside a package.
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/stellaragent.git
+git clone https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic.git
 cd stellaragent
 
 # Install Rust wasm target
@@ -218,7 +218,61 @@ struct.
 
 ## How to Contribute
 
-1. **Find an issue** — Look for [`good first issue`](https://github.com/yourusername/stellaragent/labels/good%20first%20issue) or [`help wanted`](https://github.com/yourusername/stellaragent/labels/help%20wanted) labels.
+1. **Find an issue** — Look for [`good first issue`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/good%20first%20issue) or [`help wanted`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/help%20wanted) labels.
+
+### Label Guide
+
+We use the following label taxonomy to organize issues. Use GitHub's label filters to find work that matches your skills and interests.
+
+**Area**
+
+| Label | Description |
+|-------|-------------|
+| `contracts` | Soroban smart contracts |
+| `sdk` | TypeScript SDK |
+| `cli` | @stellaragent/cli |
+| `react` | @stellaragent/react hooks |
+| `dashboard` | Monitoring dashboard |
+| `indexer` | @stellaragent/indexer |
+| `zk` | Zero-knowledge proofs |
+| `python-sdk` | Python SDK |
+| `docs` | Documentation |
+| `infra` | Infrastructure/CI |
+| `ci` | CI/CD |
+| `security` | Security-related |
+| `a11y` | Accessibility |
+| `dx` | Developer experience |
+| `community` | Community |
+| `performance` | Performance |
+| `reliability` | Reliability |
+
+**Difficulty**
+
+| Label | Description |
+|-------|-------------|
+| `good first issue` | Good for newcomers |
+| `intermediate` | Needs some familiarity |
+| `advanced` | Deep change, design discussion first |
+
+**Type**
+
+| Label | Description |
+|-------|-------------|
+| `bug` | Something isn't working |
+| `enhancement` / `feature` | New feature or request |
+| `refactor` | Code refactoring |
+| `tests` | Test improvements |
+| `documentation` | Docs improvements |
+| `epic` | Multi-phase work |
+
+**Campaign**
+
+| Label | Description |
+|-------|-------------|
+| `GrantFox OSS` | Tracked in GrantFox |
+| `Maybe Rewarded` | May be eligible for GrantFox reward |
+| `Third Campaign` | Campaign 3 |
+
 2. **Comment on the issue** — Let us know you're working on it so we don't duplicate effort.
 3. **Fork & branch** — Fork the repo and create a branch: `git checkout -b feat/your-feature-name`
 4. **Build & test** — Make sure tests pass before submitting.
@@ -290,4 +344,4 @@ If you're new to the project, start here:
 
 ## Questions?
 
-Open a [GitHub Discussion](https://github.com/yourusername/stellaragent/discussions) or join our [Discord](https://discord.gg/stellaragent).
+[Open an issue](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/issues/new) or join our [Discord](https://discord.gg/stellaragent).
