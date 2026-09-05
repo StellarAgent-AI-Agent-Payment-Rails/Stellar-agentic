@@ -11,6 +11,8 @@ export interface UsePayForAPIResult {
   error: Error | null;
   /** Back to `idle` — does not affect any in-flight call. */
   reset: () => void;
+  /** Retry the last payment with the same arguments. */
+  retry: () => Promise<TxResult>;
 }
 
 function toError(err: unknown): Error {
@@ -43,6 +45,7 @@ export function usePayForAPI(): UsePayForAPIResult {
   const [status, setStatus] = useState<PayForAPIStatus>('idle');
   const [error, setError] = useState<Error | null>(null);
   const mountedRef = useRef(true);
+  const lastParamsRef = useRef<PayForAPIParams | null>(null);
   useEffect(
     () => () => {
       mountedRef.current = false;
@@ -59,6 +62,7 @@ export function usePayForAPI(): UsePayForAPIResult {
         throw err;
       }
 
+      lastParamsRef.current = params;
       setStatus('pending');
       setError(null);
 
@@ -89,5 +93,16 @@ export function usePayForAPI(): UsePayForAPIResult {
     setError(null);
   }, []);
 
-  return { payForAPI, status, error, reset };
+  const retry = useCallback(async (): Promise<TxResult> => {
+    const params = lastParamsRef.current;
+    if (!params) {
+      const err = new Error('usePayForAPI: no previous payment to retry');
+      setStatus('error');
+      setError(err);
+      throw err;
+    }
+    return payForAPI(params);
+  }, [payForAPI]);
+
+  return { payForAPI, status, error, reset, retry };
 }
