@@ -272,3 +272,8 @@ Good first issues are labeled [`good first issue`](https://github.com/youruserna
 ## License
 
 MIT © StellarAgent Contributors
+
+
+## Security
+
+Found a vulnerability? See [SECURITY.md](SECURITY.md) for private reporting.
