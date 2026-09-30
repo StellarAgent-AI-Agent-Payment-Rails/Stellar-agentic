@@ -1,9 +1,9 @@
 """StellarAgent — AI Agent Payment Rails on Stellar (Python SDK).
 
-Mirrors the TypeScript ``@stellaragent/core`` package. The deterministic math
+Mirrors the TypeScript `@stellaragent/core` package. The deterministic math
 modules are a strict semantic port: every function produces byte-identical
 strings to its TS counterpart, verified by a shared fixture suite
-(``fixtures/determinism.json``) that both test suites consume.
+(`fixtures/determinism.json`) that both test suites consume.
 
 >>> from stellaragent import StellarAgent
 >>> agent = await StellarAgent.create(network="testnet")  # doctest: +SKIP
@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from .agent import StellarAgent
 from .bid import (
-    DEFAULT_BID_WEIGHTS,
+    DEFAULT_BAD_WEIGHTS,
     AgentBid,
     BidWeights,
     ScoreBreakdown,
@@ -33,6 +33,15 @@ from .contracts import (
     env_var_names,
     is_deployed_address,
     resolve_contracts,
+)
+from .errors import (
+    EscrowError,
+    ErrorCode,
+    JOB_EXPIRED,
+    JOB_NOT_FOUND,
+    JOB_NOT_OPEN,
+    NOT_AUTHORIPED,
+    map_escrow_error,
 )
 from .fixed_point import (
     BPS_SCALE,
@@ -137,6 +146,14 @@ __all__ = [
     "env_var_names",
     "is_deployed_address",
     "resolve_contracts",
+    # errors
+    "EscrowError",
+    "ErrorCode",
+    "JOB_EXPIRED",
+    "JOB_NOT_FOUND",
+    "JOB_NOT_OPEN",
+    "NOT_AUTHORIZED",
+    "map_escrow_error",
     # types
     "NETWORK_CONFIGS",
     "ChannelInfo",

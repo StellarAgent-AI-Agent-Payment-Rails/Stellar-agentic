@@ -1,3 +1,4 @@
+
 /**
  * Where the dashboard's `@stellaragent/react` hooks get their agent.
  *
@@ -16,6 +17,7 @@
  * configuration.
  */
 
+import { useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { StellarAgent, type ContractAddresses, type Network } from '@stellaragent/core';
 import { StellarAgentProvider } from '@stellaragent/react';
@@ -71,7 +73,7 @@ function injectedAgent(): StellarAgent | undefined {
 }
 
 export function DashboardAgentProvider({ children }: { children: ReactNode }) {
-  const agent = injectedAgent();
+  const agent = useMemo(() => injectedAgent(), []);
   return (
     <StellarAgentProvider config={AGENT_CONFIG} {...(agent ? { agent } : {})}>
       {children}
