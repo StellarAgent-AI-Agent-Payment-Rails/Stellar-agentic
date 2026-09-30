@@ -285,14 +285,21 @@ Without them the page says so instead of showing zeros. See
 ## Roadmap
 
 - [x] Project scaffolding & architecture
-- [ ] `AgentWalletFactory` Soroban contract
-- [ ] `PaymentChannel` Soroban contract
-- [ ] `Escrow` Soroban contract
-- [ ] `RateLimiter` Soroban contract
-- [ ] TypeScript SDK core
-- [ ] Python SDK
-- [ ] Rust SDK
-- [ ] Business dashboard (React + Tailwind)
+- [x] [`AgentWalletFactory` Soroban contract](contracts/agent_wallet_factory/src/lib.rs) — 5 in-module unit tests
+- [x] [`PaymentChannel` Soroban contract](contracts/payment_channel/src/lib.rs) — 18 unit tests plus the on-chain [ZK solvency-verification path](contracts/payment_channel/src/lib.rs) exercised end-to-end in [`zk/solvency_proof/tests/end_to_end.rs`](zk/solvency_proof/tests/end_to_end.rs)
+- [x] [`Escrow` Soroban contract](contracts/escrow/src/lib.rs) — 5 in-module unit tests
+- [ ] [`RateLimiter` Soroban contract](contracts/rate_limiter/src/lib.rs) — implemented (`set_limits`, `check`, `record_payment`, …) but with no in-tree unit tests yet ([tracked as a good first issue](CONTRIBUTING.md#good-first-issues))
+- [x] [`CircuitBreaker` Soroban contract](contracts/circuit_breaker/src/lib.rs) — 14 unit tests plus [integration tests](contracts/circuit_breaker/tests/integration.rs)
+- [x] [`PriceOracle` Soroban contract](contracts/price_oracle/src/lib.rs) — 4 in-module unit tests
+- [x] [`AmmSwap` Soroban contract](contracts/amm_swap/src/lib.rs) — 4 in-module unit tests
+- [x] [TypeScript SDK core](packages/core/src/index.ts) — full build/simulate/sign/submit pipeline ([`runInvocation`](packages/core/src/agent/invocation.ts)), deterministic math, routing, fleet/sponsorship, signers, telemetry, and 31 test files
+- [x] Python SDK deterministic math ([`fixed_point.py`](python/src/stellaragent/fixed_point.py), [`bid.py`](python/src/stellaragent/bid.py), [`routing.py`](python/src/stellaragent/routing.py)) — byte-identical to TypeScript across [shared fixtures](fixtures/determinism.json)
+- [ ] Python SDK chain calls — [`open_channel`](python/src/stellaragent/agent.py), `pay_for_api`, `request_work`, and friends raise `NotImplementedError` pending Soroban invocation
+- [x] [Rust SDK](sdk/rust/src/lib.rs) — deterministic math, Soroban invocation, and signer abstraction, with in-CI [determinism tests](sdk/rust/tests/determinism.rs)
+- [x] [Audit indexer](packages/indexer/src/indexer.ts) — backfill/tail of contract events, SQLite ledger, query API, reports, exports, and delivery, with [14 test files](packages/indexer/src/__tests__)
+- [x] [Circuit breaker SDK wrapper](packages/core/src/circuitBreaker.ts) — multisig pause/unpause over the contract, covered by [`circuitBreaker.test.ts`](packages/core/src/__tests__/circuitBreaker.test.ts)
+- [x] [ZK solvency crate](zk/solvency_proof/src/lib.rs) — Groth16 circuit, prover CLI, and Soroban byte encoding, accepted on-chain by the end-to-end test
+- [x] [Business dashboard (React + Tailwind)](dashboard/src/App.tsx) — 8 pages over live-chain or mock agents, with a [Playwright e2e suite](dashboard/e2e) running in CI
 - [ ] Stellar Community Fund grant application
 - [ ] Mainnet deployment
 
