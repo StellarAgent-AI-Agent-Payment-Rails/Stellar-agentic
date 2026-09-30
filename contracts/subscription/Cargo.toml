@@ -1,0 +1,14 @@
+[package]
+name = "subscription"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = "cd"
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[deps]
+soroban-sdk = { workspace = true }

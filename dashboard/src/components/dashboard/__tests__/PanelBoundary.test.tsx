@@ -1,7 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
-import { PanelBoundary } from '../PanelBoundary.js';
-import type { Panel, PanelFailure } from '../../lib/chain/types.js';
+import { PanelBoundary } from '../PanelBoundary.js';import type { Panel, PanelFailure } from '../../lib/chain/types.js';
 
 function panel<T>(overrides: Partial<Panel<T>> & { data?: T | null }): Panel<T> {
   return {
@@ -23,8 +22,8 @@ describe('PanelBoundary', () => {
         {children}
       </PanelBoundary>,
     );
-    expect(html).toContain('>a<');
-    expect(html).toContain('>b<');
+    expect(html).toContain('>a</');
+    expect(html).toContain('>b</');
     expect(html).toContain('data-testid="panel-content"');
   });
 
@@ -111,6 +110,6 @@ describe('PanelBoundary', () => {
     );
     expect(html).toContain('>a<');
     expect(html).toContain('1 of 3 agents could not be read');
-    expect(html).toContain('GABC…WXYZ');
+    expect(html).toContain('GABC…WXZZ');
   });
 });
