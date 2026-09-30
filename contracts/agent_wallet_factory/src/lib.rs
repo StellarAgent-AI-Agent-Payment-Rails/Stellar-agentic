@@ -4,9 +4,14 @@ use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short, Address, Env, Map, String, Vec,
 };
 
-// ─── Data Types ──────────────────────────────────────────────────────────────
-
-/// Metadata stored on-chain for each agent wallet
+#[contracttype]
+#[derive(Clone)]
+pub enum DataKey {
+    Admin,
+    Count,
+    Agents,
+    OwnerAgents(Address),
+}
 #[contracttype]
 #[derive(Clone, Debug)]
 pub struct AgentInfo {
@@ -93,12 +98,15 @@ impl AgentWalletFactory {
             total_ops: 0,
         };
 
-        // Store agent
-        let mut agents: Map<u64, AgentInfo> = env
+        // Update owner index (`owner -> Vec<u64>`) in persistent storage
+        let key = DataKey::OwnerAgents(owner.clone());
+        let mut owner_agents: Vec<u64> = env
             .storage()
-            .instance()
-            .get(&symbol_short!("agents"))
-            .unwrap_or(Map::new(&env));
+            .persistent()
+            .get(&key)
+            .unwrap_or(Vec::new(&env));
+        owner_agents.push_back(agent_id);
+        env.storage().persistent().set(&key, &owner_agents);
 
         agents.set(agent_id, agent.clone());
 
@@ -220,8 +228,41 @@ impl AgentWalletFactory {
         agents.get(agent_id).expect("agent not found")
     }
 
-    /// Get all agents owned by a specific address
+    /// Get all agents owned by a specific address.
+    /// Uses the owner -> Vec<agent_id> index maintained by create_agent.
+    /// If the index is empty (e.g. for factories deployed before this index was introduced),
+    /// it falls back to scanning the agents map once and populating the index for future calls (lazy migration).
     pub fn get_agents_by_owner(env: Env, owner: Address) -> Vec<AgentInfo> {
+        let key = DataKey::OwnerAgents(owner.clone());
+        let mut agent_ids: Vec<u64> = env.storage().persistent().get(&key).unwrap_or(Vec::new(&env));
+
+        if agent_ids.is_empty() {
+            // Migration / fallback for agents created before the owner index was added:
+            // Scan agents map once, collect matching IDs, and store the index.
+            let agents: Map<u64, AgentInfo> = env
+                .storage()
+                .instance()
+                .get(&symbol_short!("agents"))
+                .unwrap_or(Map::new(&env));
+            let count: u64 = env
+                .storage()
+                .instance()
+                .get(&symbol_short!("count"))
+                .unwrap_or(0);
+
+            for i in 1..=count {
+                if let Some(agent) = agents.get(i) {
+                    if agent.owner == owner {
+                        agent_ids.push_back(i);
+                    }
+                }
+            }
+
+            if !agent_ids.is_empty() {
+                env.storage().persistent().set(&key, &agent_ids);
+            }
+        }
+
         let agents: Map<u64, AgentInfo> = env
             .storage()
             .instance()
@@ -229,15 +270,9 @@ impl AgentWalletFactory {
             .unwrap_or(Map::new(&env));
 
         let mut result = Vec::new(&env);
-        let count: u64 = env
-            .storage()
-            .instance()
-            .get(&symbol_short!("count"))
-            .unwrap_or(0);
-
-        for i in 1..=count {
-            if let Some(agent) = agents.get(i) {
-                if agent.owner == owner {
+        for i in 0..agent_ids.len() {
+            if let Some(agent_id) = agent_ids.get(i) {
+                if let Some(agent) = agents.get(agent_id) {
                     result.push_back(agent);
                 }
             }
@@ -373,6 +408,47 @@ mod tests {
 
         let agents = client.get_agents_by_owner(&owner);
         assert_eq!(agents.len(), 2);
+    }
+
+    #[test]
+    fn test_multiple_owners_interleaved_creation_and_migration() {
+        let (env, client) = setup();
+        let admin = Address::generate(&env);
+        let owner1 = Address::generate(&env);
+        let owner2 = Address::generate(&env);
+
+        client.initialize(&admin);
+
+        // Interleaved agent creation
+        client.create_agent(&owner1, &Address::generate(&env), &String::from_str(&env, "O1-A1"));
+        client.create_agent(&owner2, &Address::generate(&env), &String::from_str(&env, "O2-A1"));
+        client.create_agent(&owner1, &Address::generate(&env), &String::from_str(&env, "O1-A2"));
+        client.create_agent(&owner2, &Address::generate(&env), &String::from_str(&env, "O2-A2"));
+
+        let agents1 = client.get_agents_by_owner(&owner1);
+        assert_eq!(agents1.len(), 2);
+        assert_eq!(agents1.get(0).unwrap().name, String::from_str(&env, "O1-A1"));
+        assert_eq!(agents1.get(1).unwrap().name, String::from_str(&env, "O1-A2"));
+
+        let agents2 = client.get_agents_by_owner(&owner2);
+        assert_eq!(agents2.len(), 2);
+        assert_eq!(agents2.get(0).unwrap().name, String::from_str(&env, "O2-A1"));
+        assert_eq!(agents2.get(1).unwrap().name, String::from_str(&env, "O2-A2"));
+
+        // Test migration path / fallback for legacy factory holding agents without index:
+        // Simulate a legacy factory storage where OwnerAgents index key is cleared/absent.
+        let owner3 = Address::generate(&env);
+        client.create_agent(&owner3, &Address::generate(&env), &String::from_str(&env, "O3-A1"));
+        // Clear index for owner3 to test fallback migration
+        env.storage().persistent().remove(&DataKey::OwnerAgents(owner3.clone()));
+
+        let agents3 = client.get_agents_by_owner(&owner3);
+        assert_eq!(agents3.len(), 1);
+        assert_eq!(agents3.get(0).unwrap().name, String::from_str(&env, "O3-A1"));
+
+        // Verify index is now populated via lazy migration
+        let migrated_index: Vec<u64> = env.storage().persistent().get(&DataKey::OwnerAgents(owner3)).unwrap();
+        assert_eq!(migrated_index.len(), 1);
     }
 
     #[test]
