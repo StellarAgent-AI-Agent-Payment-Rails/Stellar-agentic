@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import type { ReactNode } from 'react';
+import type { ContractAddress } from '@sa/core';
 import { pctNumber, clamp100 } from '../../lib/deterministic-math.js';
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
@@ -134,7 +135,7 @@ export function StatCard({ label, value, sub, trend, trendValue, icon, accent }:
 
 // ─── AddressChip ──────────────────────────────────────────────────────────────
 
-export function AddressChip({ address }: { address: string }) {
+export function AddressChip({ address }: { address: ContractAddress }) {
   const short = `${address.slice(0, 4)}…${address.slice(-4)}`;
   return (
     <span

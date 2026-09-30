@@ -25,7 +25,7 @@
           "type_": "u32"
         },
         {
-          "doc": "Ledger deadline \\xe2\\x80\\x94 refund available after this",
+          "doc": "Ledger deadline \xe2\x80\x94 refund available after this",
           "name": "deadline_ledger",
           "type_": "u32"
         },
@@ -104,7 +104,7 @@
   },
   {
     "function_v0": {
-      "doc": "Requester raises a dispute \\xe2\\x80\\x94 locks funds until arbiter resolves",
+      "doc": "Requester raises a dispute \xe2\x80\x94 locks funds until arbiter resolves",
       "name": "dispute",
       "inputs": [
         {
@@ -191,7 +191,7 @@
   },
   {
     "function_v0": {
-      "doc": "Create an escrow job. Locks `amount` tokens from requester.\\n\\n# Arguments\\n* `requester` - Agent requesting the work\\n* `token` - Token to pay with\\n* `amount` - Payment for completing the job\\n* `task_description` - Description / IPFS hash of what needs doing\\n* `deadline_ledger` - After this ledger, requester can claim a refund\\n* `arbiter` - Optional trusted address for dispute resolution",
+      "doc": "Create an escrow job. Locks `amount` tokens from requester.\n\n# Arguments\n* `requester` - Agent requesting the work\n* `token` - Token to pay with\n* `amount` - Payment for completing the job\n* `task_description` - Description / IPFS hash of what needs doing\n* `deadline_ledger` - After this ledger, requester can claim a refund\n* `arbiter` - Optional trusted address for dispute resolution",
       "name": "create_job",
       "inputs": [
         {
@@ -260,7 +260,7 @@
         },
         {
           "void_v0": {
-            "doc": "Funds released to worker \\xe2\\x80\\x94 job done",
+            "doc": "Funds released to worker \xe2\x80\x94 job done",
             "name": "Completed"
           }
         },
@@ -272,7 +272,7 @@
         },
         {
           "void_v0": {
-            "doc": "Disputed \\xe2\\x80\\x94 waiting for arbiter",
+            "doc": "Disputed \xe2\x80\x94 waiting for arbiter",
             "name": "Disputed"
           }
         }
@@ -281,7 +281,7 @@
   },
   {
     "function_v0": {
-      "doc": "Worker submits their result. Requester must then release or dispute.\\n\\n# Arguments\\n* `result` - Proof of work (IPFS hash, output hash, etc.)",
+      "doc": "Worker submits their result. Requester must then release or dispute.\n\n# Arguments\n* `result` - Proof of work (IPFS hash, output hash, etc.)",
       "name": "submit_result",
       "inputs": [
         {
@@ -329,7 +329,7 @@
   },
   {
     "function_v0": {
-      "doc": "Wire this escrow contract up to a deployed CircuitBreaker contract.\\nThe first caller to set it becomes the admin for future rotations.",
+      "doc": "Wire this escrow contract up to a deployed CircuitBreaker contract.\nThe first caller to set it becomes the admin for future rotations.",
       "name": "set_circuit_breaker",
       "inputs": [
         {
@@ -347,4 +347,3 @@
     }
   }
 ]
-

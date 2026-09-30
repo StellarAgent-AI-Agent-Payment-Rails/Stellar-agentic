@@ -111,7 +111,7 @@
   },
   {
     "function_v0": {
-      "doc": "Create a new agent wallet.\\nThe caller becomes the owner of this agent.\\n\\n# Arguments\\n* `owner` - The address that will own and control this agent\\n* `agent_address` - The Stellar address of the agent's wallet\\n* `name` - A human-readable name for the agent\\n\\n# Returns\\nThe agent ID (incrementing counter)",
+      "doc": "Create a new agent wallet.\\nThe caller becomes the owner of this agent.\\n\\n# Arguments\n* `owner` - The address that will own and control this agent\n* `agent_address` - The Stellar address of the agent's wallet\n* `name` - A human-readable name for the agent\n\n# Returns\nThe agent ID (incrementing counter)",
       "name": "create_agent",
       "inputs": [
         {
@@ -201,7 +201,7 @@
   },
   {
     "function_v0": {
-      "doc": "Increment the operation counter for an agent.\\nCalled by the PaymentChannel contract after a successful payment.",
+      "doc": "Increment the operation counter for an agent.\nCalled by the PaymentChannel contract after a successful payment.",
       "name": "record_operation",
       "inputs": [
         {
@@ -238,4 +238,3 @@
     }
   }
 ]
-
