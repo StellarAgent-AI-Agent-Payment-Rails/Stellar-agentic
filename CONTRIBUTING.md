@@ -65,6 +65,10 @@ it is usually the first thing a newcomer hits. Note that
 `reference-types` feature, which soroban-sdk 22's VM rejects at upload — the
 build succeeds and the artifact is simply undeployable.
 
+Stuck on an error message (wasm target, `ContractsNotDeployedError`, archived
+entries)? Search **[docs/troubleshooting.md](docs/troubleshooting.md)** for the
+exact text.
+
 ### No devcontainer? No problem. Don't want to install anything?
 
 Open the repo in a devcontainer-capable editor. `.devcontainer/` pins Node 22,

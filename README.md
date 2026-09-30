@@ -135,7 +135,8 @@ is verified against shared fixtures. See the
 
 Contract IDs must be configured through `contracts` or the
 `STELLARAGENT_<NETWORK>_*` environment variables described in the deployment
-guide. Friendly non-XLM asset codes also need an `assetContracts` mapping to
+guide. Hitting an error? Search
+[docs/troubleshooting.md](docs/troubleshooting.md) for the exact message. Friendly non-XLM asset codes also need an `assetContracts` mapping to
 their deployed Stellar Asset Contract ID.
 
 #### Production: keep the key out of the agent process
