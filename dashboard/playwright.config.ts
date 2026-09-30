@@ -24,6 +24,14 @@ const PORT = 4173;
  *
  * `VITE_STELLARAGENT_MODE` is read at **build** time, so it has to be on the
  * `build` step's environment and not just the preview server's.
+ *
+ * ## Browser compatibility smoke test (issue #63)
+ *
+ * The `browser-compat` project runs a dedicated spec that imports the
+ * built core SEK bundle and exercises its read paths (`decodeBytes`, `bytesVal`)
+ * inside a real browser. That catches Node-only globals (`Buffer`, `process`)
+ * that would otherwise only fail in a user's browser. It is wired into CI as
+ * a normal Playwright project so it runs alongside the dashboard e2e specs.
  */
 const MOCK_ENV = 'VITE_STELLARAGENT_MODE=mock';
 
@@ -47,6 +55,12 @@ export default defineConfig({
 
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Browser compatibility smoke test for the core SDK bundle.
+    {
+      name: 'browser-compat',
+      testMatch: /core-browser-compat\.spec\.ts$/,
+      use: { ...devices['Desktop Chrome'] },
+    },
   ],
 
   webServer: {

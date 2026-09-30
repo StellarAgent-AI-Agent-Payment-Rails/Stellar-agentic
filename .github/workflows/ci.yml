@@ -494,6 +494,45 @@ jobs:
           path: packages/core/coverage/
           retention-days: 7
 
+  # ── Core SDK browser compatibility ────────────────────────────────────────
+  #
+  # packages/core ships CJS and ESM and is bundled into the dashboard by Vite,
+  # but nothing verified it actually runs in a browser. Node-only globals
+  # (Buffer, process) on the read path would only surface at runtime in the
+  # dashboard. This job bundles the package for the browser and exercises its
+  # read paths (decodeBytes, bytesVal) in a real Chromium via Playwright.
+  core-browser:
+    name: Core SDK (browser smoke)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        # Version is taken from the "packageManager" field in package.json.
+        # Passing "version" here as well makes the action abort with
+        # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @stellaragent/core
+        run: pnpm --filter @stellaragent/core run build
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @stellaragent/core exec playwright install --with-deps chromium
+
+      - name: Bundle for the browser and run read paths in Chromium
+        run: pnpm --filter @stellaragent/core run test:browser
+
   # ── Dashboard e2e ─────────────────────────────────────────────────────────
   dashboard-e2e:
     name: Dashboard (Playwright)

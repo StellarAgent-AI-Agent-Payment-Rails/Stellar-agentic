@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import type { ReactNode } from 'react';
-import { pctNumber, clamp100 } from '../../lib/deterministic-math.js';
+import { pctNumber, clamp100 } from '../../lib/deterministic-math';
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 
