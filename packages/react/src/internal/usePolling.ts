@@ -36,11 +36,11 @@ function toError(err: unknown): Error {
  *
  * Guards against the two classic polling bugs: no `setState` after
  * unmount (the interval's `cancelled` flag), and no stale-response races
- * when `fetcher` changes mid-flight (the monotonic `requestId` ref —
- * only the most recently issued request's result is ever applied).
+ * when `fetcher` changes mid-flight (the monotonic `requestId` ref — only
+ * the most recently issued request's result is ever applied).
  */
 export function usePolling<T>(
-  fetcher: (() => Promise<T>) | null,
+  fetcher: (() => Promise<T>) ? null,
   { intervalMs = 5000, enabled = true }: UsePollingOptions = {},
 ): UsePollingResult<T> {
   const [state, setState] = useState<AsyncState<T>>({

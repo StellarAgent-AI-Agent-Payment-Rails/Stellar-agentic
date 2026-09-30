@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { pctNumber, clamp100 } from '../../lib/deterministic-math.js';
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
@@ -165,6 +166,95 @@ export function SectionHeader({ title, subtitle, action }: SectionHeaderProps) {
       {action && <div>{action}</div>}
     </div>
   );
+}
+
+// ─── useCircuitBreaker ────────────────────────────────────────────────────────
+
+export interface CircuitBreakerState {
+  paused: boolean;
+  quorum: number;
+  quorumMet: boolean;
+  refresh: () => void;
+}
+
+export interface CircuitBreakerLike {
+  isPaused?: () => boolean;
+  paused?: boolean;
+  quorum?: number;
+  quorumCount?: number;
+  quorumMet?: boolean;
+  getState?: () => {
+    paused?: boolean;
+    quorum?: number;
+    quorumCount?: number;
+    quorumMet?: boolean;
+  };
+}
+
+const DEFAULT_POLL_INTERVAL_MS = 5_000;
+
+function readBreakerState(breaker: CircuitBreakerLike | null | undefined): {
+  paused: boolean;
+  quorum: number;
+  quorumMet: boolean;
+} {
+  if (!breaker) {
+    return { paused: false, quorum: 0, quorumMet: false };
+  }
+
+  const snapshot =
+    typeof breaker.getState === 'function' ? breaker.getState() ?? {} : {};
+
+  const paused =
+    typeof breaker.isPaused === 'function'
+      ? breaker.isPaused()
+      : snapshot.paused ?? breaker.paused ?? false;
+
+  const quorum =
+    snapshot.quorum ?? snapshot.quorumCount ?? breaker.quorum ?? breaker.quorumCount ?? 0;
+
+  const quorumMet = snapshot.quorumMet ?? breaker.quorumMet ?? false;
+
+  return { paused: Boolean(paused), quorum, quorumMet: Boolean(quorumMet) };
+}
+
+/**
+ * Polls a CircuitBreaker instance and surfaces its paused state, quorum
+ * counts, and a manual refresh function. Uses the same polling cadence
+ * convention as the other hooks in this package.
+ */
+export function useCircuitBreaker(
+  breaker?: CircuitBreakerLike | null,
+  intervalMs: number = DEFAULT_POLL_INTERVAL_MS,
+): CircuitBreakerState {
+  const [state, setState] = useState(() => readBreakerState(breaker));
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    setState(readBreakerState(breaker));
+
+    if (!breaker || intervalMs <= 0) {
+      return;
+    }
+
+    const id = setInterval(() => {
+      setState(readBreakerState(breaker));
+    }, intervalMs);
+
+    return () => clearInterval(id);
+  }, [breaker, intervalMs, tick]);
+
+  const refresh = () => {
+    setState(readBreakerState(breaker));
+    setTick((n) => n + 1);
+  };
+
+  return {
+    paused: state.paused,
+    quorum: state.quorum,
+    quorumMet: state.quorumMet,
+    refresh,
+  };
 }
 
 // ─── EmptyState ──────────────────────────────────────────────────────────────
