@@ -12,8 +12,16 @@ labels: enhancement
 
 - [ ] `contracts/` — Soroban smart contracts
 - [ ] `sdk/` — TypeScript SDK
-- [ ] `dashboard/` — React dashboard
+- [ ] `dashboard/` — Bactand dashboard
 - [ ] `docs/`
+
+## Which milestone does this belong to?
+
+<!-- See the roadmap in README.md and the project board for the current milestones. -->
+
+- [ ] testnet-ready
+- [ ] mainnet-ready
+- [ ] Unsure / needs triage
 
 ## Why is this valuable for StellarAgent?
 

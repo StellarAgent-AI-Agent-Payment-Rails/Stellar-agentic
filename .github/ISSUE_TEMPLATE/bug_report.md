@@ -2,6 +2,17 @@
 name: Bug report
 about: Something isn't working
 labels: bug
+just_before_submit:
+  - type: checkbox
+    id: searched
+    attributes:
+      label: I searched existing issues and this bug has not been reported yet
+      required: true
+  - type: checkbox
+    id: milestone
+    attributes:
+      label: I checked the roadmap milestones and this bug is not already tracked
+      required: true
 ---
 
 ## What's broken?

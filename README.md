@@ -284,6 +284,13 @@ Without them the page says so instead of showing zeros. See
 
 ## Roadmap
 
+Track what's being worked on and what's next on our
+[project board](https://github.com/Enniwealth/Stellar-agentic/projects). Issues are
+grouped into two milestones — **testnet-ready** and **mainnet-ready** — so a
+newcomer can see what "done" looks like for the next release. See
+[CONTRIBUTING.md](CONTRIBUTING.md#how-issues-are-prioritized) for how issues are
+prioritized.
+
 - [x] Project scaffolding & architecture
 - [ ] `AgentWalletFactory` Soroban contract
 - [ ] `PaymentChannel` Soroban contract
@@ -301,6 +308,9 @@ Without them the page says so instead of showing zeros. See
 ## Contributing
 
 We welcome contributors! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get started.
+
+Not sure where to start? Check the [project board](https://github.com/Enniwealth/Stellar-agentic/projects)
+to see what's in flight, or pick up a [`good first issue`](https://github.com/yourusername/stellaragent/labels/good%20first%20issue).
 
 Good first issues are labeled [`good first issue`](https://github.com/yourusername/stellaragent/labels/good%20first%20issue).
 

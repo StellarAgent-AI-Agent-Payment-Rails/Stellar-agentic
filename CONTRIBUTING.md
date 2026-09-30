@@ -8,6 +8,7 @@ Thank you for your interest in contributing! StellarAgent is an open-source proj
 
 - [Code of Conduct](#code-of-conduct)
 - [Project Structure](#project-structure)
+- [Roadmap & Prioritization](#roadmap--prioritization)
 - [Development Setup](#development-setup)
 - [Testing](#testing)
 - [Dependency updates](#dependency-updates)
@@ -21,6 +22,55 @@ Thank you for your interest in contributing! StellarAgent is an open-source proj
 ## Code of Conduct
 
 Be respectful. Be constructive. We're all here to build something great together.
+
+---
+
+## Roadmap & Prioritization
+
+We track everything on the public [StellarAgent project board](https://github.com/yourusername/stellaragent/projects/1).
+The board is the source of truth for what is being worked on and what is next —
+if it is not on the board, it is not scheduled.
+
+### Milestones
+
+Work is grouped into two milestones:
+
+| Milestone | What "done" means |
+|-----------|-------------------|
+| **testnet-ready** | Contracts deployed and initialized on testnet, SDK/CLI can register an agent and complete a payment-channel and escrow lifecycle end to end, dashboard reads live chain state. |
+| **mainnet-ready** | testnet-ready plus an external audit of the contracts, a documented deployment runbook, and the determinism guarantee verified across TS, Python, and Rust. |
+
+Every issue is assigned to exactly one of these milestones (or explicitly
+parked as `backlog`). An issue without a milestone is a triage gap — say so in
+the thread.
+
+### Board columns
+
+The board uses a simple triage flow:
+
+1. **Triage** — new issues land here. A maintainer labels and assigns a
+   milestone within a week.
+2. **Ready** — scoped, has acceptance criteria, and is not blocked. This is
+   where to look for something to pick up.
+3. **In progress** — someone has commented and opened a branch. One issue,
+   one person; if you want to help, ask in the thread.
+4. **In review** — a PR is open and CI is running.
+5. **Done** — merged and closed.
+
+### How issues get prioritized
+
+In rough order:
+
+1. **Correctness and security** — anything that can move funds incorrectly,
+   break the determinism guarantee, or produce an undeployable artifact.
+2. **Milestone blockers** — issues that stop `testnet-ready` or
+   `mainnet-ready` from being declared done.
+3. **`good first issue` and `help wanted`** — kept unblocked and scoped so a
+   newcomer can land a first PR.
+4. **Everything else** — bugs, docs, and enhancements, roughly by age.
+
+If you think something is mis-prioritized, comment on the issue with the
+reason. Prioritization is a discussion, not a decree.
 
 ---
 
@@ -366,6 +416,7 @@ what moved.
 ## How to Contribute
 
 1. **Find an issue** — Look for [`good first issue`](https://github.com/yourusername/stellaragent/labels/good%20first%20issue) or [`help wanted`](https://github.com/yourusername/stellaragent/labels/help%20wanted) labels.
+   Check the [project board](https://github.com/yourusername/stellaragent/projects/1) and the current milestone to see what is next.
 2. **Comment on the issue** — Let us know you're working on it so we don't duplicate effort.
 3. **Fork & branch** — Fork the repo and create a branch: `git checkout -b feat/your-feature-name`
 4. **Build & test** — Make sure tests pass before submitting.
