@@ -99,12 +99,12 @@ interface StatCardProps {
 export function StatCard({ label, value, sub, trend, trendValue, icon, accent }: StatCardProps) {
   return (
     <Card>
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3 min-w-0">
         <div className="flex-1">
           <p className="label mb-2">{label}</p>
           <p
             className={clsx(
-              'font-display text-2xl font-semibold',
+              'font-display text-xl sm:text-2xl font-semibold break-words',
               accent ? 'text-sa-accent' : 'text-sa-text',
             )}
           >
@@ -157,12 +157,12 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, subtitle, action }: SectionHeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-5">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
       <div>
         <h2 className="section-title">{title}</h2>
         {subtitle && <p className="text-xs text-sa-text-dim mt-0.5">{subtitle}</p>}
       </div>
-      {action && <div>{action}</div>}
+      {action && <div className="flex-shrink-0">{action}</div>}
     </div>
   );
 }
@@ -171,7 +171,7 @@ export function SectionHeader({ title, subtitle, action }: SectionHeaderProps) {
 
 export function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-sa-text-dim">
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center text-sa-text-dim">
       <div className="w-12 h-12 rounded-full border border-sa-border flex items-center justify-center mb-3">
         <span className="text-xl">∅</span>
       </div>
@@ -203,7 +203,7 @@ export function ProgressBar({ value, max = 100, label, showPercent, danger }: Pr
   return (
     <div className="w-full">
       {(label || showPercent) && (
-        <div className="flex justify-between mb-1">
+        <div className="flex justify-between gap-2 mb-1">
           {label && <span className="text-xs text-sa-text-dim">{label}</span>}
           {showPercent && (
             <span className={clsx('text-xs font-mono', isHigh || danger ? 'text-sa-yellow' : 'text-sa-text-dim')}>

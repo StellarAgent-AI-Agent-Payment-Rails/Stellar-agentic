@@ -47,6 +47,11 @@ export default defineConfig({
 
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Mobile viewports — the acceptance criterion is "is every route usable
+    // at 375 px wide". We keep the desktop project and add mobile ones so the
+    // same specs run at both sizes.
+    { name: 'mobile-chromium', use: { ...devices['Pixel 5'] } },
+    { name: 'iphone-12-mini', use: { ...devices['iPhone 12 Mini'] } },
   ],
 
   webServer: {

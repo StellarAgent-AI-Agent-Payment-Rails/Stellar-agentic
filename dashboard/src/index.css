@@ -8,7 +8,12 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  ::-webkit-scrollbar {
+  html,
+  body {
+    @apply overflow-x-hidden;
+  }
+
+  ::-webkit-scrollbar width {
     width: 6px;
     height: 6px;
   }
@@ -74,5 +79,14 @@
 
   .label {
     @apply text-xs font-medium text-sa-text-dim uppercase tracking-wider;
+  }
+
+  /* Horizontal scroll container for wide tables on small screens. */
+  .table-scroll {
+    @apply w-full overflow-x-auto -webkit-overflow-scrolling:touch;
+  }
+
+  .table-scroll > table {
+    @apply min-w-full;
   }
 }

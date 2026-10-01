@@ -42,28 +42,30 @@ export function App() {
           {/* Radial glow overlay */}
           <div className="fixed inset-0 bg-radial-glow pointer-events-none" />
 
-          <Sidebar />
+        <Sidebar />
 
-        <main className="flex flex-1 overflow-hidden relative">
-          <Suspense fallback={
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <p className="font-display text-xl font-semibold text-sa-text mb-2">Loading...</p>
+<main className="flex flex-1 flex-col min-w-0 overflow-x-clip relative pt-14 md-pt-0">
+          <div className="flex-1 min-w-0 overflow-x-auto">
+            <Suspense fallback={
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <p className="font-display text-xl font-semibold text-sa-text mb-2">Loading...</p>
+                </div>
               </div>
-            </div>
-          }>
-            <Routes>
-              <Route path="/" element={<OverviewPage />} />
-              <Route path="/agents" element={<AgentsPage />} />
-              <Route path="/payments" element={<PaymentsPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/jobs" element={<JobsPage />} />
-              <Route path="/limits" element={<PlaceholderPage title="Rate Limits" />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/health" element={<HealthPage />} />
-              <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
-            </Routes>
-          </Suspense>
+            }>
+              <Routes>
+                <Route path="/" element={<OverviewPage />} />
+                <Route path="/agents" element={<AgentsPage />} />
+                <Route path="/payments" element={<PaymentsPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/jobs" element={<JobsPage />} />
+                <Route path="/limits" element={<PlaceholderPage title="Rate Limits" />} />
+                <Route path="/alerts" element={<AlertsPage />} />
+                <Route path="/health" element={<HealthPage />} />
+                <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+              </Routes>
+            </Suspense>
+          </div>
         </main>
       </div>
     </BrowserRouter>
