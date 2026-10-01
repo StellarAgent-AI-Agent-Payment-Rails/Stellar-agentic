@@ -11,8 +11,8 @@
  *
  * The obvious answer, a `KeypairSigner` built from a secret pasted into a
  * `VITE_` variable, is wrong: `VITE_*` values are inlined into the JavaScript
- * bundle, which is served to every visitor of a monitoring dashboard. A
- * read-only view does not need authority, so it does not get any.
+ * bundle, which is served to every visitor of a monitoring dashboard. A read-only
+ * view does not need authority, so it does not get any.
  *
  * Queries never reach `signTransaction` or `signAuthEntry` — `runInvocation`
  * returns immediately after `simulateTransaction` when `readOnly` is set — so

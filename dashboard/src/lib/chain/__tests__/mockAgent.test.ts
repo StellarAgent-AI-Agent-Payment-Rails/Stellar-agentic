@@ -5,8 +5,8 @@ import { createMockAgent } from '../mockAgent.js';
 /**
  * Mock mode is only worth having if it exercises the same code the live path
  * does. These tests pin that contract: the stand-in answers the SDK's methods,
- * in the SDK's shapes, and can be told to fail so the error branch is
- * reachable without a broken network.
+ * in the SDK's shapes, and can be told to fail so the error branch is reachable
+ * without a broken network.
  */
 describe('createMockAgent', () => {
   it('answers getRateLimitStatus in the SDK RateLimitStatus shape', async () => {

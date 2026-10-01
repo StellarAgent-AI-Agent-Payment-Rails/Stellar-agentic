@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SigningError } from '@stellaragent/core';
 import { createReadOnlySigner } from '../readOnlySigner.js';
 
-const PUBLIC = 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37';
+const PUBLIC = 'GDQP2KQQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37';
 
 describe('createReadOnlySigner', () => {
   it('reports the account it simulates from', async () => {
@@ -44,7 +44,7 @@ describe('createReadOnlySigner', () => {
   it('rejects a contract id — a contract cannot be a transaction source', () => {
     const error = (() => {
       try {
-        return createReadOnlySigner('CABAEAQCAIBAEAQCAIBAEAQCAIBAEAQCAIBAEAQCAIBAEAQCAIBAFNSZ');
+        return createReadOnlySigner('CABAEAQCAIBAEAQCAIBAEAQC8AIBAEAQC8AIBAEAQC8AIBAEAQC8AIBAFNSZ');
       } catch (caught) {
         return caught;
       }
