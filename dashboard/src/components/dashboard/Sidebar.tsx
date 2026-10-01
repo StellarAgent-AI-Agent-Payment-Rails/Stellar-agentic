@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -12,6 +13,8 @@ import {
   BellDot,
   HeartPulse,
   FileBarChart,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { WalletConnection } from './WalletConnection.js';
@@ -28,8 +31,45 @@ const NAV_ITEMS = [
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
+type Theme = 'light' | 'dark';
+
+const THEME_STORAGE_KEY = 'sa-theme';
+
+function getInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'dark';
+  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === 'light' || stored === 'dark') return stored;
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  root.classList.toggle('dark', theme === 'dark');
+  root.classList.toggle('light', theme === 'light');
+  root.dataset.theme = theme;
+}
+
 export function Sidebar() {
   const { config } = useDashboard();
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+
+  useEffect(() => {
+    applyTheme(theme);
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: light)');
+    const onChange = (e: MediaQueryListEvent) => {
+      if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
+        setTheme(e.matches ? 'light' : 'dark');
+      }
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
+
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
 
   return (
     <aside className="w-60 shrink-0 flex flex-col bg-sa-surface border-r border-sa-border h-screen sticky top-0">
@@ -44,6 +84,20 @@ export function Sidebar() {
             v0.1.0 · {config.mode === 'mock' ? 'demo' : config.network}
           </p>
         </div>
+      </div>
+
+      {/* Theme toggle */}
+      <div className="px-3 pt-3">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Toggle color theme"
+          aria-pressed={theme === 'dark'}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sa-text-dim hover:text-sa-text hover:bg-sa-bg/60 transition-all duration-150"
+        >
+          {theme === 'dark' ? <Sun size={16} className="text-sa-muted" /> : <Moon size={16} className="text-sa-muted" />}
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </button>
       </div>
 
       {/* Nav */}

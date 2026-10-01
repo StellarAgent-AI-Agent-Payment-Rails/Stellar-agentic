@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Theme tokens.
+ *
+ * The dark palette is the default so the dashboard looks the same as
+ * before for anyone who has not explicitly picked a theme and has not
+ * set a system preference. The light values are applied when `<html>`
+ * carries the `.light` class. The inline script in `index.html` adds
+ * the right class before first paint so there is no flash of the
+ * wrong theme.
+ */
+.dark {
+  --sa-bg: 8 12 20;
+  --sa-surface: 13 20 32;
+  --sa-border: 26 37 53;
+  --sa-accent: 0 212 255;
+  --sa-accent-dim: 0 153 187;
+  --sa-green: 0 255 178;
+  --sa-green-dim: 0 204 142;
+  --sa-red: 255 69 96;
+  --sa-yellow: 255 184 0;
+  --sa-muted: 74 96 128;
+  --sa-text: 200 216 232;
+  --sa-text-dim: 122 144 168;
+  --sa-accent-glow: 0 212 255;
+  --sa-grid-line: 0 212 255 / 0.03;
+  --sa-radial-glow: 0 212 255 / 0.08;
+}
+
+.light {
+  --sa-bg: 245 247 250;
+  --sa-surface: 255 255 255;
+  --sa-border: 203 213 225;
+  --sa-accent: 0 120 199;
+  --sa-accent-dim: 0 90 158;
+  --sa-green: 0 150 106;
+  --sa-green-dim: 0 120 85;
+  --sa-red: 204 48 65;
+  --sa-yellow: 160 106 0;
+  --sa-muted: 148 163 184;
+  --sa-text: 23 32 46;
+  --sa-text-dim: 71 85 99;
+  --sa-accent-glow: 0 120 199;
+  --sa-grid-line: 0 120 199 / 0.06;
+  --sa-radial-glow: 0 120 199 / 0.06;
+}
+
 @layer base {
   html {
     @apply bg-sa-bg text-sa-text antialiased;
@@ -22,8 +68,7 @@
     @apply bg-sa-muted;
   }
 
-  * {
-    @apply border-sa-border;
+  * {J    @apply border-sa-border;
   }
 }
 
@@ -49,7 +94,7 @@
   }
 
   .status-dot.active {
-    @apply bg-sa-green shadow-[0_0_6px_rgba(0,255,178,0.6)];
+    @apply bg-sa-green shadow-[0_0_6px_rgbavar(--sa-green, 0.6)];
   }
 
   .status-dot.inactive {
@@ -57,7 +102,7 @@
   }
 
   .status-dot.warning {
-    @apply bg-sa-yellow shadow-[0_0_6px_rgba(255,184,0,0.6)];
+    @apply bg-sa-yellow shadow-[0_0_6px_rgbavar(--sa-yellow, 0.6)];
   }
 
   .mono {

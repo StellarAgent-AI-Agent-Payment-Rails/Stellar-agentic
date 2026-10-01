@@ -1,6 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Sidebar } from './components/dashboard/Sidebar.js';
+import { lazy } from 'react';
+import { DashboardAgentBoundary } from './lib/chain/DashboardProvider.js';
+import { ThemeToggle } from './components/dashboard/ThemeToggle.js';
 
 // Lazy-load pages for code splitting
 const OverviewPage = lazy(() => import('./pages/OverviewPage.js').then(m => ({ default: m.OverviewPage })));
@@ -45,6 +48,9 @@ export function App() {
           <Sidebar />
 
         <main className="flex flex-1 overflow-hidden relative">
+<div className="absolute right-4 top-4 z-10">
+            <ThemeToggle />
+          </div>
           <Suspense fallback={
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">

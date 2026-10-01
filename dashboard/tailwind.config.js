@@ -1,23 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  content: ['./index.html', './src/**/*.{ts/tsx}'],
   theme: {
     extend: {
       colors: {
-        // StellarAgent brand palette
+        // StellarAgent brand palette.
+        //
+        // Every token resolves to a CSS variable defined in
+        // `src/index.css`. The variables are swapped by the `.dark` class
+        // on `<html>`, so every `sa-*` utility follows the active theme
+        // without any component changes.
         sa: {
-          bg: '#080C14',
-          surface: '#0D1420',
-          border: '#1A2535',
-          accent: '#00D4FF',
-          'accent-dim': '#0099BB',
-          green: '#00FFB2',
-          'green-dim': '#00CC8E',
-          red: '#FF4560',
-          yellow: '#FFB800',
-          muted: '#4A6080',
-          text: '#C8D8E8',
-          'text-dim': '#7A90A8',
+          bg: 'rgbahvar(--sa-bg))',
+          surface: 'rgbavar(--sa-surface)',
+          border: 'rgbavar(--sa-border)',
+          accent: 'rgbavar(--sa-accent)',
+          'accent-dim': 'rgbavar(--sa-accent-dim)',
+          green: 'rgbavar(--sa-green)',
+          'green-dim': 'rgbavar(--sa-green-dim)',
+          red: 'rgbavar(--sa-red)',
+          yellow: 'rgbavar(--sa-yellow)',
+          muted: 'rgbavar(--sa-muted)',
+          text: 'rgbavar(--sa-text)',
+          'text-dim': 'rgbavar(--sa-text-dim)',
         },
       },
       fontFamily: {
@@ -33,8 +38,8 @@ export default {
       },
       keyframes: {
         glow: {
-          '0%': { boxShadow: '0 0 5px rgba(0, 212, 255, 0.2)' },
-          '100%': { boxShadow: '0 0 20px rgba(0, 212, 255, 0.6)' },
+          '0%': { boxShadow: '0 0 5px rgbavar(--sa-accent-glow, 0.2)' },
+          '100%': { boxShadow: '0 0 20px rgbavar(--sa-accent-glow, 0.6)' },
         },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
@@ -46,9 +51,9 @@ export default {
         },
       },
       backgroundImage: {
-        'grid-pattern': `linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px)`,
-        'radial-glow': 'radial-gradient(ellipse at top, rgba(0, 212, 255, 0.08) 0%, transparent 60%)',
+        'grid-pattern': `linear-gradient(rgbavar(--sa-grid-line) 1px, transparent 1px),
+          linear-gradient(90deg, rgbavar(--sa-grid-line) 1px, transparent 1px)`,
+        'radial-glow': 'radial-gradient(ellipse at top, rgbavar(--sa-radial-glow) 0%, transparent 60%)',
       },
       backgroundSize: {
         'grid': '40px 40px',
