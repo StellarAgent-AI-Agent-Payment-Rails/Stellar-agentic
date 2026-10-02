@@ -23,6 +23,6 @@ ed25519-dalek = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.11"
-stellar-strkey = "0.0.13"
+stellar-strkey = "0.0.18"
 stellar-xdr = { version = "23", features = ["curr", "std", "base64"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "io-util"] }
