@@ -141,7 +141,8 @@ is verified against shared fixtures. See the
 
 Contract IDs must be configured through `contracts` or the
 `STELLARAGENT_<NETWORK>_*` environment variables described in the deployment
-guide. Friendly non-XLM asset codes also need an `assetContracts` mapping to
+guide. Hitting an error? Search
+[docs/troubleshooting.md](docs/troubleshooting.md) for the exact message. Friendly non-XLM asset codes also need an `assetContracts` mapping to
 their deployed Stellar Asset Contract ID.
 
 #### Production: keep the key out of the agent process
@@ -262,6 +263,22 @@ Step-by-step walkthrough, including the on-chain `set_solvency_vk` and
 `verify_solvency_proof` invocations and measured timings:
 **[docs/zk-solvency-walkthrough.md](docs/zk-solvency-walkthrough.md)**.
 Design and threat model: **[docs/zk-solvency-design.md](docs/zk-solvency-design.md)**.
+
+### Indexer
+
+`packages/indexer` (`@stellaragent/indexer`, binary `stellaragent-indexer`) is a
+reorg-safe Soroban event indexer. It backfills and live-tails events from the
+Payment Channel, Escrow, Rate Limiter and Agent Wallet Factory contracts into
+SQLite and serves them over a REST API. The dashboard's Reports view consumes
+that API, and operators use it for audit statements, exports and scheduled
+delivery.
+
+```bash
+pnpm --filter @stellaragent/indexer build
+pnpm --filter @stellaragent/indexer exec stellaragent-indexer tail
+```
+
+Configuration, API routes and operations: [packages/indexer/README.md](packages/indexer/README.md).
 
 ### Dashboard
 
