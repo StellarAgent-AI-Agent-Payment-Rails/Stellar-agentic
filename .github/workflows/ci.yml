@@ -410,6 +410,9 @@ jobs:
       - name: Type check
         run: mypy
 
+      - name: Import-check examples
+        run: python -c "import pathlib,py_compile; [py_compile.compile(str(p), doraise=True) for p in pathlib.Path('examples').glob('*.py')]"
+
       # Includes tests/test_determinism.py, which asserts the Python math
       # modules produce byte-identical output to the TypeScript ones for every
       # case in fixtures/determinism.json.
