@@ -94,7 +94,7 @@ If you are installing by hand:
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/stellaragent.git
+git clone https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic.git
 cd stellaragent
 
 # Confirm the toolchain before anything else
@@ -407,11 +407,43 @@ what moved.
 
 ## How to Contribute
 
-1. **Find an issue** — Look for [`good first issue`](https://github.com/yourusername/stellaragent/labels/good%20first%20issue) or [`help wanted`](https://github.com/yourusername/stellaragent/labels/help%20wanted) labels.
+1. **Find an issue** — Look for [`good first issue`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/good%20first%20issue) or [`help wanted`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/help%20wanted) labels.
 2. **Comment on the issue** — Let us know you're working on it so we don't duplicate effort.
 3. **Fork & branch** — Fork the repo and create a branch: `git checkout -b feat/your-feature-name`
 4. **Build & test** — Make sure tests pass before submitting.
 5. **Submit a PR** — Fill out the PR template and link the issue.
+
+### Labels
+
+Every issue is labelled so you can filter for work that fits you. There are
+two axes: **area** (which part of the repo) and **difficulty** (how much
+context it needs).
+
+**Difficulty** — pick your entry point:
+
+| Label | Meaning |
+|-------|---------|
+| [`good first issue`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/good%20first%20issue) | Self-contained; a good place to start. |
+| [`intermediate`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/intermediate) | Needs some familiarity with the codebase. |
+| [`advanced`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/advanced) | A deep change — open a design discussion first. |
+
+**Area** — where the change lands:
+
+| Label | Area |
+|-------|------|
+| [`contracts`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/contracts) | Soroban contracts (`contracts/`) |
+| [`sdk`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/sdk) | `@stellaragent/core` |
+| [`react`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/react) | `@stellaragent/react` |
+| [`cli`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/cli) | `@stellaragent/cli` |
+| [`indexer`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/indexer) | `@stellaragent/indexer` |
+| [`python-sdk`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/python-sdk) | `python/` |
+| [`dashboard`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/dashboard) | `dashboard/` |
+| [`zk`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/zk) | `zk/` |
+| [`docs`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/docs) | `docs/` and prose |
+| [`ci`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/ci) · [`infra`](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels/infra) | Workflows, tooling, deployment |
+
+Browse the full [label list](https://github.com/StellarAgent-AI-Agent-Payment-Rails/Stellar-agentic/labels)
+to filter by any of them.
 
 ---
 
