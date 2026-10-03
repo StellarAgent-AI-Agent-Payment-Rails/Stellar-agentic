@@ -4,14 +4,9 @@ use soroban_sdk::{
     contract, contractimpl, contracttype, symbol_short, Address, Env, Map, String, Vec,
 };
 
-#[contracttype]
-#[derive(Clone)]
-pub enum DataKey {
-    Admin,
-    Count,
-    Agents,
-    OwnerAgents(Address),
-}
+// ─── Data Types ──────────────────────────────────────────────────────────────
+
+/// Metadata stored on-chain for each agent wallet
 #[contracttype]
 #[derive(Clone, Debug)]
 pub struct AgentInfo {
@@ -29,15 +24,17 @@ pub struct AgentInfo {
     pub total_ops: u64,
 }
 
-/// Events emitted by this contract
-#[contracttype]
-pub enum Event {
-    Created,
-    Deactivated,
-    Reactivated,
-}
-
 // ─── Contract ────────────────────────────────────────────────────────────────
+
+
+pub const DAY_IN_LEDGERS: u32 = 17280;
+pub const INSTANCE_BUMP_AMOUNT: u32 = 30 * DAY_IN_LEDGERS;
+pub const INSTANCE_LIFETIME_THRESHOLD: u32 = 7 * DAY_IN_LEDGERS;
+
+
+pub fn extend_instance_ttl(env: &Env) {
+    env.storage().instance().extend_ttl(INSTANCE_LIFETIME_THRESHOLD, INSTANCE_BUMP_AMOUNT);
+}
 
 #[contract]
 pub struct AgentWalletFactory;
@@ -49,6 +46,7 @@ impl AgentWalletFactory {
     /// Initialize the factory with an admin address.
     /// Must be called once after deployment.
     pub fn initialize(env: Env, admin: Address) {
+        extend_instance_ttl(&env);
         if env.storage().instance().has(&symbol_short!("admin")) {
             panic!("already initialized");
         }
@@ -77,6 +75,7 @@ impl AgentWalletFactory {
     /// # Returns
     /// The agent ID (incrementing counter)
     pub fn create_agent(env: Env, owner: Address, agent_address: Address, name: String) -> u64 {
+        extend_instance_ttl(&env);
         // Require the owner to authorize this call
         owner.require_auth();
 
@@ -98,15 +97,12 @@ impl AgentWalletFactory {
             total_ops: 0,
         };
 
-        // Update owner index (`owner -> Vec<u64>`) in persistent storage
-        let key = DataKey::OwnerAgents(owner.clone());
-        let mut owner_agents: Vec<u64> = env
+        // Store agent
+        let mut agents: Map<u64, AgentInfo> = env
             .storage()
-            .persistent()
-            .get(&key)
-            .unwrap_or(Vec::new(&env));
-        owner_agents.push_back(agent_id);
-        env.storage().persistent().set(&key, &owner_agents);
+            .instance()
+            .get(&symbol_short!("agents"))
+            .unwrap_or(Map::new(&env));
 
         agents.set(agent_id, agent.clone());
 
@@ -119,11 +115,11 @@ impl AgentWalletFactory {
 
         // Emit creation event
         env.events().publish(
-            (symbol_short!("factory"), symbol_short!("created")),
+            (symbol_short!("agent"), symbol_short!("created")),
             (agent_id, agent_address, owner),
         );
         env.events().publish(
-            (symbol_short!("state"), symbol_short!("agent")),
+            (symbol_short!("agent"), symbol_short!("state")),
             (agent_id, agent),
         );
 
@@ -132,6 +128,7 @@ impl AgentWalletFactory {
 
     /// Deactivate an agent. Only the owner can deactivate their agent.
     pub fn deactivate_agent(env: Env, owner: Address, agent_id: u64) {
+        extend_instance_ttl(&env);
         owner.require_auth();
 
         let mut agents: Map<u64, AgentInfo> = env
@@ -153,17 +150,18 @@ impl AgentWalletFactory {
             .set(&symbol_short!("agents"), &agents);
 
         env.events().publish(
-            (symbol_short!("factory"), symbol_short!("deactiv")),
+            (symbol_short!("agent"), symbol_short!("deactiv")),
             (agent_id, owner),
         );
         env.events().publish(
-            (symbol_short!("state"), symbol_short!("agent")),
+            (symbol_short!("agent"), symbol_short!("state")),
             (agent_id, agent),
         );
     }
 
     /// Reactivate a previously deactivated agent.
     pub fn reactivate_agent(env: Env, owner: Address, agent_id: u64) {
+        extend_instance_ttl(&env);
         owner.require_auth();
 
         let mut agents: Map<u64, AgentInfo> = env
@@ -185,11 +183,11 @@ impl AgentWalletFactory {
             .set(&symbol_short!("agents"), &agents);
 
         env.events().publish(
-            (symbol_short!("factory"), symbol_short!("reactiv")),
+            (symbol_short!("agent"), symbol_short!("reactiv")),
             (agent_id, owner),
         );
         env.events().publish(
-            (symbol_short!("state"), symbol_short!("agent")),
+            (symbol_short!("agent"), symbol_short!("state")),
             (agent_id, agent),
         );
     }
@@ -197,6 +195,7 @@ impl AgentWalletFactory {
     /// Increment the operation counter for an agent.
     /// Called by the PaymentChannel contract after a successful payment.
     pub fn record_operation(env: Env, agent_id: u64) {
+        extend_instance_ttl(&env);
         let mut agents: Map<u64, AgentInfo> = env
             .storage()
             .instance()
@@ -210,7 +209,7 @@ impl AgentWalletFactory {
             .instance()
             .set(&symbol_short!("agents"), &agents);
         env.events().publish(
-            (symbol_short!("state"), symbol_short!("agent")),
+            (symbol_short!("agent"), symbol_short!("state")),
             (agent_id, agent),
         );
     }
@@ -219,6 +218,7 @@ impl AgentWalletFactory {
 
     /// Get agent info by ID
     pub fn get_agent(env: Env, agent_id: u64) -> AgentInfo {
+        extend_instance_ttl(&env);
         let agents: Map<u64, AgentInfo> = env
             .storage()
             .instance()
@@ -228,42 +228,9 @@ impl AgentWalletFactory {
         agents.get(agent_id).expect("agent not found")
     }
 
-    /// Get all agents owned by a specific address.
-    /// Uses the owner -> Vec<agent_id> index maintained by create_agent.
-    /// If the index is empty (e.g. for factories deployed before this index was introduced),
-    /// it falls back to scanning the agents map once and populating the index for future calls (lazy migration).
+    /// Get all agents owned by a specific address
     pub fn get_agents_by_owner(env: Env, owner: Address) -> Vec<AgentInfo> {
         extend_instance_ttl(&env);
-        let key = DataKey::OwnerAgents(owner.clone());
-        let mut agent_ids: Vec<u64> = env.storage().persistent().get(&key).unwrap_or(Vec::new(&env));
-
-        if agent_ids.is_empty() {
-            // Migration / fallback for agents created before the owner index was added:
-            // Scan agents map once, collect matching IDs, and store the index.
-            let agents: Map<u64, AgentInfo> = env
-                .storage()
-                .instance()
-                .get(&symbol_short!("agents"))
-                .unwrap_or(Map::new(&env));
-            let count: u64 = env
-                .storage()
-                .instance()
-                .get(&symbol_short!("count"))
-                .unwrap_or(0);
-
-            for i in 1..=count {
-                if let Some(agent) = agents.get(i) {
-                    if agent.owner == owner {
-                        agent_ids.push_back(i);
-                    }
-                }
-            }
-
-            if !agent_ids.is_empty() {
-                env.storage().persistent().set(&key, &agent_ids);
-            }
-        }
-
         let agents: Map<u64, AgentInfo> = env
             .storage()
             .instance()
@@ -271,9 +238,15 @@ impl AgentWalletFactory {
             .unwrap_or(Map::new(&env));
 
         let mut result = Vec::new(&env);
-        for i in 0..agent_ids.len() {
-            if let Some(agent_id) = agent_ids.get(i) {
-                if let Some(agent) = agents.get(agent_id) {
+        let count: u64 = env
+            .storage()
+            .instance()
+            .get(&symbol_short!("count"))
+            .unwrap_or(0);
+
+        for i in 1..=count {
+            if let Some(agent) = agents.get(i) {
+                if agent.owner == owner {
                     result.push_back(agent);
                 }
             }
@@ -284,6 +257,7 @@ impl AgentWalletFactory {
 
     /// Total number of agents ever created
     pub fn total_agents(env: Env) -> u64 {
+        extend_instance_ttl(&env);
         env.storage()
             .instance()
             .get(&symbol_short!("count"))
@@ -292,6 +266,7 @@ impl AgentWalletFactory {
 
     /// Check if a specific address is a registered active agent
     pub fn is_active_agent(env: Env, address: Address) -> bool {
+        extend_instance_ttl(&env);
         let agents: Map<u64, AgentInfo> = env
             .storage()
             .instance()
@@ -317,15 +292,10 @@ impl AgentWalletFactory {
 
     /// Get the contract admin
     pub fn admin(env: Env) -> Address {
+        extend_instance_ttl(&env);
         env.storage()
             .instance()
             .get(&symbol_short!("admin"))
             .unwrap()
     }
-}
-
-// ─── Tests ───────────────────────────────────────────────────────────────────
-
-
-#[cfg(test)]
-mod test;
+}\n\n#[cfg(test)]\nmod test;\n
