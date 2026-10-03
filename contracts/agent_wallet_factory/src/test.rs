@@ -98,3 +98,30 @@ fn test_is_active_agent() {
     client.deactivate_agent(&owner, &agent_id);
     assert!(!client.is_active_agent(&agent));
 }
+
+#[test]
+fn test_multiple_owners_interleaved_creation_and_migration() {
+    let (env, client) = setup();
+    let admin = Address::generate(&env);
+    let owner1 = Address::generate(&env);
+    let owner2 = Address::generate(&env);
+
+    client.initialize(&admin);
+
+    // Interleaved agent creation
+    client.create_agent(&owner1, &Address::generate(&env), &String::from_str(&env, "O1-A1"));
+    client.create_agent(&owner2, &Address::generate(&env), &String::from_str(&env, "O2-A1"));
+    client.create_agent(&owner1, &Address::generate(&env), &String::from_str(&env, "O1-A2"));
+    client.create_agent(&owner2, &Address::generate(&env), &String::from_str(&env, "O2-A2"));
+
+    let agents1 = client.get_agents_by_owner(&owner1);
+    assert_eq!(agents1.len(), 2);
+    assert_eq!(agents1.get(0).unwrap().name, String::from_str(&env, "O1-A1"));
+    assert_eq!(agents1.get(1).unwrap().name, String::from_str(&env, "O1-A2"));
+
+    let agents2 = client.get_agents_by_owner(&owner2);
+    assert_eq!(agents2.len(), 2);
+    assert_eq!(agents2.get(0).unwrap().name, String::from_str(&env, "O2-A1"));
+    assert_eq!(agents2.get(1).unwrap().name, String::from_str(&env, "O2-A2"));
+}
+
