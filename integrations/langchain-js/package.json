@@ -24,7 +24,7 @@
     "@langchain/core": { "optional": true }
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^26.6.3",
     "@vitest/coverage-v8": "^1.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
