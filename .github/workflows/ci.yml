@@ -20,7 +20,7 @@ jobs:
         working-directory: contracts
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -62,7 +62,7 @@ jobs:
       # ~/.cargo/bin.
       - name: Cache stellar-cli
         id: cache-stellar-cli
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cargo/bin/stellar
           key: ${{ runner.os }}-stellar-cli-25.1.0-bin
@@ -106,16 +106,16 @@ jobs:
         --filter=@stellaragent/langchain
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -125,7 +125,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Cache Turbo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             .turbo
@@ -150,13 +150,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -184,16 +184,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -223,13 +223,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -259,7 +259,7 @@ jobs:
         working-directory: sdk/rust
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -313,7 +313,7 @@ jobs:
         working-directory: services/signer
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -379,7 +379,7 @@ jobs:
         working-directory: zk
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -422,10 +422,10 @@ jobs:
         working-directory: python
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -451,7 +451,7 @@ jobs:
       # PR comment noisier. Informational; see codecov.yml.
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() && matrix.python-version == '3.12' }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: python/coverage.xml
@@ -479,23 +479,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -544,16 +544,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -599,7 +599,7 @@ jobs:
       # shows which lines dropped out. The gate is still the step above.
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: packages/core/coverage/lcov.info
@@ -622,16 +622,16 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -671,7 +671,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: >-
@@ -699,16 +699,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -735,16 +735,16 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         # Version is taken from the "packageManager" field in package.json.
         # Passing "version" here as well makes the action abort with
         # ERR_PNPM_BAD_PM_VERSION ("Multiple versions of pnpm specified").
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'pnpm'
@@ -754,7 +754,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Cache Turbo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             .turbo
