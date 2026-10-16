@@ -24,7 +24,7 @@ import {
 import { getConfigPath, readConfigFile, writeConfigFile } from './config.js';
 import { handlePayCommand } from './pay.js';
 import { handleChannelCommand } from './channel.js';
-import { handleLimitsCommand } from './limits.js';
+
 
 const HELP = `StellarAgent CLI
 
@@ -39,8 +39,7 @@ Commands:
   config set <k> <v>  Set configuration value
   pay                 Send payment with pre-flight outcome prediction
   channel             Manage payment channels (open, top-up, status, close)
-  limits set          Configure rate limits (per hour / per day)
-  limits show         Show remaining rate-limit headroom and window resets
+
 
 Options:
   --network <net>     Network to operate against
@@ -197,13 +196,6 @@ export async function runCli(
     );
   }
 
-  // Deploy command — wraps the repo deployment script
-  if (command === 'deploy') {
-    const rest = args.slice(1);
-    if (rest.includes('--dry-run')) io.stdout('deploy: dry run, no contracts will be sent');
-    execFileSync('pnpm', ['exec', 'tsx', 'scripts/deploy.ts', ...rest], { stdio: 'inherit' });
-    return 0;
-  }
 
   io.stderr(`Unknown command: ${args.join(' ')}`);
   io.stderr(HELP);
