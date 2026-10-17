@@ -100,11 +100,16 @@ dashboards, operators, and agent tooling.
 ### SDK (TypeScript)
 
 ```bash
-npm install @stellaragent/sdk
+npm install @stellaragent/core        # core SDK
+npm install @stellaragent/react       # React hooks (optional)
+npm install @stellaragent/cli         # CLI tooling (optional)
 ```
 
+Packages version independently — see [docs/releases.md](docs/releases.md) for the
+versioning strategy and how releases are cut.
+
 ```typescript
-import { StellarAgent } from '@stellaragent/sdk';
+import { StellarAgent } from '@stellaragent/core';
 
 const agent = await StellarAgent.create({
   network: 'testnet',
@@ -154,7 +159,7 @@ funds. Pass a `signer` instead — the key stays behind a network boundary and
 never enters this process:
 
 ```typescript
-import { StellarAgent, RemoteSigner } from '@stellaragent/sdk';
+import { StellarAgent, RemoteSigner } from '@stellaragent/core';
 
 const agent = await StellarAgent.create({
   network: 'mainnet',

@@ -2,6 +2,9 @@
   "name": "@stellaragent/cli",
   "version": "0.1.0",
   "description": "CLI for StellarAgent",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
   "bin": {
     "stellaragent": "dist/index.js"
   },

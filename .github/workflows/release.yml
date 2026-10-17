@@ -1,0 +1,102 @@
+name: Release (npm packages)
+
+# Publish the three TypeScript packages (@stellaragent/core, @stellaragent/cli,
+# @stellaragent/react) to npm. Triggered by a tag rather than by a push to main,
+# so cutting a release is a deliberate act:
+#
+#   git tag v0.1.0-alpha.0 && git push --tags
+#
+# The tag prefix is namespaced (`v*`) because this repo also ships a Python SDK
+# (`sdk-python-v*`) and a Rust SDK (`sdk-rust-v*`), and a bare `v0.1.0` would
+# be ambiguous about which distribution is being released.
+#
+# Requires an `NPM_TOKEN` repository secret (classic npm token or an automation
+# token with publish scope). Publishing is done through Changesets, which
+# reads the versions already bumped by `pnpm changeset version` and publishes
+# every package whose version is not yet on npm. npm attaches
+# [provenance](https://github.com/npm/cli/blob/latest/docs/content/provenance.md)
+# automatically to every authenticated publish, so each published version carries
+# cryptographic proof of its origin.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Verify and package without publishing'
+        type: boolean
+        default: true
+
+concurrency:
+  group: release-npm-packages
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Publish @stellaragent packages to npm
+    runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        # Version is taken from the "packageManager" field in package.json.
+        # Passing "version" here as well aborts with ERR_PNPM_BAD_PM_VERSION.
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        # --no-frozen-lockfile because the root lockfile carries pre-existing
+        # drift (see packages/core/package.json vs pnpm-lock.yaml); a maintainer
+        # should run `pnpm install` to regenerate it. Changesets itself only
+        # needs @changesets/cli and @changesets/changelog-github installed.
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          EXPECTED=$(node -e "console.log(require('./packages/core/package.json').version)")
+          if [ "$TAG" != "$EXPECTED" ]; then
+            echo "::error::Tag v$TAG does not match packages/core version $EXPECTED"
+            echo "Run pnpm changeset version, commit, then retag."
+            exit 1
+          fi
+          echo "Releasing @stellaragent packages @ $TAG"
+
+      - name: Build all packages
+        run: pnpm turbo run build --filter=@stellaragent/core --filter=@stellaragent/cli --filter=@stellaragent/react
+
+      - name: Publish to npm
+        id: publish
+        if: >
+          startsWith(github.ref, 'refs/tags/') &&
+          github.event.inputs.dry_run != 'true' &&
+          secrets.NPM_TOKEN != ''
+        run: pnpm changeset publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish skipped (dry run or no token)
+        if: >
+          startsWith(github.ref, 'refs/tags/') &&
+          (github.event.inputs.dry_run == 'true' || secrets.NPM_TOKEN == '')
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "Dry run: not publishing to npm."
+          else
+            echo "Skipping publish: the NPM_TOKEN repository secret is not configured."
+            echo "Add it to Settings -> Secrets and variables -> Actions, then retag."
+          fi
